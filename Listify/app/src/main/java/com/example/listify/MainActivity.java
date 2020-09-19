@@ -1,9 +1,13 @@
 package com.example.listify;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.core.Amplify;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -23,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //------------------------------Auth Testing---------------------------------------------//
+
+
+
+
+        //------------------------------------------------------------------------------------------//
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
