@@ -4,19 +4,21 @@ import android.util.Log;
 import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
 
 public class AuthManager {
     AuthSession authSession = null;
     AuthSignUpResult authSignUpResult = null;
+    AuthSignInResult authSignInResult = null;
     AuthException authError = null;
     String email = null;
     String password = null;
-    boolean waiting = false;
+    volatile boolean waiting = false;
 
 
-    public void fetchAuthSession() throws AuthException {
+    void fetchAuthSession() throws AuthException {
         waiting = true;
         Amplify.Auth.fetchAuthSession(
             result -> setAuthSession(result),
@@ -25,9 +27,15 @@ public class AuthManager {
         throwIfAuthError();
     }
 
+    public AuthSession getAuthSession() throws AuthException {
+        fetchAuthSession();
+        return authSession;
+    }
+
 
     public void setAuthSession(AuthSession toSet) {
         authSession = toSet;
+        waiting = false;
     }
 
     public void setAuthError(AuthException newError) {
@@ -49,7 +57,12 @@ public class AuthManager {
         authSignUpResult = toSet;
     }
 
-    public void startSignup(String email, String password) throws AuthException {
+    public void setAuthSignInResult(AuthSignInResult toSet) {
+        authSignInResult = toSet;
+        waiting = false;
+    }
+
+    public void startSignUp(String email, String password) throws AuthException {
         this.email = email;
         this.password = password;
         waiting = true;
@@ -64,22 +77,28 @@ public class AuthManager {
 
     }
 
-    public void confirmSignUp(String confirmationCode) {
+    public void confirmSignUp(String confirmationCode) throws AuthException {
+        waiting = true;
         Amplify.Auth.confirmSignUp(
             email,
             confirmationCode,
-            result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
-            error -> Log.e("AuthQuickstart", error.toString())
+            result -> setAuthSignUpResult(result),
+            error -> setAuthError(error)
         );
+        throwIfAuthError();
     }
 
-    public void signIn(String email, String password) {
+    public void signIn(String email, String password) throws AuthException{
+        this.email = email;
+        this.password = password;
+        waiting = true;
         Amplify.Auth.signIn(
             email,
             password,
-            result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
-            error -> Log.e("AuthQuickstart", error.toString())
+            result -> setAuthSignInResult(result),
+            error -> setAuthError(error)
         );
+        throwIfAuthError();
     }
 
 

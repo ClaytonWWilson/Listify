@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 
+import com.amazonaws.mobileconnectors.cognitoauth.Auth;
+import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
@@ -29,6 +31,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //------------------------------Auth Testing---------------------------------------------//
 
+        AuthManager authManager = new AuthManager();
+        try {
+            authManager.signIn("merzn@purdue.edu", "Password123");
+            Log.i("Authentication", authManager.getAuthSession().toString());
+        } catch (AuthException e) {
+            Log.i("Authentication", "Login failed. User probably needs to register. Exact error: " + e.getMessage());
+            try {
+                authManager.startSignUp("merzn@purdue.edu", "Password123");
+                authManager.confirmSignUp("######");
+            } catch (AuthException signUpError) {
+                Log.e("Authentication", "SignUp error: " + signUpError.getMessage());
+            }
+        }
 
 
 
