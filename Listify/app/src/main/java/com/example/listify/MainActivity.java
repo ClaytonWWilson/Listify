@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             authManager.signIn("merzn@purdue.edu", "Password123");
             Log.i("Authentication", authManager.getAuthSession().toString());
+            Log.i("Token", authManager.getAuthSession().getUserPoolTokens().getValue().getIdToken());
         } catch (AuthException e) {
             Log.i("Authentication", "Login failed. User probably needs to register. Exact error: " + e.getMessage());
             try {

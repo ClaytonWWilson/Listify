@@ -1,15 +1,15 @@
 package com.example.listify;
 
-import android.util.Log;
 import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthSession;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
 
 public class AuthManager {
-    AuthSession authSession = null;
+    AWSCognitoAuthSession authSession = null;
     AuthSignUpResult authSignUpResult = null;
     AuthSignInResult authSignInResult = null;
     AuthException authError = null;
@@ -27,14 +27,21 @@ public class AuthManager {
         throwIfAuthError();
     }
 
-    public AuthSession getAuthSession() throws AuthException {
-        fetchAuthSession();
+    public AWSCognitoAuthSession getAuthSession() throws AuthException {
+        if (authSession == null) {
+            fetchAuthSession();
+        }
+
         return authSession;
+    }
+
+    public String getUserToken() {
+        return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
 
     public void setAuthSession(AuthSession toSet) {
-        authSession = toSet;
+        authSession = (AWSCognitoAuthSession) toSet;
         waiting = false;
     }
 

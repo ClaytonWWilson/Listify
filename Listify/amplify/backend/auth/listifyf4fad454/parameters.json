@@ -1,6 +1,6 @@
 {
     "identityPoolName": "listifyf4fad454_identitypool_f4fad454",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "listiff4fad454",
     "userPoolName": "listifyf4fad454_userpool_f4fad454",
     "autoVerifiedAttributes": [
