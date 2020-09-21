@@ -1,10 +1,8 @@
 package com.example.listify;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
-import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -20,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
-    //private Button toLoginPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +42,10 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        /*toLoginPage = (Button) findViewById(R.id.button1);
-        toLoginPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.example.listify.ui.SignupPage.class);
-                startActivity(intent);
-            }
-        });*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
