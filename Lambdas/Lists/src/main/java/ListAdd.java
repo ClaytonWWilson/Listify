@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -17,6 +19,13 @@ public class ListAdd implements RequestHandler<Map<String,Object>, String>{
         }
         System.out.println(inputMap.get("context"));
         System.out.println(contextMap.get("sub"));
+        try {
+            System.out.println(new DBConnector());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
