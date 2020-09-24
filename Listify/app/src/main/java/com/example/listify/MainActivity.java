@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                onSearchRequested();
                 Intent intent = new Intent(MainActivity.this, SearchResults.class);
+                // Send them to the search results page
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_left, R.anim.exit_from_left);
 
