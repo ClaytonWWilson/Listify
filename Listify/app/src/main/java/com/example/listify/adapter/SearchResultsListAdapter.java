@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.listify.model.Product;
 import com.example.listify.R;
 
@@ -53,7 +54,8 @@ public class SearchResultsListAdapter extends BaseAdapter {
         TextView price = (TextView) convertView.findViewById(R.id.item_price);
 
         Product product = productList.get(position);
-        product.loadImageView(0, 0, productImage);
+//        product.loadImageView(0, 0, productImage);
+        Glide.with(activity).load(product.getImageUrl()).into(productImage);
         itemName.setText(product.getItemName());
         description.setText(product.getDescription());
         price.setText(product.getPrice());

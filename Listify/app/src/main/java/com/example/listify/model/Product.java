@@ -43,35 +43,35 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-
-        public DownloadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        protected Bitmap doInBackground(String... args) {
-            String url = args[0];
-            Bitmap image = null;
-            try {
-                InputStream in = new java.net.URL(url).openStream();
-                image = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return image;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            // Return the broken image icon as a bitmap if the url is invalid
-            if (result == null) {
-                imageView.setImageResource(R.drawable.ic_baseline_broken_image_600);
-            } else {
-                imageView.setImageBitmap(result);
-            }
-        }
-    }
+//    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+//        ImageView imageView;
+//
+//        public DownloadImageTask(ImageView imageView) {
+//            this.imageView = imageView;
+//        }
+//
+//        protected Bitmap doInBackground(String... args) {
+//            String url = args[0];
+//            Bitmap image = null;
+//            try {
+//                InputStream in = new java.net.URL(url).openStream();
+//                image = BitmapFactory.decodeStream(in);
+//            } catch (Exception e) {
+//                Log.e("Error", e.getMessage());
+//                e.printStackTrace();
+//            }
+//            return image;
+//        }
+//
+//        protected void onPostExecute(Bitmap result) {
+//            // Return the broken image icon as a bitmap if the url is invalid
+//            if (result == null) {
+//                imageView.setImageResource(R.drawable.ic_baseline_broken_image_600);
+//            } else {
+//                imageView.setImageBitmap(result);
+//            }
+//        }
+//    }
 
     public String getItemName() {
         return itemName;
@@ -161,8 +161,8 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    // TODO: Need to implement image resizing
-    public void loadImageView(int height, int width, ImageView imageView) {
-        new DownloadImageTask(imageView).execute(this.imageUrl);
-    }
+//    // TODO: Need to implement image resizing
+//    public void loadImageView(int height, int width, ImageView imageView) {
+//        new DownloadImageTask(imageView).execute(this.imageUrl);
+//    }
 }
