@@ -1,14 +1,7 @@
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
-
-public class ListAdd implements RequestHandler<Map<String,Object>, String>{
-
-
-    public String handleRequest(Map<String, Object> inputMap, Context unfilled) {
+public class InputUtils {
+    public static String getCognitoIDFromBody(Map<String, Object> inputMap) {
         System.out.println(inputMap.keySet());
         System.out.println(inputMap.entrySet());
         Map<String, Object> contextMap;
@@ -19,13 +12,5 @@ public class ListAdd implements RequestHandler<Map<String,Object>, String>{
         }
         System.out.println(inputMap.get("context"));
         System.out.println(contextMap.get("sub"));
-        try {
-            System.out.println(new DBConnector());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

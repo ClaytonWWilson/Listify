@@ -28,7 +28,7 @@ zipPath=${functionPath}.zip
 
 zip ${zipPath} ${jarPath}
 
-RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${zipPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}.lambda_handler)
+RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${zipPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method}.lambda_handler 2>${DEBUGFILE})
 
 if [[ $? -ne 0 ]]; then
   echo "Unable to create Lamba" >&2
@@ -39,11 +39,15 @@ LAMBDAARN=$(echo $RAWLAMBDA | head -n 3 | tail -n 1 | cut -d \" -f 8)
 
 echo ${LAMBDAARN} > ${DEBUGFILE}
 
-RAWRESOURCEID=$(aws apigateway create-resource --rest-api-id ${APIID} --parent-id ${ROOTRESOURCEID} --path-part ${functionName})
+RAWRESOURCEID=$(aws apigateway create-resource --rest-api-id ${APIID} --parent-id ${ROOTRESOURCEID} --path-part ${functionName} 2>${DEBUGFILE})
 
 if [[ $? -ne 0 ]]; then
-  echo "Unable to create Resource. This needs to be handled at some future point" >&2
-  exit 1
+  echo "Unable to create resource." > ${DEBUGFILE}
+  RAWRESOURCEID=$(aws apigateway get-resources --rest-api-id datoh7woc9 --query "items[?pathPart==\`${functionName}\`].{id:id}" | head -n 3 | tail -n 1)
+  if [[ $RAWRESOURCEID == "[]" ]]; then
+    echo "Unable to create or find API Gateway resource." >&2
+    exit 1
+  fi
 fi
 
 RESOURCEID=$(echo ${RAWRESOURCEID} | head -n 2 | tail -n 1 | cut -d \" -f 4)
