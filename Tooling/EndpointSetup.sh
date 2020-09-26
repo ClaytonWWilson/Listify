@@ -2,33 +2,17 @@
 #Base script from: https://github.com/NMerz/DoctorsNote/blob/master/AWS%20Setup/Lambda-GatewayInitialization.sh
 
 #NOTE: This has been tested and works; however, the apigateway does not properly show as a trigger in AWS's web UI
-#NOTE2: This assumes that the root Gateway and Lambda role have been set up previously (one-time setup) and their values are stored in the constants below
+#NOTE2: This assumes that the root Gateway and Lambda role have been set up previously (one-time setup) and their values are set in VarSetup.sh
 
-#constants
-APIID=datoh7woc9 #rest-api-id is tied to the apigateway while resource-id seems tied to the specific url extension
-ROOTRESOURCEID=6xrzhzidxh #gateway root should have a consistent resource id which will serve as parent for many apis
-LAMBDAROLE=arn:aws:iam::569815541706:role/LambdaBasic
-LANGUAGE=java11
-DEPLOYSTAGE=Development
+echo "Creating a Gateway/Lambda pair."
 
-DEBUGFILE=/dev/null
+REL_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 
-echo -n "Please enter function/endpoint name: "
-read functionName
-echo -n "Please enter method(GET, POST, etc.): "
-read method
+source ${REL_SCRIPT_DIR}/VarSetup.sh
 
-jarPath=$(find .. -name "${functionName}.jar")
-if [[ "$jarPath" == "" ]]; then
-  echo "Unable to find file ${functionName}.jar" >&2
-  exit 1
-fi
-functionPath=${jarPath%/${functionName}.jar}
-zipPath=${functionPath}.zip
 
-zip ${zipPath} ${jarPath}
+RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${zipPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method} 2>${DEBUGFILE})
 
-RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${zipPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method}.lambda_handler 2>${DEBUGFILE})
 
 if [[ $? -ne 0 ]]; then
   echo "Unable to create Lamba" >&2

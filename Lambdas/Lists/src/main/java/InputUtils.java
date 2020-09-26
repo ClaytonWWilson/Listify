@@ -8,9 +8,21 @@ public class InputUtils {
         if ((inputMap.get("context") != null) && (inputMap.get("context") instanceof Map<?, ?>)) {
             contextMap = ((Map<String, Object>) inputMap.get("context"));
         } else {
-            throw new IllegalArgumentException("The key \"Context\" must exist and be a map");
+            throw new IllegalArgumentException("The key \"context\" must exist and be a map");
         }
         System.out.println(inputMap.get("context"));
         System.out.println(contextMap.get("sub"));
+        return contextMap.get("sub").toString();
+    }
+
+    public static Map<String, Object> getBody(Map<String, Object> inputMap) {
+        return getMap(inputMap, "body");
+    }
+
+    public static Map<String, Object> getMap(Map<String, Object> parentMap, String childKey) {
+        if ((parentMap.get(childKey) != null) && (parentMap.get(childKey) instanceof Map<?, ?>)) {
+            return ((Map<String, Object>) parentMap.get(childKey));
+        }
+        throw new IllegalArgumentException("The key \"" + childKey + "\" must exist and be a map");
     }
 }
