@@ -87,3 +87,4 @@ lint/tmp/
 Lambdas/Lists/src/main/resources/dbProperties.json
 Lambdas/Lists/target/classes/dbProperties.json
 Lambdas/Lists/target/classes/META-INF/Lists.kotlin_module
+Listify/app/src/main/res/raw/auths.json

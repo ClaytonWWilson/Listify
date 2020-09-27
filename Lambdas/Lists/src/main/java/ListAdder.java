@@ -18,7 +18,7 @@ public class ListAdder {
     public void add(Map<String, Object> bodyMap) throws SQLException {
         Connection connection = connector.getConnection();
         PreparedStatement statement = connection.prepareStatement(LIST_CREATE);
-        statement.setString(1, bodyMap.get("Name").toString());
+        statement.setString(1, bodyMap.get("name").toString());//Needs safe checking
         statement.setString(2, cognitoID);
         System.out.println(statement);
         statement.executeUpdate();

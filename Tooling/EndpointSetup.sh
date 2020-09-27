@@ -11,7 +11,7 @@ REL_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 source ${REL_SCRIPT_DIR}/VarSetup.sh
 
 
-RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${zipPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method} 2>${DEBUGFILE})
+RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${jarPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method} 2>${DEBUGFILE})
 
 
 if [[ $? -ne 0 ]]; then
@@ -42,7 +42,7 @@ aws apigateway put-method --rest-api-id ${APIID} --resource-id ${RESOURCEID} --h
 
 
 
-aws apigateway put-integration --rest-api-id ${APIID} --resource-id ${RESOURCEID} --http-method ${method} --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/${LAMBDAARN}/invocations --request-templates 'file://body_and_auth_mapping.json' > ${DEBUGFILE}
+aws apigateway put-integration --rest-api-id ${APIID} --resource-id ${RESOURCEID} --http-method ${method} --type AWS --integration-http-method POST --uri arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/${LAMBDAARN}/invocations --request-templates "file://${REL_SCRIPT_DIR}/body_and_auth_mapping.json" --passthrough-behavior NEVER > ${DEBUGFILE}
 
 aws lambda add-permission --function-name ${functionName}${method} --statement-id ${functionName}API --action lambda:InvokeFunction --principal apigateway.amazonaws.com > ${DEBUGFILE}
 

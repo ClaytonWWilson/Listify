@@ -1,5 +1,6 @@
 package com.example.listify;
 
+import android.content.Context;
 import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthSession;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
@@ -7,6 +8,13 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 public class AuthManager {
     AWSCognitoAuthSession authSession = null;
@@ -110,5 +118,22 @@ public class AuthManager {
 
 
 
-
+    public static Properties loadProperties(Context context, String path) throws IOException, JSONException {
+        Properties toReturn = new Properties();
+        String propertiesJSONString = "";
+        for (Object line : new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.auths))).lines().toArray()) {
+            propertiesJSONString += line.toString();
+        }
+        System.out.println(propertiesJSONString);
+        JSONObject propertiesJSON = new JSONObject(propertiesJSONString);
+        propertiesJSON.keys().forEachRemaining(key -> {
+            try {
+                toReturn.setProperty(key, propertiesJSON.get(key).toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+        System.out.println(toReturn);
+        return toReturn;
+    }
 }

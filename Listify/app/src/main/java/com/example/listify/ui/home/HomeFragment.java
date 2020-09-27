@@ -24,6 +24,7 @@ public class HomeFragment extends Fragment {
         toLoginPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ui.SignupPage.class);
                 startActivity(intent);
             }

@@ -1,29 +1,23 @@
 package com.example.listify;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-
-import com.amazonaws.mobileconnectors.cognitoauth.Auth;
-import com.amplifyframework.auth.AuthException;
-import com.amplifyframework.auth.AuthUserAttributeKey;
-import com.amplifyframework.auth.options.AuthSignUpOptions;
-import com.amplifyframework.core.Amplify;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import android.widget.ImageButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.widget.ImageButton;
+import com.amplifyframework.auth.AuthException;
+import com.google.android.material.navigation.NavigationView;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -51,6 +45,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         //------------------------------------------------------------------------------------------//
+
+        //----------------------------------API Testing---------------------------------------------//
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException|JSONException e) {
+            e.printStackTrace();
+        }
+
+        Requestor requestor = new Requestor(this, authManager,configs.getProperty("apiKey"));
+        List testList = new List("IAmATestList");
+        try {
+            requestor.postObject(testList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //------------------------------------------------------------------------------------------//
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
