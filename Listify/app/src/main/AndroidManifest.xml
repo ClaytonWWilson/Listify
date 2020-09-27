@@ -31,7 +31,6 @@
         </activity>
       
         <activity android:name="com.example.listify.ui.SignupPage" />
-      
         <activity android:name="com.example.listify.ui.LoginPage" />
     </application>
 
