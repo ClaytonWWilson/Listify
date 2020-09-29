@@ -10,20 +10,29 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import com.example.listify.adapter.SearchResultsListAdapter;
 import com.example.listify.model.Product;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SearchResults extends AppCompatActivity {
+public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener {
     private ListView listView;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
-    private List<Product> resultsProductListFiltered = new ArrayList<>();
+    private List<Product> resultsProductListSorted = new ArrayList<>();
+    private ArrayList<String> stores = new ArrayList<>();
+    private int storeSelection;
+    private int sortMode;
+    private boolean descending;
 
+    @Override
+    public void sendSort(int storeSelection, int sortMode, boolean descending) {
+        this.storeSelection = storeSelection;
+        this.sortMode = sortMode;
+        this.descending = descending;
+        sortResults();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +72,12 @@ public class SearchResults extends AppCompatActivity {
         });
 
         listView = (ListView) findViewById(R.id.search_results_list);
-        searchResultsListAdapter = new SearchResultsListAdapter(this, resultsProductListFiltered);
+        searchResultsListAdapter = new SearchResultsListAdapter(this, resultsProductListSorted);
         listView.setAdapter(searchResultsListAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(SearchResults.this, resultsProductListFiltered.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -86,7 +95,27 @@ public class SearchResults extends AppCompatActivity {
             }
         });
 
+        // Create a dialog for filtering and sorting search results
+        ImageButton sortButton = (ImageButton) findViewById(R.id.results_sort_button);
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sort the store list
+                stores.sort(new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return o1.compareTo(o2);
+                    }
+                });
+                SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending);
+                sortDialog.show(getSupportFragmentManager(), "Sort");
+            }
+        });
+
     }
+
+
+
 
     // Override default phone back button to add animation
     @Override
@@ -116,22 +145,38 @@ public class SearchResults extends AppCompatActivity {
             resultsProductList.add(f);
         }
 
-        // Add all results to the filtered list
-        resultsProductListFiltered.addAll(resultsProductList);
+        // Create a list of all stores in the results so the user can filter by store name
+        for (int i = 0; i < resultsProductList.size(); i++) {
+            if (!stores.contains(resultsProductList.get(i).getChainName())) {
+                stores.add(resultsProductList.get(i).getChainName());
+            }
+        }
+
+        // Add all results to the sorted list
+        resultsProductListSorted.addAll(resultsProductList);
+
+        // Apply selected sorting to the list
+        sortResults();
     }
 
     // Sorts the search results
-    private void sortResults(int sortMode, boolean descending) {
+    private void sortResults() {
         // Sort Modes
-        // 0 itemName
-        // 1 price
-        // 2 chainName
-        // 3 upc
+        // 0 default (no sorting)
+        // 1 itemName
+        // 2 price
+        // 3 chainName
+        // 4 upc
 
         // Sort based on mode
-        switch (sortMode) {
+        switch (this.sortMode) {
             case 0:
-                resultsProductListFiltered.sort(new Comparator<Product>() {
+                resultsProductListSorted.clear();
+                resultsProductListSorted.addAll(resultsProductList);
+                searchResultsListAdapter.notifyDataSetChanged();
+                return;
+            case 1:
+                resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
                         return a.getItemName().compareToIgnoreCase(b.getItemName());
@@ -140,17 +185,23 @@ public class SearchResults extends AppCompatActivity {
                 break;
 
             // TODO: May need to change this depending on if price is stored as a string or a double
-            case 1:
-                resultsProductListFiltered.sort(new Comparator<Product>() {
+            case 2:
+                resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
-                        return (int)(a.getPrice() - b.getPrice());
+                        if (a.getPrice() - b.getPrice() > 0) {
+                            return 1;
+                        } else if (a.getPrice() - b.getPrice() < 0) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
                     }
                 });
                 break;
 
-            case 2:
-                resultsProductListFiltered.sort(new Comparator<Product>() {
+            case 3:
+                resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
                         return a.getChainName().compareToIgnoreCase(b.getChainName());
@@ -158,8 +209,8 @@ public class SearchResults extends AppCompatActivity {
                 });
                 break;
 
-            case 3:
-                resultsProductListFiltered.sort(new Comparator<Product>() {
+            case 4:
+                resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
                         return a.getUpc().compareToIgnoreCase(b.getUpc());
@@ -168,12 +219,14 @@ public class SearchResults extends AppCompatActivity {
                 break;
         }
 
-        if (descending) {
-            for (int i = 0; i < resultsProductListFiltered.size() / 2; i++) {
-                Product temp = resultsProductListFiltered.get(i);
-                resultsProductListFiltered.set(i, resultsProductListFiltered.get(resultsProductListFiltered.size() - i - 1));
-                resultsProductListFiltered.set(resultsProductListFiltered.size() - i - 1, temp);
+        if (this.descending) {
+            for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
+                Product temp = resultsProductListSorted.get(i);
+                resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));
+                resultsProductListSorted.set(resultsProductListSorted.size() - i - 1, temp);
             }
         }
+
+        searchResultsListAdapter.notifyDataSetChanged();
     }
 }
