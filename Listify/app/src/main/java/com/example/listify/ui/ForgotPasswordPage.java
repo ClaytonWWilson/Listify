@@ -9,19 +9,19 @@ import com.example.listify.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LoginPage extends AppCompatActivity {
+public class ForgotPasswordPage extends AppCompatActivity {
     private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_forgotpswd);
 
-        button = (Button) findViewById(R.id.button3);
+        button = (Button) findViewById(R.id.button4);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginPage.this, ForgotPasswordPage.class);
+                Intent intent = new Intent(ForgotPasswordPage.this, ResetPasswordPage.class);
                 startActivity(intent);
             }
         });
