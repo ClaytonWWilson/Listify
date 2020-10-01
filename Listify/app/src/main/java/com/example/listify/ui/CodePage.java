@@ -6,24 +6,23 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.listify.R;
-import com.example.listify.MainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SignupPage extends AppCompatActivity {
-    private Button button1; //Log in page button
-    private Button button2; //Sign up button
+public class CodePage extends AppCompatActivity {
+    private Button button1; //Reset password page button
+    private Button button2; //Cancel button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_code);
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignupPage.this, LoginPage.class);
+                Intent intent = new Intent(CodePage.this, ResetPasswordPage.class);
                 startActivity(intent);
             }
         });
@@ -32,7 +31,7 @@ public class SignupPage extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignupPage.this, MainActivity.class);
+                Intent intent = new Intent(CodePage.this, LoginPage.class);
                 startActivity(intent);
             }
         });
