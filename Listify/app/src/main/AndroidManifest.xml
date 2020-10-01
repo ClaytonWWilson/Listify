@@ -34,6 +34,7 @@
         <activity android:name="com.example.listify.ui.LoginPage" />
         <activity android:name="com.example.listify.ui.ForgotPasswordPage" />
         <activity android:name="com.example.listify.ui.ResetPasswordPage" />
+        <activity android:name="com.example.listify.ui.CodePage" />
     </application>
 
 </manifest>

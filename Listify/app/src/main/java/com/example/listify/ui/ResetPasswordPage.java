@@ -6,23 +6,22 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.listify.R;
-import com.example.listify.MainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ResetPasswordPage extends AppCompatActivity {
-    private Button button;
+    private Button button1; //Log in page button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resetpswd);
 
-        button = (Button) findViewById(R.id.button5);
-        button.setOnClickListener(new View.OnClickListener() {
+        button1 = (Button) findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ResetPasswordPage.this, MainActivity.class);
+                Intent intent = new Intent(ResetPasswordPage.this, LoginPage.class);
                 startActivity(intent);
             }
         });
