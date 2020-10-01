@@ -36,10 +36,17 @@
                 >
             </SearchView>
 
+            <ImageButton
+                android:id="@+id/results_sort_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/sort_button_desc"
+                android:background="@null"
+                app:srcCompat="@drawable/ic_baseline_sort_28" />
 
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_search_results" />\
+    <include layout="@layout/content_search_results" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

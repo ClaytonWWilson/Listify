@@ -9,64 +9,64 @@
 
     <ImageView
         android:id="@+id/item_image"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/ic_baseline_broken_image_600"
+        android:contentDescription="@string/item_image_desc"
         android:layout_alignTop="@+id/linearLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/linearLayout">
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginStart="14dp"
+        android:layout_toEndOf="@+id/item_image"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:paddingTop="20dp"
+        android:textSize="12sp"
+        android:layout_toEndOf="@+id/item_image"
+        android:text=""/>
+
+    <!-- Only displays if the item is cheaper at another store -->
+    <TextView
+        android:id="@+id/cheaper_price_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FF0000"
+        android:layout_marginStart="14dp"
+        android:paddingTop="35dp"
         android:text=""
-        android:textSize="15dp"
-        android:layout_centerInParent="true"
-        android:gravity="center"/>
+        android:layout_toEndOf="@+id/item_image"
+        />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/item_store"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:id="@+id/linearLayout">
-
-        <TextView
-            android:id="@+id/item_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true">
-        <TextView
-            android:id="@+id/item_price_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Price:  "
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/item_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="" />
-
-
-    </LinearLayout>
+        android:text=""
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

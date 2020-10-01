@@ -1,17 +1,5 @@
 package com.example.listify.model;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ImageView;
-
-import com.example.listify.R;
-
-import java.io.InputStream;
-
 public class Product {
     private String itemName;
     private String itemId;
@@ -20,7 +8,7 @@ public class Product {
     private String upc;
     private String description;
     private String department;
-    private String price;
+    private double price;
     private String retrievedDate;
     private String fetchCounts;
     private String imageUrl;
@@ -28,7 +16,7 @@ public class Product {
     public Product() {}
 
     public Product(String itemName, String itemId, String chainName, String chainId, String upc,
-                   String description, String department, String price, String retrievedDate,
+                   String description, String department, double price, String retrievedDate,
                    String fetchCounts, String imageUrl) {
         this.itemName = itemName;
         this.itemId = itemId;
@@ -42,36 +30,6 @@ public class Product {
         this.fetchCounts = fetchCounts;
         this.imageUrl = imageUrl;
     }
-
-//    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-//        ImageView imageView;
-//
-//        public DownloadImageTask(ImageView imageView) {
-//            this.imageView = imageView;
-//        }
-//
-//        protected Bitmap doInBackground(String... args) {
-//            String url = args[0];
-//            Bitmap image = null;
-//            try {
-//                InputStream in = new java.net.URL(url).openStream();
-//                image = BitmapFactory.decodeStream(in);
-//            } catch (Exception e) {
-//                Log.e("Error", e.getMessage());
-//                e.printStackTrace();
-//            }
-//            return image;
-//        }
-//
-//        protected void onPostExecute(Bitmap result) {
-//            // Return the broken image icon as a bitmap if the url is invalid
-//            if (result == null) {
-//                imageView.setImageResource(R.drawable.ic_baseline_broken_image_600);
-//            } else {
-//                imageView.setImageBitmap(result);
-//            }
-//        }
-//    }
 
     public String getItemName() {
         return itemName;
@@ -129,11 +87,11 @@ public class Product {
         this.department = department;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -160,9 +118,4 @@ public class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
-//    // TODO: Need to implement image resizing
-//    public void loadImageView(int height, int width, ImageView imageView) {
-//        new DownloadImageTask(imageView).execute(this.imageUrl);
-//    }
 }

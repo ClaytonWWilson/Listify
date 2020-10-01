@@ -23,7 +23,7 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="5dp"
                 android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_search"
+                app:srcCompat="@drawable/ic_baseline_search_28"
                 android:contentDescription="@string/search_button_desc"
                 android:background="@null"/>
         </androidx.appcompat.widget.Toolbar>
