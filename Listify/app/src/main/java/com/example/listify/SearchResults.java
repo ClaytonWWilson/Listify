@@ -189,9 +189,9 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
-                        if (a.getPrice() - b.getPrice() > 0) {
+                        if (b.getPrice() - a.getPrice() > 0) {
                             return 1;
-                        } else if (a.getPrice() - b.getPrice() < 0) {
+                        } else if (b.getPrice() - a.getPrice() < 0) {
                             return -1;
                         } else {
                             return 0;
