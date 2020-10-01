@@ -42,23 +42,24 @@ public class SearchResultsListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(inflater == null){
+        if (inflater == null) {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }if(convertView == null){
+        }
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.search_list_item, null);
         }
 
         ImageView productImage = (ImageView) convertView.findViewById(R.id.item_image);
         TextView itemName  = (TextView) convertView.findViewById(R.id.item_name);
-        TextView description = (TextView) convertView.findViewById(R.id.item_desc);
         TextView price = (TextView) convertView.findViewById(R.id.item_price);
+        TextView itemStore  = (TextView) convertView.findViewById(R.id.item_store);
 
         Product product = productList.get(position);
-//        product.loadImageView(0, 0, productImage);
+        // TODO: If image url is broken, display @drawable/ic_baseline_broken_image_600.xml
         Glide.with(activity).load(product.getImageUrl()).into(productImage);
         itemName.setText(product.getItemName());
-        description.setText(product.getDescription());
-        price.setText(product.getPrice());
+        price.setText(String.format("$%.2f", product.getPrice()));
+        itemStore.setText(product.getChainName());
 
         return convertView;
     }

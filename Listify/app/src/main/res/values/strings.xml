@@ -14,6 +14,9 @@
     <string name="app_label">Listify</string>
     <string name="search_hint">Search Test</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="item_image_desc">Product Image</string>
+    <string name="sort_button_desc">Sort Icon</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -25,4 +28,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="search_button_desc">Search Button</string>
     <string name="title_activity_search_results">SearchResults</string>
+    <string name="store_selection">Store selection</string>
 </resources>
