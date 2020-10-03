@@ -19,6 +19,10 @@ public class InputUtils {
         return getMap(inputMap, "body");
     }
 
+    public static String getQueryString(Map<String, Object> inputMap) {
+        return (String) (getMap(inputMap, "params").get("querystring"));
+    }
+
     public static Map<String, Object> getMap(Map<String, Object> parentMap, String childKey) {
         if ((parentMap.get(childKey) != null) && (parentMap.get(childKey) instanceof Map<?, ?>)) {
             return ((Map<String, Object>) parentMap.get(childKey));
