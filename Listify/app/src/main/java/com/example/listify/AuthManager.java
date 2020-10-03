@@ -70,6 +70,7 @@ public class AuthManager {
 
     public void setAuthSignUpResult(AuthSignUpResult toSet) {
         authSignUpResult = toSet;
+        waiting = false;
     }
 
     public void setAuthSignInResult(AuthSignInResult toSet) {
