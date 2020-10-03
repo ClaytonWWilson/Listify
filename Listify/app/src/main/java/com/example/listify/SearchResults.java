@@ -1,4 +1,5 @@
 package com.example.listify;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -77,7 +78,9 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+                Intent itemDetails = new Intent(SearchResults.this, ItemDetails.class);
+                startActivity(itemDetails);
             }
         });
 
@@ -128,6 +131,9 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // TODO: Query Database
         // TODO: Create a new Product Object for each result
         // TODO: Add each result to productList
+
+        // Clear the old search results
+        resultsProductList = new ArrayList<>();
 
         // Hardcode some search results...
         for (int i = 0; i < 2; i++) {
