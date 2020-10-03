@@ -49,4 +49,76 @@ public class Item {
                 ", fetchCounts=" + fetchCounts +
                 '}';
     }
+
+    public Integer getProductID() {
+        return productID;
+    }
+
+    public void setProductID(Integer productID) {
+        this.productID = productID;
+    }
+
+    public Integer getChainID() {
+        return chainID;
+    }
+
+    public void setChainID(Integer chainID) {
+        this.chainID = chainID;
+    }
+
+    public String getUpc() {
+        return upc;
+    }
+
+    public void setUpc(String upc) {
+        this.upc = upc;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public LocalDateTime getRetrievedDate() {
+        return retrievedDate;
+    }
+
+    public void setRetrievedDate(LocalDateTime retrievedDate) {
+        this.retrievedDate = retrievedDate;
+    }
+
+    public Integer getFetchCounts() {
+        return fetchCounts;
+    }
+
+    public void setFetchCounts(Integer fetchCounts) {
+        this.fetchCounts = fetchCounts;
+    }
 }

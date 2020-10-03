@@ -28,6 +28,12 @@ public class Requestor {
         getObject(id, classType, receiver, null);
     }
 
+    public <T> void getListOfIds(Class<T> ofType, Receiver<Integer[]> successHandler, RequestErrorHandler failureHandler) {
+        String getURL = DEV_BASEURL + "/" + ofType.getSimpleName() + "?list=-1";
+        Request postRequest = buildBaseRequest(getURL, "GET", null);
+        launchCall(postRequest, successHandler, Integer[].class, failureHandler);
+    }
+
     public <T> void getObject(String id, Class<T> classType, Receiver<T> successHandler, RequestErrorHandler failureHandler) {
         String getURL = DEV_BASEURL + "/" + classType.getSimpleName() + "?id=" + id;
         Request postRequest = buildBaseRequest(getURL, "GET", null);

@@ -34,6 +34,6 @@ public class SynchronousReceiver<T> implements Requestor.Receiver<T>, Requestor.
     @Override
     public void acceptError(IOException error) {
         waiting = false;
-        this.error = error
+        this.error = error;
     }
 }
