@@ -3,9 +3,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import java.util.Map;
 
-public class ItemPOST implements RequestHandler<Map<String,Object>, String>{
+public class ItemPOST implements RequestHandler<Map<String,Object>, Object> {
 
-    public String handleRequest(Map<String, Object> inputMap, Context unfilled) {
+    public Object handleRequest(Map<String, Object> inputMap, Context unfilled) {
         return BasicHandler.handleRequest(inputMap, unfilled, ItemAdder.class);
     }
 }

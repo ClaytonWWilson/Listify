@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         //------------------------------Auth Testing---------------------------------------------//
 
         AuthManager authManager = new AuthManager();
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         //------------------------------------------------------------------------------------------//
 
+
         //----------------------------------API Testing---------------------------------------------//
         Properties configs = new Properties();
         try {
@@ -54,13 +57,22 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Requestor requestor = new Requestor(this, authManager,configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(authManager,configs.getProperty("apiKey"));
         List testList = new List("IAmATestList");
         try {
             requestor.postObject(testList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        SynchronousReceiver<Item> receiver = new SynchronousReceiver<Item>();
+        requestor.getObject("1", Item.class, receiver, receiver);
+        try {
+            System.out.println(receiver.await());
+        } catch (IOException receiverError) {
+            receiverError.printStackTrace();
+        }
+
 
         //------------------------------------------------------------------------------------------//
 

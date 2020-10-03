@@ -1,66 +1,104 @@
 package com.example.listify;
 
 
-import android.content.Context;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import android.util.Log;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 public class Requestor {
 
     private final String DEV_BASEURL = "https://datoh7woc9.execute-api.us-east-2.amazonaws.com/Development";
 
     AuthManager authManager;
-    RequestQueue queue;
     String apiKey;
+    OkHttpClient client;
 
-    Requestor(Context context, AuthManager authManager, String apiKey) {
-        queue = Volley.newRequestQueue(context);
+    Requestor(AuthManager authManager, String apiKey) {
         this.authManager = authManager;
         this.apiKey = apiKey;
+        client = new OkHttpClient();
     }
 
     public <T> void getObject(String id, Class<T> classType, Receiver<T> receiver) {
-        String getURL = DEV_BASEURL + "/" + classType.getSimpleName() + "?id=" + id;
+        getObject(id, classType, receiver, null);
     }
 
-    public void postObject(Object toPost, Response.ErrorListener failureHandler) throws JSONException {
-        String postURL = DEV_BASEURL + "/" + toPost.getClass().getSimpleName();
-        queue.add(buildRequest(postURL, toPost, null, failureHandler));
+    public <T> void getObject(String id, Class<T> classType, Receiver<T> successHandler, RequestErrorHandler failureHandler) {
+        String getURL = DEV_BASEURL + "/" + classType.getSimpleName() + "?id=" + id;
+        Request postRequest = buildBaseRequest(getURL, "GET", null);
+        launchCall(postRequest, successHandler, classType, failureHandler);
     }
 
     public void postObject(Object toPost) throws JSONException {
         postObject(toPost, null);
     }
 
-    private JsonObjectRequest buildRequest(String url, Object toJSONify, Response.Listener<JSONObject> successHandler, Response.ErrorListener failureHandler) throws JSONException {
-        return buildRequest(url, new JSONObject(new Gson().toJson(toJSONify)), successHandler, failureHandler);
+    public void postObject(Object toPost, RequestErrorHandler failureHandler) throws JSONException {
+        String postURL = DEV_BASEURL + "/" + toPost.getClass().getSimpleName();
+        Request postRequest = buildBaseRequest(postURL, "POST", new Gson().toJson(toPost));
+        launchCall(postRequest, null, null, failureHandler);
     }
 
-    private JsonObjectRequest buildRequest(String url, JSONObject jsonBody, Response.Listener<JSONObject> successHandler, Response.ErrorListener failureHandler) {
-        return new JsonObjectRequest(url, jsonBody, successHandler, failureHandler) {
+
+    private void launchCall(Request toLaunch, Receiver receiver, Class classType, RequestErrorHandler failureHandler) {
+        client.newCall(toLaunch).enqueue(new Callback() {
             @Override
-            public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                System.out.println(authManager.getUserToken());
-                headers.put("Authorization", authManager.getUserToken());
-                headers.put("Content-Type", "application/json");
-                headers.put("X-API-Key", apiKey);
-                return headers;
+            public void onResponse(@NotNull Call call, @NotNull okhttp3.Response response) throws IOException {
+                String responseString = response.body().string();
+                if (receiver != null) {
+                    if (classType == null) {
+                        Log.e("Requestor Contract Error", "classType while receiver populated");
+                    }
+                    try {
+                        receiver.acceptDelivery(new Gson().fromJson(responseString, classType));
+                    } catch (JsonSyntaxException e) {
+                        System.out.println(e);
+                        Log.e("API response was not proper JSON", responseString);
+                        throw new JsonSyntaxException(e);
+                    }
+                }
+                Log.d("API Response", responseString);
             }
-        };
+            @Override
+            public void onFailure(@NotNull Call call, IOException e) {
+                if (failureHandler != null) {
+                    failureHandler.acceptError(e);
+                } else {
+                    Log.e("Network Error", e.getLocalizedMessage());
+                }
+            }
+        });
     }
 
-    public class Receiver<T> {
-        public void acceptDelivery(T delivered) {
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
+    private Request buildBaseRequest(String url, String method, String bodyJSON) {
+        Request.Builder requestBase = addAuthHeaders(new Request.Builder().url(url));
+        if (method == "GET") {
+            requestBase.get();
+        } else {
+            requestBase.method(method, RequestBody.create(bodyJSON, JSON));
         }
+        return requestBase.build();
+    }
+
+    private Request.Builder addAuthHeaders(Request.Builder toAuthorize) {
+        toAuthorize.addHeader("Authorization", authManager.getUserToken());
+        toAuthorize.addHeader("X-API-Key", apiKey);
+        return toAuthorize;
+    }
+
+    public interface Receiver<T> {
+        void acceptDelivery(T delivered);
+    }
+
+    public interface RequestErrorHandler {
+        void acceptError(IOException error);
     }
 }

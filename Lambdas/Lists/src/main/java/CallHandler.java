@@ -1,6 +1,7 @@
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface CallHandler {
-    String conductAction(Map<String, Object> bodyMap, String cognitoID) throws SQLException;
+    Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException;
 }

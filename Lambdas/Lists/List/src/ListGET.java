@@ -1,11 +1,12 @@
-import java.util.Map;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-public class ListPOST implements RequestHandler<Map<String,Object>, Object>{
+import java.util.Map;
+
+public class ListGET implements RequestHandler<Map<String,Object>, Object> {
 
     public Object handleRequest(Map<String, Object> inputMap, Context unfilled) {
-        return BasicHandler.handleRequest(inputMap, unfilled, ListAdder.class);
+        return BasicHandler.handleRequest(inputMap, unfilled, ListGetter.class);
     }
+
 }
