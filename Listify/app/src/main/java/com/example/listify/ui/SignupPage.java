@@ -68,8 +68,8 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
         else {
             try {
                 authManager.confirmSignUp(code);
-                //Intent intent = new Intent(SignupPage.this, MainActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(SignupPage.this, MainActivity.class);
+                startActivity(intent);
             }
             catch (Exception e) {
                 //Remove user from database

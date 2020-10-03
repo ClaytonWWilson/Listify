@@ -55,8 +55,8 @@ public class LoginPage extends AppCompatActivity {
 
                 try {
                     authManager.signIn(email, password);
-                    //Intent intent = new Intent(LoginPage.this, LoginPage.class);
-                    //startActivity(intent);
+                    Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                    startActivity(intent);
                 }
                 catch(Exception ex) {
                     //Display "Incorrect email or password" message
