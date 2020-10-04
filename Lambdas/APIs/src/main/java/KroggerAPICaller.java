@@ -15,14 +15,8 @@ public class KroggerAPITester {
     final static String client_secret = "hM88WJ3cJGou5jX1vNRZBqKKVmmcMMktTcTbvkRD";
     final static String redirect_uri = "https://example.com/callback"; //subject to change as needed
     final static String scope = "product.compact";
-
     final static String authString = "listify-f6e083b133a87ab8a98b2ec4f580dedb9125180887245441161:hM88WJ3cJGou5jX1vNRZBqKKVmmcMMktTcTbvkRD";
-
-    public static void main(String[] args) {
-        String s = getKroggerAuthKey();
-        System.out.println(s);
-        getProduct(s);
-    }
+    
 
     public static String getKroggerAuthKey() {
         String token = "not found";
