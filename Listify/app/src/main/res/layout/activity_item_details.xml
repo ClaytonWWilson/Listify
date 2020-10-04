@@ -34,21 +34,56 @@
 
     <include layout="@layout/content_item_details" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lin2"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_menu_item_margin"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
+        android:layout_marginBottom="22dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab1"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        <TextView
+            android:id="@+id/add_item_to_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_to_list"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="5dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginStart="5dp"
+            app:srcCompat="@drawable/ic_baseline_post_add_28" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lin1"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_menu_item_margin"
-        app:srcCompat="@android:drawable/ic_dialog_map" />
+        android:layout_marginBottom="22dp">
+
+        <TextView
+            android:id="@+id/create_new_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_new_list"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="5dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginStart="5dp"
+            app:srcCompat="@drawable/ic_baseline_create_28" />
+
+    </LinearLayout>
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -57,14 +92,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_baseline_add_28" />
-
-
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom|end"-->
-<!--        android:layout_margin="@dimen/fab_margin"-->
-<!--        app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
