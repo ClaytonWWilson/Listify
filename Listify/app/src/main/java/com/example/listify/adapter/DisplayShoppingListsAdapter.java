@@ -43,7 +43,7 @@ public class DisplayShoppingListsAdapter extends BaseAdapter {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.search_list_item, null);
+            convertView = inflater.inflate(R.layout.display_shopping_lists_item, null);
         }
 
         ShoppingList curList = lists.get(position);
