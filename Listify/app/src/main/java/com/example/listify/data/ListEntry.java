@@ -1,19 +1,39 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package com.example.listify.data;
+
 import java.time.LocalDateTime;
 
-public class ItemEntry {
+public class ListEntry {
     Integer listID;
     Integer productID;
     Integer quantity;
     LocalDateTime addedDate;
     Boolean purchased;
-    public ItemEntry(Integer listID, ResultSet listRow) throws SQLException {
+
+    public ListEntry(Integer listID, Integer productID, Integer quantity, LocalDateTime addedDate, Boolean purchased) {
         this.listID = listID;
-        productID = listRow.getInt(1);
-        quantity = listRow.getInt(2);
-        addedDate = listRow.getObject(3, LocalDateTime.class);
-        purchased = listRow.getBoolean(4);
+        this.productID = productID;
+        this.quantity = quantity;
+        this.addedDate = addedDate;
+        this.purchased = purchased;
+    }
+
+    @Override
+    public String toString() {
+        return "ListEntry{" +
+                "listID=" + listID +
+                ", productID=" + productID +
+                ", quantity=" + quantity +
+                ", addedDate=" + addedDate +
+                ", purchased=" + purchased +
+                '}';
+    }
+
+    public Integer getListID() {
+        return listID;
+    }
+
+    public void setListID(Integer listID) {
+        this.listID = listID;
     }
 
     public Integer getProductID() {

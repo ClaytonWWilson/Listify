@@ -24,7 +24,7 @@ public class BasicHandler {
                 }
             } catch (IOException |SQLException|ClassNotFoundException e) {
                 e.printStackTrace();
-                throw new RuntimeException(e.getMessage());
+                throw new RuntimeException(e.getLocalizedMessage());
             }
             return null;
         }

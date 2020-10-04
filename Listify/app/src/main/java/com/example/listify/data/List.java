@@ -1,26 +1,24 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+package com.example.listify.data;
+
+import java.util.Arrays;
 
 public class List {
     Integer itemID;
     String name;
     String owner;
     long lastUpdated;
-    ArrayList<ItemEntry> entries;
+    final ListEntry[] entries;
 
-    public List(ResultSet listRow) throws SQLException {
-        itemID = listRow.getInt("listID");
-        name = listRow.getString("name");
-        owner = listRow.getString("owner");
-        lastUpdated = listRow.getTimestamp("lastUpdated").toInstant().toEpochMilli();
-        entries = new ArrayList<>();
+    public List(Integer itemID, String name, String owner, long lastUpdated, ListEntry[] entries) {
+        this.itemID = itemID;
+        this.name = name;
+        this.owner = owner;
+        this.lastUpdated = lastUpdated;
+        this.entries = entries;
     }
 
-    public void addItemEntry(ItemEntry entry) {
-        entries.add(entry);
+    public List(Integer itemID, String name, String owner, long lastUpdated) {
+        this(itemID,  name,  owner,  lastUpdated, null);
     }
 
     @Override
@@ -30,12 +28,8 @@ public class List {
                 ", name='" + name + '\'' +
                 ", owner='" + owner + '\'' +
                 ", lastUpdated=" + lastUpdated +
-                ", entries=" + entries +
+                ", entries=" + Arrays.toString(entries) +
                 '}';
-    }
-
-    public ItemEntry[] getEntries() {
-        return entries.toArray(new ItemEntry[entries.size()]);
     }
 
     public Integer getItemID() {
@@ -68,5 +62,9 @@ public class List {
 
     public void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public ListEntry[] getEntries() {
+        return entries;
     }
 }

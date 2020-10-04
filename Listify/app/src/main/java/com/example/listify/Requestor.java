@@ -29,7 +29,7 @@ public class Requestor {
     }
 
     public <T> void getListOfIds(Class<T> ofType, Receiver<Integer[]> successHandler, RequestErrorHandler failureHandler) {
-        String getURL = DEV_BASEURL + "/" + ofType.getSimpleName() + "?list=-1";
+        String getURL = DEV_BASEURL + "/" + ofType.getSimpleName() + "?id=-1";
         Request postRequest = buildBaseRequest(getURL, "GET", null);
         launchCall(postRequest, successHandler, Integer[].class, failureHandler);
     }
@@ -41,15 +41,22 @@ public class Requestor {
     }
 
     public void postObject(Object toPost) throws JSONException {
-        postObject(toPost, null);
+        postObject(toPost, (RequestErrorHandler) null);
     }
 
     public void postObject(Object toPost, RequestErrorHandler failureHandler) throws JSONException {
-        String postURL = DEV_BASEURL + "/" + toPost.getClass().getSimpleName();
-        Request postRequest = buildBaseRequest(postURL, "POST", new Gson().toJson(toPost));
-        launchCall(postRequest, null, null, failureHandler);
+        postObject(toPost, null, failureHandler);
     }
 
+    public void postObject(Object toPost, Receiver<Integer> idReceiver) throws JSONException {
+        postObject(toPost, idReceiver, null);
+    }
+
+    public void postObject(Object toPost, Receiver<Integer> idReceiver, RequestErrorHandler failureHandler) throws JSONException {
+        String postURL = DEV_BASEURL + "/" + toPost.getClass().getSimpleName();
+        Request postRequest = buildBaseRequest(postURL, "POST", new Gson().toJson(toPost));
+        launchCall(postRequest, idReceiver, Integer.class, failureHandler);
+    }
 
     private void launchCall(Request toLaunch, Receiver receiver, Class classType, RequestErrorHandler failureHandler) {
         client.newCall(toLaunch).enqueue(new Callback() {

@@ -1,6 +1,4 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -20,13 +18,16 @@ public class ListAdder implements CallHandler {
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         Connection connection = connector.getConnection();
-        PreparedStatement statement = connection.prepareStatement(LIST_CREATE);
+        PreparedStatement statement = connection.prepareStatement(LIST_CREATE, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, bodyMap.get("name").toString());//Needs safe checking
         statement.setString(2, cognitoID);
-        statement.setObject(3, Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime());
+        statement.setTimestamp(3, Timestamp.from(Instant.now()));
         System.out.println(statement);
         statement.executeUpdate();
+        ResultSet newIDRS = statement.getGeneratedKeys();
+        newIDRS.first();
+        Integer newID = newIDRS.getInt(1);
         connection.commit();
-        return null;
+        return newID;
     }
 }

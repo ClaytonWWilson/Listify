@@ -23,13 +23,14 @@ public class ListGetter implements CallHandler{
 
     @Override
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
-        Connection connection = connector.getConnection();
-        Integer id = Integer.parseInt(queryMap.get("id"));
-        try {
+        try (Connection connection = connector.getConnection()) {
+            Integer id = Integer.parseInt(queryMap.get("id"));
             if (id == -1) {
                 PreparedStatement getLists = connection.prepareStatement(GET_LISTS);
                 getLists.setString(1, cognitoID);
+                System.out.println(getLists);
                 ResultSet getListsResults = getLists.executeQuery();
+                System.out.println(getListsResults);
                 ArrayList<Integer> listIds = new ArrayList<>();
                 while (getListsResults.next()) {
                     listIds.add(getListsResults.getInt(1));
@@ -48,11 +49,10 @@ public class ListGetter implements CallHandler{
             getListEntries.setInt(1, id);
             ResultSet getEntryResults = getListEntries.executeQuery();
             while (getEntryResults.next()) {
-                retrievedList.addItemEntry(new ItemEntry(getEntryResults));
+                retrievedList.addItemEntry(new ItemEntry(id, getEntryResults));
             }
+            System.out.println(retrievedList);
             return retrievedList;
-        } finally {
-            connection.close();
         }
     }
 }

@@ -3,9 +3,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import java.util.Map;
 
-public class ItemDELETE implements RequestHandler<Map<String,Object>, Object> {
+public class ListEntryDELETE implements RequestHandler<Map<String,Object>, Object> {
 
     public Object handleRequest(Map<String, Object> inputMap, Context unfilled) {
-        return BasicHandler.handleRequest(inputMap, unfilled, ItemGetter.class);
+        return BasicHandler.handleRequest(inputMap, unfilled, ListEntryDeleter.class);
     }
 }

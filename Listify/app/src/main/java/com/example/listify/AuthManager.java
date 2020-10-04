@@ -44,6 +44,13 @@ public class AuthManager {
     }
 
     public String getUserToken() {
+        if (authSession == null) {
+            try {
+                fetchAuthSession();
+            } catch (AuthException e) {
+                e.printStackTrace();
+            }
+        }
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 

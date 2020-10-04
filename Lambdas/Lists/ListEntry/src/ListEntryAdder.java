@@ -6,14 +6,14 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemAdder implements CallHandler {
+public class ListEntryAdder implements CallHandler {
 
     private DBConnector connector;
     private String cognitoID;
 
     private final String ITEM_TO_LIST = "INSERT INTO ListProduct (productID, listID, quantity, addedDate, purchased) VALUES (?, ?, ?, ?, ?)";
 
-    public ItemAdder(DBConnector connector, String cognitoID) {
+    public ListEntryAdder(DBConnector connector, String cognitoID) {
         this.connector = connector;
         this.cognitoID = cognitoID;
     }
@@ -22,7 +22,7 @@ public class ItemAdder implements CallHandler {
         Connection connection = connector.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(ITEM_TO_LIST);
-            statement.setInt(1, (Integer) bodyMap.get("itemID"));
+            statement.setInt(1, (Integer) bodyMap.get("productID"));
             statement.setInt(2, (Integer) bodyMap.get("listID"));
             statement.setInt(3, (Integer) bodyMap.get("quantity"));
             statement.setObject(4, Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime());

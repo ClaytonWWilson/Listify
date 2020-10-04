@@ -4,14 +4,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemDeleter implements CallHandler {
+public class ListEntryDeleter implements CallHandler {
 
     private DBConnector connector;
     private String cognitoID;
 
     private final String REMOVE_FROM_LIST = "DELETE FROM ListProduct WHERE (ProductID = ? AND ListID = ?);";
 
-    public ItemDeleter(DBConnector connector, String cognitoID) {
+    public ListEntryDeleter(DBConnector connector, String cognitoID) {
         this.connector = connector;
         this.cognitoID = cognitoID;
     }

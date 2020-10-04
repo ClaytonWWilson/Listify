@@ -11,7 +11,7 @@ REL_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 source ${REL_SCRIPT_DIR}/VarSetup.sh
 
 
-RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${jarPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method} 2>${DEBUGFILE})
+RAWLAMBDA=$(aws lambda create-function --function-name ${functionName}${method} --zip-file fileb://${jarPath} --runtime ${LANGUAGE} --role ${LAMBDAROLE} --handler ${functionName}${method} --memory-size 512 2>${DEBUGFILE})
 
 
 if [[ $? -ne 0 ]]; then
