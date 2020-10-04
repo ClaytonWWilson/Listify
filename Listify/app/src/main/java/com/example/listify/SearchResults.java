@@ -137,12 +137,16 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             Product d = new Product("Video Game", "0003", "Walmart", "0001", "0123456783", "Fun Vidya Gaemz", "Electronics", 60.00, "9/24/2020", "1", "https://i1.wp.com/bestlifeonline.com/wp-content/uploads/2018/06/cat-meme-67.jpg?resize=1024%2C1024&ssl=1");
             Product e = new Product("Mountain Dew", "0004", "Walmart", "0001", "0123456784", "Gamer fuel", "Grocery", 5.87, "9/24/2020", "1", "https://memeguy.com/photos/images/gaming-cat-7680.png");
             Product f = new Product("Tire", "0005", "Walmart", "0001", "0123456785", "30 inch rims", "Automotive", 146.97, "9/24/2020", "1", "http://cdn.sheknows.com/articles/2013/05/pet5.jpg");
+            Product g = new Product("Bottled Water", "0000", "Target", "0001", "0123456780", "Bro, it's water...", "Grocery", 13.37, "9/24/2020", "1", "http://3.bp.blogspot.com/-MfroPPQVDKo/UyhUZWqGvkI/AAAAAAAAB-I/DGk622onsvc/s1600/lettuce-b-kool-cat-meme.jpg");
+            Product h = new Product("Tin Foil", "0001", "Kroger", "0001", "0123456781", "Not aluminum foil", "Grocery", 1.00, "9/24/2020", "1", "https://i.ytimg.com/vi/q9N1doYMxR0/maxresdefault.jpg");
             resultsProductList.add(a);
             resultsProductList.add(b);
             resultsProductList.add(c);
             resultsProductList.add(d);
             resultsProductList.add(e);
             resultsProductList.add(f);
+            resultsProductList.add(g);
+            resultsProductList.add(h);
         }
 
         // Create a list of all stores in the results so the user can filter by store name
@@ -173,8 +177,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             case 0:
                 resultsProductListSorted.clear();
                 resultsProductListSorted.addAll(resultsProductList);
-                searchResultsListAdapter.notifyDataSetChanged();
-                return;
+                break;
             case 1:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
@@ -219,12 +222,24 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 break;
         }
 
-        if (this.descending) {
+        if (this.sortMode != 0 & this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
                 resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));
                 resultsProductListSorted.set(resultsProductListSorted.size() - i - 1, temp);
             }
+        }
+
+        // Only keep results that match the current store selection
+        if (this.storeSelection != 0) {
+            ArrayList<Product> temp = new ArrayList<>();
+            resultsProductListSorted.forEach(product -> {
+                if (product.getChainName().equals(this.stores.get(this.storeSelection - 1))) {
+                    temp.add(product);
+                }
+            });
+            resultsProductListSorted.clear();
+            resultsProductListSorted.addAll(temp);
         }
 
         searchResultsListAdapter.notifyDataSetChanged();
