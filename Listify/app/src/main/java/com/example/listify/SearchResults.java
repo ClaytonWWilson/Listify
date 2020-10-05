@@ -165,6 +165,10 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
 
     // Sorts the search results
     private void sortResults() {
+        // Reset the filtered list
+        resultsProductListSorted.clear();
+        resultsProductListSorted.addAll(resultsProductList);
+
         // Sort Modes
         // 0 default (no sorting)
         // 1 itemName
@@ -175,8 +179,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // Sort based on mode
         switch (this.sortMode) {
             case 0:
-                resultsProductListSorted.clear();
-                resultsProductListSorted.addAll(resultsProductList);
+                // Do nothing
                 break;
             case 1:
                 resultsProductListSorted.sort(new Comparator<Product>() {
