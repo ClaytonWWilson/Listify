@@ -16,6 +16,7 @@ import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.adapter.DisplayShoppingListsAdapter;
 import com.example.listify.model.ShoppingList;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,14 @@ public class ListsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getContext(), "open and display " + shoppingLists.get(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "yo", Toast.LENGTH_SHORT).show();
             }
         });
 
