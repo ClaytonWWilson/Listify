@@ -24,20 +24,30 @@ public class Requestor {
         client = new OkHttpClient();
     }
 
-    public <T> void getObject(String id, Class<T> classType, Receiver<T> receiver) {
-        getObject(id, classType, receiver, null);
-    }
-
     public <T> void getListOfIds(Class<T> ofType, Receiver<Integer[]> successHandler, RequestErrorHandler failureHandler) {
         String getURL = DEV_BASEURL + "/" + ofType.getSimpleName() + "?id=-1";
         Request postRequest = buildBaseRequest(getURL, "GET", null);
         launchCall(postRequest, successHandler, Integer[].class, failureHandler);
     }
 
+    public <T> void getObject(String id, Class<T> classType, Receiver<T> receiver) {
+        getObject(id, classType, receiver, null);
+    }
+
     public <T> void getObject(String id, Class<T> classType, Receiver<T> successHandler, RequestErrorHandler failureHandler) {
         String getURL = DEV_BASEURL + "/" + classType.getSimpleName() + "?id=" + id;
-        Request postRequest = buildBaseRequest(getURL, "GET", null);
-        launchCall(postRequest, successHandler, classType, failureHandler);
+        Request getRequest = buildBaseRequest(getURL, "GET", null);
+        launchCall(getRequest, successHandler, classType, failureHandler);
+    }
+
+    public void deleteObject(String id, Class classType) {
+        deleteObject(id, classType, null);
+    }
+
+    public void deleteObject(String id, Class classType, RequestErrorHandler failureHandler) {
+        String deleteURL = DEV_BASEURL + "/" + classType.getSimpleName() + "?id=" + id;
+        Request deleteRequest = buildBaseRequest(deleteURL, "DELETE", "{}");
+        launchCall(deleteRequest, null, classType, failureHandler);
     }
 
     public void postObject(Object toPost) throws JSONException {

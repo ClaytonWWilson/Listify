@@ -8,6 +8,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
+import com.example.listify.data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,6 +86,10 @@ public class AuthManager {
         waiting = false;
     }
 
+    public void signOutSuccess() {
+        waiting = false;
+    }
+
     public void startSignUp(String email, String password) throws AuthException {
         this.email = email;
         this.password = password;
@@ -122,6 +127,11 @@ public class AuthManager {
             error -> setAuthError(error)
         );
         throwIfAuthError();
+    }
+
+    public void deleteUser(Requestor requestor) {
+        requestor.deleteObject("N/A", User.class);
+        Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
     }
 
 
