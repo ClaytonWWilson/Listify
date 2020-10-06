@@ -82,7 +82,10 @@ public class Requestor {
                     } catch (JsonSyntaxException e) {
                         System.out.println(e);
                         Log.e("API response was not proper JSON", responseString);
-                        throw new JsonSyntaxException(e);
+                        if (failureHandler != null) {
+                            failureHandler.acceptError(e);
+                        }
+                        //throw new JsonSyntaxException(e);
                     }
                 }
                 Log.d("API Response", responseString);
@@ -122,6 +125,6 @@ public class Requestor {
     }
 
     public interface RequestErrorHandler {
-        void acceptError(IOException error);
+        void acceptError(Exception error);
     }
 }

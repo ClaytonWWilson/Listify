@@ -32,15 +32,14 @@ public class UserDeleter implements CallHandler {
         }
         String userPoolId = cognitoProperties.get("userPoolId").toString();
         System.out.println(userPoolId);
-        AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest().withUserPoolId(userPoolId);
-        adminDeleteUserRequest.setUsername(cognitoID);
-        System.out.println(adminDeleteUserRequest);
-        awsCognitoIdentityProvider.adminDeleteUser(adminDeleteUserRequest);
         AdminUserGlobalSignOutRequest adminUserGlobalSignOutRequest = new AdminUserGlobalSignOutRequest().withUserPoolId(userPoolId);
         adminUserGlobalSignOutRequest.setUsername(cognitoID);
         System.out.println(adminUserGlobalSignOutRequest);
         awsCognitoIdentityProvider.adminUserGlobalSignOut(adminUserGlobalSignOutRequest);
-
+        AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest().withUserPoolId(userPoolId);
+        adminDeleteUserRequest.setUsername(cognitoID);
+        System.out.println(adminDeleteUserRequest);
+        awsCognitoIdentityProvider.adminDeleteUser(adminDeleteUserRequest);
         return null;
 
         //        Connection connection = connector.getConnection();

@@ -1,10 +1,8 @@
 package com.example.listify;
 
-import java.io.IOException;
-
 public class SynchronousReceiver<T> implements Requestor.Receiver<T>, Requestor.RequestErrorHandler {
     private volatile boolean waiting;
-    private volatile IOException error;
+    private volatile Exception error;
     private T toReturn;
 
     public SynchronousReceiver() {
@@ -12,13 +10,13 @@ public class SynchronousReceiver<T> implements Requestor.Receiver<T>, Requestor.
         error = null;
     }
 
-    public T await() throws IOException {
+    public T await() throws Exception {
         while (waiting) {
             Thread.yield();
         }
         waiting = true;
         if (error != null) {
-            IOException toThrow = error;
+            Exception toThrow = error;
             error = null;
             throw toThrow;
         }
@@ -32,7 +30,7 @@ public class SynchronousReceiver<T> implements Requestor.Receiver<T>, Requestor.
     }
 
     @Override
-    public void acceptError(IOException error) {
+    public void acceptError(Exception error) {
         waiting = false;
         this.error = error;
     }

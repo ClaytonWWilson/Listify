@@ -50,7 +50,11 @@ public class AuthManager {
                 fetchAuthSession();
             } catch (AuthException e) {
                 e.printStackTrace();
+                return "";
             }
+        }
+        if (authSession.isSignedIn() == false) {
+            return "";
         }
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
@@ -129,12 +133,17 @@ public class AuthManager {
         throwIfAuthError();
     }
 
-    public void deleteUser(Requestor requestor) {
+    public void deleteUser(Requestor requestor) throws AuthException {
         requestor.deleteObject("N/A", User.class);
-        Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
+        signOutUser();
     }
 
-
+    public void signOutUser() throws AuthException {
+        authSession = null;
+        waiting = true;
+        Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
+        throwIfAuthError();
+    }
 
     public static Properties loadProperties(Context context, String path) throws IOException, JSONException {
         Properties toReturn = new Properties();
