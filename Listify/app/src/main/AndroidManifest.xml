@@ -35,11 +35,13 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity android:name=".ui.SignupPage" />
-        <activity android:name=".ui.LoginPage" />
-        <activity android:name=".ui.ForgotPasswordPage" />
-        <activity android:name=".ui.ResetPasswordPage" />
-        <activity android:name=".ui.CodePage" />
+  
+        <activity android:name="com.example.listify.ui.SignupPage" />
+        <activity android:name="com.example.listify.ui.LoginPage" />
+        <activity android:name="com.example.listify.ui.ForgotPasswordPage" />
+        <activity android:name="com.example.listify.ui.ResetPasswordPage" />
+        <activity android:name="com.example.listify.List" />
+      
     </application>
 
 </manifest>
