@@ -1,8 +1,12 @@
 package com.example.listify;
 
 import android.os.Bundle;
+
+import com.amazonaws.services.cognitoidentityprovider.model.TooManyFailedAttemptsException;
 import com.bumptech.glide.Glide;
+import com.example.listify.adapter.DisplayShoppingListsAdapter;
 import com.example.listify.model.Product;
+import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,11 +15,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ItemDetails extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener {
     private Product curProduct;
-    private LinearLayout lin1;
-    private LinearLayout lin2;
+    private LinearLayout linAddItem;
+    private LinearLayout linCreateList;
     private TextView tvCreateNew;
     private TextView tvAddItem;
     private TextView tvItemName;
@@ -24,6 +31,8 @@ public class ItemDetails extends AppCompatActivity {
     private TextView tvItemPrice;
     private TextView tvItemDesc;
     private ImageButton backToSearchbutton;
+
+    ArrayList<ShoppingList> shoppingLists = new ArrayList<>();
 
     private boolean isFABOpen = false;
 
@@ -34,13 +43,13 @@ public class ItemDetails extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Load Product object from search results activity
         curProduct = (Product) getIntent().getSerializableExtra("SelectedProduct");
 
+        // Set up floating action buttons
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-//        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        lin1 = (LinearLayout) findViewById(R.id.lin1);
-        lin2 = (LinearLayout) findViewById(R.id.lin2);
+        linAddItem = (LinearLayout) findViewById(R.id.lin_add_item);
+        linCreateList = (LinearLayout) findViewById(R.id.lin_create_list);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,6 +61,30 @@ public class ItemDetails extends AppCompatActivity {
             }
         });
 
+        linAddItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFABMenu();
+
+                // Hardcode shopping lists to demonstrate displaying lists
+                for (int i = 0; i < 10; i++) {
+                    shoppingLists.add(new ShoppingList(Integer.toString(i)));
+                }
+
+                ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);
+                listPickerDialog.show(getSupportFragmentManager(), "User Lists");
+            }
+        });
+
+        linCreateList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ItemDetails.this, "create", Toast.LENGTH_SHORT).show();
+                closeFABMenu();
+            }
+        });
+
+        // Set data
         tvItemName = (TextView) findViewById(R.id.item_name);
         tvItemName.setText(curProduct.getItemName());
 
@@ -84,19 +117,23 @@ public class ItemDetails extends AppCompatActivity {
 
     private void showFABMenu(){
         isFABOpen=true;
-        lin1.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        lin2.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
+        linAddItem.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        linCreateList.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
         tvAddItem.setVisibility(View.VISIBLE);
         tvCreateNew.setVisibility(View.VISIBLE);
     }
 
     private void closeFABMenu(){
         isFABOpen=false;
-        lin1.animate().translationY(0);
-        lin2.animate().translationY(0);
+        linAddItem.animate().translationY(0);
+        linCreateList.animate().translationY(0);
         tvAddItem.setVisibility(View.INVISIBLE);
         tvCreateNew.setVisibility(View.INVISIBLE);
     }
 
 
+    @Override
+    public void sendListSelection(int selectedListIndex, int quantity) {
+        Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_SHORT).show();
+    }
 }
