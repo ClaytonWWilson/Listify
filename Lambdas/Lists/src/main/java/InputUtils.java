@@ -1,3 +1,9 @@
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InputUtils {
@@ -18,6 +24,24 @@ public class InputUtils {
     public static Map<String, Object> getBody(Map<String, Object> inputMap) {
         return getMap(inputMap, "body");
     }
+
+    private static String getQueryString(Map<String, Object> inputMap) {
+        return (String) (getMap(inputMap, "params").get("querystring"));
+    }
+
+    public static HashMap<String, String> getQueryParams(Map<String, Object> inputMap) {
+        return (HashMap<String, String>) (getMap(inputMap, "params").get("querystring"));
+
+//        String queryString = getQueryString(inputMap);
+//        List<NameValuePair> queryparams = URLEncodedUtils.parse(queryString, StandardCharsets.UTF_8);
+//        HashMap<String, String> mappedParams = new HashMap<>();
+//        for (NameValuePair param : queryparams) {
+//            mappedParams.put(param.getName(), param.getValue());
+//        }
+//        return mappedParams;
+    }
+
+
 
     public static Map<String, Object> getMap(Map<String, Object> parentMap, String childKey) {
         if ((parentMap.get(childKey) != null) && (parentMap.get(childKey) instanceof Map<?, ?>)) {
