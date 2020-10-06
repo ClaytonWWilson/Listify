@@ -1,10 +1,7 @@
 package com.example.listify;
 
 import android.os.Bundle;
-
-import com.amazonaws.services.cognitoidentityprovider.model.TooManyFailedAttemptsException;
 import com.bumptech.glide.Glide;
-import com.example.listify.adapter.DisplayShoppingListsAdapter;
 import com.example.listify.model.Product;
 import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,10 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
-public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener {
+public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListDialogFragment.OnNewListListener {
     private Product curProduct;
     private LinearLayout linAddItem;
     private LinearLayout linCreateList;
@@ -79,8 +75,10 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
         linCreateList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ItemDetails.this, "create", Toast.LENGTH_SHORT).show();
                 closeFABMenu();
+
+                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
+                createListDialogFragment.show(getSupportFragmentManager(), "Create New List");
             }
         });
 
@@ -134,6 +132,11 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
     @Override
     public void sendListSelection(int selectedListIndex, int quantity) {
-        Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void sendNewListName(String name) {
+        Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
     }
 }
