@@ -8,6 +8,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
+import com.example.listify.data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +45,17 @@ public class AuthManager {
     }
 
     public String getUserToken() {
+        if (authSession == null) {
+            try {
+                fetchAuthSession();
+            } catch (AuthException e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+        if (authSession.isSignedIn() == false) {
+            return "";
+        }
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
@@ -75,6 +87,10 @@ public class AuthManager {
 
     public void setAuthSignInResult(AuthSignInResult toSet) {
         authSignInResult = toSet;
+        waiting = false;
+    }
+
+    public void signOutSuccess() {
         waiting = false;
     }
 
@@ -117,7 +133,17 @@ public class AuthManager {
         throwIfAuthError();
     }
 
+    public void deleteUser(Requestor requestor) throws AuthException {
+        requestor.deleteObject("N/A", User.class);
+        signOutUser();
+    }
 
+    public void signOutUser() throws AuthException {
+        authSession = null;
+        waiting = true;
+        Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
+        throwIfAuthError();
+    }
 
     public static Properties loadProperties(Context context, String path) throws IOException, JSONException {
         Properties toReturn = new Properties();
