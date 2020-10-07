@@ -21,10 +21,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class List extends AppCompatActivity {
     ListView listView;
-    String listName = "Sample List";
+    MyAdapter myAdapter;
 
     Button incrQuan;
     Button decrQuan;
+    Button removeItem;
 
     ArrayList<String> pNames = new ArrayList<>(); //String[] pNames = {"Half-gallon organic whole milk"};
     ArrayList<String> pStores = new ArrayList<>(); //String[] pStores = {"Kroger"};
@@ -40,11 +41,25 @@ public class List extends AppCompatActivity {
         pQuantity.add("1");
         pImages.add(R.drawable.milk);
 
+        pNames.add("5-bunch medium bananas");
+        pStores.add("Kroger");
+        pPrices.add("$3.00");
+        pQuantity.add("1");
+        pImages.add(R.drawable.bananas);
+
+        pNames.add("JIF 40-oz creamy peanut butter");
+        pStores.add("Kroger");
+        pPrices.add("$7.00");
+        pQuantity.add("1");
+        pImages.add(R.drawable.peanutbutter);
+
+        int currSize = pNames.size();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
         listView = findViewById(R.id.listView);
-        MyAdapter myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
+        myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
 
         listView.setAdapter(myAdapter);
     }
@@ -74,37 +89,48 @@ public class List extends AppCompatActivity {
             View listproduct = layoutInflater.inflate(R.layout.listproduct, parent,false);
 
             decrQuan = (Button) listproduct.findViewById(R.id.buttonDecr);
+            incrQuan = (Button) listproduct.findViewById(R.id.buttonIncr);
+            removeItem = (Button) listproduct.findViewById(R.id.buttonDel);
+
             decrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TextView quantityText = (TextView) findViewById(R.id.quantityView);
-                    int q = Integer.parseInt(quantityText.getText().toString()) - 1;
-                    quantityText.setText(Integer.toString(q));
-
-                    if(q <= 1) {
-                        decrQuan.setEnabled(false);
-                    }
-                    if(q < 10) {
-                        incrQuan.setEnabled(true);
-                    }
+                    int q = Integer.parseInt(pQuantity.get(position)) - 1;
+                    pQuantity.set(position, Integer.toString(q));
+                    listView.setAdapter(myAdapter);
                 }
             });
-            decrQuan.setEnabled(false);
+            if(Integer.parseInt(pQuantity.get(position)) <= 1) {
+                decrQuan.setEnabled(false);
+            }
+            if(Integer.parseInt(pQuantity.get(position)) < 10) {
+                incrQuan.setEnabled(true);
+            }
 
-            incrQuan = (Button) listproduct.findViewById(R.id.buttonIncr);
             incrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TextView quantityText = (TextView) findViewById(R.id.quantityView);
-                    int q = Integer.parseInt(quantityText.getText().toString()) + 1;
-                    quantityText.setText(Integer.toString(q));
+                    int q = Integer.parseInt(pQuantity.get(position)) + 1;
+                    pQuantity.set(position, Integer.toString(q));
+                    listView.setAdapter(myAdapter);
+                }
+            });
+            if(Integer.parseInt(pQuantity.get(position)) > 1) {
+                decrQuan.setEnabled(true);
+            }
+            if(Integer.parseInt(pQuantity.get(position)) >= 10) {
+                incrQuan.setEnabled(false);
+            }
 
-                    if(q > 1) {
-                        decrQuan.setEnabled(true);
-                    }
-                    if(q >= 10) {
-                        incrQuan.setEnabled(false);
-                    }
+            removeItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pNames.remove(position);
+                    pStores.remove(position);
+                    pPrices.remove(position);
+                    pQuantity.remove(position);
+                    pImages.remove(position);
+                    listView.setAdapter(myAdapter);
                 }
             });
 
@@ -114,11 +140,13 @@ public class List extends AppCompatActivity {
             TextView quantity = listproduct.findViewById(R.id.quantityView);
             ImageView image = listproduct.findViewById(R.id.imageView);
 
-            name.setText(pNames.get(position));
-            store.setText(pStores.get(position));
-            price.setText(pPrices.get(position));
-            quantity.setText(pQuantity.get(position));
-            image.setImageResource(pImages.get(position));
+            if(!pNames.isEmpty()) {
+                name.setText(pNames.get(position));
+                store.setText(pStores.get(position));
+                price.setText(pPrices.get(position));
+                quantity.setText(pQuantity.get(position));
+                image.setImageResource(pImages.get(position));
+            }
 
             return listproduct;
         }
