@@ -16,6 +16,7 @@ public class KroggerAPITester {
     final static String redirect_uri = "https://example.com/callback"; //subject to change as needed
     final static String scope = "product.compact";
     final static String authString = "listify-f6e083b133a87ab8a98b2ec4f580dedb9125180887245441161:hM88WJ3cJGou5jX1vNRZBqKKVmmcMMktTcTbvkRD";
+    final static String closetKrogger = "02100138"; //Closest Kroger to purdue, will make an api call to determine closest kroger in sprint 2
     
 
     public static String getKroggerAuthKey() {
@@ -73,6 +74,58 @@ public class KroggerAPITester {
             e.printStackTrace();
         }
         return token;
+    }
+
+    public static List<String> getProductIds(String authToken, String product) {
+        List<String> idList = new ArrayList();
+        try {
+            URL url = new URL("https://api.kroger.com/v1/products?&filter.term=" + product + "&filter.locationId=" + closetKrogger);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Authorization", "Bearer " + authToken);
+            System.out.println(connection.getResponseCode());
+
+
+            int responseStatus = connection.getResponseCode();
+            if(responseStatus == 200) {
+                try(BufferedReader br = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    StringBuilder response = new StringBuilder();
+                    String responseLine;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                        //System.out.println(responseLine);
+                    }
+
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    //System.out.println(jsonArray);
+
+                    for(int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject currentItem = jsonArray.getJSONObject(i);
+                        JSONArray currentItemDetails = (JSONArray) currentItem.get("items");
+                        JSONObject item = currentItemDetails.getJSONObject(0);
+                        System.out.println(item.getJSONObject("price").get("regular"));
+                        if(item.get("itemId") != null) idList.add((String) item.get("itemId"));
+                        System.out.println();
+                    }
+
+                    return idList;
+
+                }
+            }
+
+            connection.disconnect();
+        } catch(MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return idList;
     }
 
 }
