@@ -1,7 +1,6 @@
 package com.example.listify.data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class Item {
     Integer productID;
@@ -11,11 +10,11 @@ public class Item {
     BigDecimal price;
     String imageURL;
     String department;
-    LocalDateTime retrievedDate;
+    long retrievedDate;
     Integer fetchCounts;
 
     public Item(Integer productID, Integer chainID, String upc, String description, BigDecimal price,
-         String imageURL, String department, LocalDateTime retrievedDate, Integer fetchCounts) {
+                String imageURL, String department, long retrievedDate, Integer fetchCounts) {
         this.productID = productID;
         this.chainID = chainID;
         this.upc = upc;
@@ -37,7 +36,7 @@ public class Item {
                 ", price=" + price +
                 ", imageURL='" + imageURL + '\'' +
                 ", department='" + department + '\'' +
-                ", retrievedDate=" + (retrievedDate == null ? null : retrievedDate) +
+                ", retrievedDate=" + retrievedDate +
                 ", fetchCounts=" + fetchCounts +
                 '}';
     }
@@ -98,11 +97,11 @@ public class Item {
         this.department = department;
     }
 
-    public LocalDateTime getRetrievedDate() {
+    public long getRetrievedDate() {
         return retrievedDate;
     }
 
-    public void setRetrievedDate(LocalDateTime retrievedDate) {
+    public void setRetrievedDate(long retrievedDate) {
         this.retrievedDate = retrievedDate;
     }
 
