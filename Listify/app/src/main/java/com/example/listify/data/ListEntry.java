@@ -1,15 +1,13 @@
 package com.example.listify.data;
 
-import java.time.LocalDateTime;
-
 public class ListEntry {
     Integer listID;
     Integer productID;
     Integer quantity;
-    LocalDateTime addedDate;
+    long addedDate;
     Boolean purchased;
 
-    public ListEntry(Integer listID, Integer productID, Integer quantity, LocalDateTime addedDate, Boolean purchased) {
+    public ListEntry(Integer listID, Integer productID, Integer quantity, long addedDate, Boolean purchased) {
         this.listID = listID;
         this.productID = productID;
         this.quantity = quantity;
@@ -52,11 +50,11 @@ public class ListEntry {
         this.quantity = quantity;
     }
 
-    public LocalDateTime getAddedDate() {
+    public long getAddedDate() {
         return addedDate;
     }
 
-    public void setAddedDate(LocalDateTime addedDate) {
+    public void setAddedDate(long addedDate) {
         this.addedDate = addedDate;
     }
 

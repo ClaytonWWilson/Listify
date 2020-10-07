@@ -6,13 +6,13 @@ public class ItemEntry {
     Integer listID;
     Integer productID;
     Integer quantity;
-    LocalDateTime addedDate;
+    long addedDate;
     Boolean purchased;
     public ItemEntry(Integer listID, ResultSet listRow) throws SQLException {
         this.listID = listID;
         productID = listRow.getInt(1);
         quantity = listRow.getInt(2);
-        addedDate = listRow.getObject(3, LocalDateTime.class);
+        addedDate = listRow.getTimestamp(3).toInstant().toEpochMilli();
         purchased = listRow.getBoolean(4);
     }
 
@@ -32,11 +32,11 @@ public class ItemEntry {
         this.quantity = quantity;
     }
 
-    public LocalDateTime getAddedDate() {
+    public long getAddedDate() {
         return addedDate;
     }
 
-    public void setAddedDate(LocalDateTime addedDate) {
+    public void setAddedDate(long addedDate) {
         this.addedDate = addedDate;
     }
 

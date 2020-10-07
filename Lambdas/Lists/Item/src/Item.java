@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 public class Item {
     Integer productID;
@@ -11,7 +10,7 @@ public class Item {
     BigDecimal price;
     String imageURL;
     String department;
-    LocalDateTime retrievedDate;
+    long retrievedDate;
     Integer fetchCounts;
 
     public Item(ResultSet itemRow) throws SQLException {
@@ -29,7 +28,7 @@ public class Item {
         System.out.println(imageURL);
         this.department = itemRow.getString(7);
         System.out.println(department);
-        this.retrievedDate = itemRow.getObject(8, LocalDateTime.class);
+        this.retrievedDate = itemRow.getTimestamp(8).toInstant().toEpochMilli();
         System.out.println(retrievedDate);
         this.fetchCounts = itemRow.getInt(9);
         System.out.println(fetchCounts);
@@ -106,11 +105,11 @@ public class Item {
         this.department = department;
     }
 
-    public LocalDateTime getRetrievedDate() {
+    public long getRetrievedDate() {
         return retrievedDate;
     }
 
-    public void setRetrievedDate(LocalDateTime retrievedDate) {
+    public void setRetrievedDate(long retrievedDate) {
         this.retrievedDate = retrievedDate;
     }
 

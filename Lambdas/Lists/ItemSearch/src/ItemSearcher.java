@@ -10,9 +10,9 @@ public class ItemSearcher implements CallHandler {
     DBConnector connector;
     String cognitoID;
 
-    private final String GET_ITEM_MATCHES = "SELECT * FROM Product WHERE description LIKE %?%";
+    private final String GET_ITEM_MATCHES = "SELECT * FROM Product WHERE description LIKE ?";
 
-    ItemSearcher(DBConnector connector, String cognitoID) {
+    public ItemSearcher(DBConnector connector, String cognitoID) {
         this.connector = connector;
         this.cognitoID = cognitoID;
     }
@@ -21,7 +21,7 @@ public class ItemSearcher implements CallHandler {
     public Object conductAction(Map<String, Object> body, HashMap<String, String> queryParams, String s) throws SQLException {
         try (Connection connection = connector.getConnection()) {
             PreparedStatement getItemMatches = connection.prepareStatement(GET_ITEM_MATCHES);
-            getItemMatches.setString(1, queryParams.get("id"));
+            getItemMatches.setString(1, "%" + queryParams.get("id") + "%");
             System.out.println(getItemMatches);
             ResultSet searchResults = getItemMatches.executeQuery();
             ItemSearch searchResultsObject = new ItemSearch(searchResults);
