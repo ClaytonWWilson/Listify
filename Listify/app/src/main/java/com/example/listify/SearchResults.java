@@ -155,6 +155,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                     "Sapien eget mi proin sed libero enim sed faucibus turpis. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Integer enim neque volutpat ac tincidunt vitae semper. Euismod lacinia at quis risus sed vulputate. Ut venenatis tellus in metus vulputate eu scelerisque. Etiam erat velit scelerisque in dictum non consectetur. Viverra nam libero justo laoreet sit amet cursus sit. Arcu non sodales neque sodales. Vivamus arcu felis bibendum ut tristique et egestas quis. Sed adipiscing diam donec adipiscing tristique risus. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus vitae. Velit ut tortor pretium viverra suspendisse potenti nullam ac tortor. Non nisi est sit amet facilisis magna etiam. Tortor at risus viverra adipiscing. Donec ultrices tincidunt arcu non sodales neque sodales. Eget egestas purus viverra accumsan. Enim lobortis scelerisque fermentum dui faucibus in ornare. Porttitor massa id neque aliquam. Ut consequat semper viverra nam. Orci ac auctor augue mauris augue neque gravida.\n" +
                     "\n" +
                     "Lacus sed viverra tellus in hac habitasse platea dictumst. Nec ullamcorper sit amet risus nullam eget felis eget nunc. Semper feugiat nibh sed pulvinar. Consequat nisl vel pretium lectus quam id leo in. Volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque. Faucibus a pellentesque sit amet porttitor eget. Sed viverra tellus in hac habitasse platea dictumst vestibulum. Placerat vestibulum lectus mauris ultrices eros in cursus turpis. Sed tempus urna et pharetra pharetra massa massa ultricies mi. Ornare arcu odio ut sem. Ornare arcu dui vivamus arcu felis bibendum ut. Feugiat pretium nibh ipsum consequat. Consectetur adipiscing elit ut aliquam purus sit amet luctus venenatis. Felis eget velit aliquet sagittis id consectetur purus ut.", "Automotive", 45.22, "9/24/2020", "1", "http://cdn.sheknows.com/articles/2013/05/pet5.jpg");
+            Product h = new Product("Tin Foil", "0001", "Kroger", "0001", "0123456781", "Not aluminum foil", "Grocery", 1.00, "9/24/2020", "1", "https://i.ytimg.com/vi/q9N1doYMxR0/maxresdefault.jpg");
             resultsProductList.add(a);
             resultsProductList.add(b);
             resultsProductList.add(c);
@@ -162,6 +163,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             resultsProductList.add(e);
             resultsProductList.add(f);
             resultsProductList.add(g);
+            resultsProductList.add(h);
         }
 
         // Create a list of all stores in the results so the user can filter by store name
@@ -180,6 +182,10 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
 
     // Sorts the search results
     private void sortResults() {
+        // Reset the filtered list
+        resultsProductListSorted.clear();
+        resultsProductListSorted.addAll(resultsProductList);
+
         // Sort Modes
         // 0 default (no sorting)
         // 1 itemName
@@ -190,10 +196,8 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // Sort based on mode
         switch (this.sortMode) {
             case 0:
-                resultsProductListSorted.clear();
-                resultsProductListSorted.addAll(resultsProductList);
-                searchResultsListAdapter.notifyDataSetChanged();
-                return;
+                // Do nothing
+                break;
             case 1:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
@@ -238,12 +242,24 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 break;
         }
 
-        if (this.descending) {
+        if (this.sortMode != 0 & this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
                 resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));
                 resultsProductListSorted.set(resultsProductListSorted.size() - i - 1, temp);
             }
+        }
+
+        // Only keep results that match the current store selection
+        if (this.storeSelection != 0) {
+            ArrayList<Product> temp = new ArrayList<>();
+            resultsProductListSorted.forEach(product -> {
+                if (product.getChainName().equals(this.stores.get(this.storeSelection - 1))) {
+                    temp.add(product);
+                }
+            });
+            resultsProductListSorted.clear();
+            resultsProductListSorted.addAll(temp);
         }
 
         searchResultsListAdapter.notifyDataSetChanged();
