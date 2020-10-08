@@ -29,6 +29,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
+    public static AuthManager am = new AuthManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

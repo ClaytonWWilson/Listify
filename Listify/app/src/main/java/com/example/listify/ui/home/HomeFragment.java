@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
         toListPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.List.class);
+                Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
                 startActivity(intent);
             }
         });
