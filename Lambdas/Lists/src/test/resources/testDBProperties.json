@@ -1,0 +1,5 @@
+{
+  "url": "jdbc:mariadb://listify.id.us-east-2.rds.amazonaws.com:3306/ListifySchema",
+  "user": "auser",
+  "password": "apassword"
+}
