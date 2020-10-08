@@ -56,7 +56,8 @@ public class ListPage extends AppCompatActivity {
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<List> lr = new SynchronousReceiver<>();
-        requestor.getObject("-1", List.class, lr, lr);
+        //ListReceiver<List> lr = new ListReceiver<>();
+        requestor.getObject("39", List.class, lr);
 
         List list;
 
@@ -203,7 +204,7 @@ public class ListPage extends AppCompatActivity {
         }
     }
 
-    /*class ListReceiver<T> implements Requestor.Receiver<T> {
+    class ListReceiver<T> implements Requestor.Receiver<T> {
         @Override
         public void acceptDelivery(T delivered) {
             for(ListEntry entry : ((List) delivered).getEntries()) {
@@ -224,5 +225,5 @@ public class ListPage extends AppCompatActivity {
             pPrices.add(i.getPrice().toString());
             pImages.add(R.drawable.placeholder);
         }
-    }*/
+    }
 }
