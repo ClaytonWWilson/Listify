@@ -1,24 +1,38 @@
 package com.example.listify.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class Product implements Serializable {
     private String itemName;
-    private String itemId;
+    private int itemId;
     private String chainName;
-    private String chainId;
+    private int chainId;
     private String upc;
     private String description;
     private String department;
-    private double price;
+    private BigDecimal price;
     private String retrievedDate;
     private String fetchCounts;
     private String imageUrl;
 
     public Product() {}
 
-    public Product(String itemName, String itemId, String chainName, String chainId, String upc,
-                   String description, String department, double price, String retrievedDate,
+    public Product(String itemName, int itemId, String chainName, int chainId, String upc, String description, BigDecimal price, String imageUrl, String department) {
+        this.itemName = itemName;
+        this.itemId = itemId;
+        this.chainName = chainName;
+        this.chainId = chainId;
+        this.upc = upc;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.department = department;
+
+    }
+
+    public Product(String itemName, int itemId, String chainName, int chainId, String upc,
+                   String description, String department, BigDecimal price, String retrievedDate,
                    String fetchCounts, String imageUrl) {
         this.itemName = itemName;
         this.itemId = itemId;
@@ -41,11 +55,11 @@ public class Product implements Serializable {
         this.itemName = itemName;
     }
 
-    public String getItemId() {
+    public int getItemId() {
         return itemId;
     }
 
-    public void setItemId(String itemId) {
+    public void setItemId(int itemId) {
         this.itemId = itemId;
     }
 
@@ -57,11 +71,11 @@ public class Product implements Serializable {
         this.chainName = chainName;
     }
 
-    public String getChainId() {
+    public int getChainId() {
         return chainId;
     }
 
-    public void setChainId(String chainId) {
+    public void setChainId(int chainId) {
         this.chainId = chainId;
     }
 
@@ -89,11 +103,11 @@ public class Product implements Serializable {
         this.department = department;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

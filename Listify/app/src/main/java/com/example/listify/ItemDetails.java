@@ -1,7 +1,10 @@
 package com.example.listify;
 
 import android.os.Bundle;
+
+import com.amplifyframework.auth.AuthException;
 import com.bumptech.glide.Glide;
+import com.example.listify.data.List;
 import com.example.listify.model.Product;
 import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,7 +16,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListDialogFragment.OnNewListListener {
     private Product curProduct;
@@ -28,7 +37,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     private TextView tvItemDesc;
     private ImageButton backToSearchbutton;
 
-    ArrayList<ShoppingList> shoppingLists = new ArrayList<>();
+    ArrayList<List> shoppingLists = new ArrayList<>();
 
     private boolean isFABOpen = false;
 
@@ -62,9 +71,32 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             public void onClick(View v) {
                 closeFABMenu();
 
-                // Hardcode shopping lists to demonstrate displaying lists
-                for (int i = 0; i < 10; i++) {
-                    shoppingLists.add(new ShoppingList(Integer.toString(i)));
+                AuthManager authManager = new AuthManager();
+                try {
+                    authManager.signIn("merzn@purdue.edu", "Password123");
+                } catch (AuthException e) {
+                    e.printStackTrace();
+                }
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ItemDetails.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+                SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
+                SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+
+                requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
+                try {
+                    Integer[] listIds = listIdsReceiver.await();
+                    for (int i = 0; i < listIds.length; i++) {
+                        requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                        shoppingLists.add(listReceiver.await());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);
@@ -136,7 +168,32 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     }
 
     @Override
-    public void sendNewListName(String name) {
-        Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
+    public void sendNewListName(String name) {AuthManager authManager = new AuthManager();
+        try {
+            authManager.signIn("merzn@purdue.edu", "Password123");
+        } catch (AuthException e) {
+            e.printStackTrace();
+        }
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+
+        try {
+            requestor.postObject(newList, idReceiver, idReceiver);
+            System.out.println(idReceiver.await());
+            // TODO: add item to new list
+            newList.getItemID();
+            Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }

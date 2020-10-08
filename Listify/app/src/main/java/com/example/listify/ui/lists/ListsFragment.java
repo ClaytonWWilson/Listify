@@ -12,33 +12,63 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.amplifyframework.auth.AuthException;
+import com.example.listify.AuthManager;
 import com.example.listify.CreateListDialogFragment;
 import com.example.listify.MainActivity;
 import com.example.listify.R;
+import com.example.listify.Requestor;
+import com.example.listify.SynchronousReceiver;
 import com.example.listify.adapter.DisplayShoppingListsAdapter;
+import com.example.listify.data.List;
 import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
 
 public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
+    ArrayList<List> shoppingLists = new ArrayList<>();
     ListView shoppingListsView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_lists, container, false);
-
-//        Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar_lists);
-//        ((AppCompatActivity)getActivity()).setActionBar(toolbar);
-
-        // Hardcode shopping lists to demonstrate displaying lists
         shoppingListsView = root.findViewById(R.id.shopping_lists);
-        ShoppingList a = new ShoppingList("first list");
-        ShoppingList b = new ShoppingList("Groceries");
-        ShoppingList c = new ShoppingList("Expensive Stuff");
-        ArrayList<ShoppingList> shoppingLists = new ArrayList<>();
-        shoppingLists.add(a);
-        shoppingLists.add(b);
-        shoppingLists.add(c);
+
+        // TODO: Switch this to async
+        AuthManager authManager = new AuthManager();
+        try {
+            authManager.signIn("merzn@purdue.edu", "Password123");
+        } catch (AuthException e) {
+            e.printStackTrace();
+        }
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
+        SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+
+        requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
+        try {
+            Integer[] listIds = listIdsReceiver.await();
+            for (int i = 0; i < listIds.length; i++) {
+                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                shoppingLists.add(listReceiver.await());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         // Set adapter and display this users lists
         DisplayShoppingListsAdapter displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
@@ -64,6 +94,30 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
     @Override
     public void sendNewListName(String name) {
-        Toast.makeText(getActivity(), String.format("%s created", name), Toast.LENGTH_LONG).show();
+        AuthManager authManager = new AuthManager();
+        try {
+            authManager.signIn("merzn@purdue.edu", "Password123");
+        } catch (AuthException e) {
+            e.printStackTrace();
+        }
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+
+        try {
+            requestor.postObject(newList, idReceiver, idReceiver);
+            System.out.println(idReceiver.await());
+            Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }

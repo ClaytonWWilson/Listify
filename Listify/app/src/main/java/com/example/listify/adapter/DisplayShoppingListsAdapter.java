@@ -8,15 +8,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.example.listify.R;
-import com.example.listify.model.ShoppingList;
+import com.example.listify.data.List;
 import java.util.ArrayList;
 
 public class DisplayShoppingListsAdapter extends BaseAdapter {
     private Activity activity;
-    private ArrayList<ShoppingList> lists;
+    private ArrayList<List> lists;
     private LayoutInflater inflater;
 
-    public DisplayShoppingListsAdapter(Activity activity, ArrayList<ShoppingList> lists){
+    public DisplayShoppingListsAdapter(Activity activity, ArrayList<List> lists){
         this.activity = activity;
         this.lists = lists;
     }
@@ -45,7 +45,7 @@ public class DisplayShoppingListsAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.display_shopping_lists_item, null);
         }
 
-        ShoppingList curList = lists.get(position);
+        List curList = lists.get(position);
 
         TextView tvListName = (TextView) convertView.findViewById(R.id.shopping_list_name);
         tvListName.setText(curList.getName());
