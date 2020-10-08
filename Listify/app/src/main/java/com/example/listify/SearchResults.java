@@ -1,4 +1,5 @@
 package com.example.listify;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -77,7 +78,12 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+                Intent itemDetailsPage = new Intent(SearchResults.this, ItemDetails.class);
+
+                // Send the selected product
+                itemDetailsPage.putExtra("SelectedProduct", resultsProductListSorted.get(position));
+                startActivity(itemDetailsPage);
             }
         });
 
@@ -129,6 +135,9 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // TODO: Create a new Product Object for each result
         // TODO: Add each result to productList
 
+        // Clear the old search results
+        resultsProductList = new ArrayList<>();
+
         // Hardcode some search results...
         for (int i = 0; i < 2; i++) {
             Product a = new Product("Bottled Water", "0000", "Walmart", "0001", "0123456780", "Bro, it's water...", "Grocery", 13.37, "9/24/2020", "1", "http://3.bp.blogspot.com/-MfroPPQVDKo/UyhUZWqGvkI/AAAAAAAAB-I/DGk622onsvc/s1600/lettuce-b-kool-cat-meme.jpg");
@@ -136,13 +145,23 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             Product c = new Product("Lettuce", "0002", "Walmart", "0001", "0123456782", "Burger King foot lettuce", "Grocery", 0.60, "9/24/2020", "1", "https://www.cattitudedaily.com/wp-content/uploads/2019/12/white-cat-meme-feature.jpg");
             Product d = new Product("Video Game", "0003", "Walmart", "0001", "0123456783", "Fun Vidya Gaemz", "Electronics", 60.00, "9/24/2020", "1", "https://i1.wp.com/bestlifeonline.com/wp-content/uploads/2018/06/cat-meme-67.jpg?resize=1024%2C1024&ssl=1");
             Product e = new Product("Mountain Dew", "0004", "Walmart", "0001", "0123456784", "Gamer fuel", "Grocery", 5.87, "9/24/2020", "1", "https://memeguy.com/photos/images/gaming-cat-7680.png");
-            Product f = new Product("Tire", "0005", "Walmart", "0001", "0123456785", "30 inch rims", "Automotive", 146.97, "9/24/2020", "1", "http://cdn.sheknows.com/articles/2013/05/pet5.jpg");
+            Product f = new Product("Tire", "0005", "Kroger", "0002", "0123456785", "30 inch rims", "Automotive", 146.97, "9/24/2020", "1", "http://cdn.sheknows.com/articles/2013/05/pet5.jpg");
+            Product g = new Product("This is a test for a product that has a very long title to see if the text overflows", "0006", "Target", "0003", "0123456786", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit ut aliquam purus sit amet luctus venenatis. Tellus orci ac auctor augue mauris augue neque gravida. Habitant morbi tristique senectus et netus. Dignissim diam quis enim lobortis. Suspendisse sed nisi lacus sed viverra tellus in. Viverra adipiscing at in tellus integer feugiat scelerisque. Volutpat consequat mauris nunc congue nisi vitae suscipit tellus. Habitant morbi tristique senectus et netus et malesuada. Quis enim lobortis scelerisque fermentum dui faucibus in ornare quam. Mattis pellentesque id nibh tortor id aliquet. Volutpat blandit aliquam etiam erat. Vestibulum lorem sed risus ultricies tristique nulla aliquet.\n" +
+                    "\n" +
+                    "Placerat orci nulla pellentesque dignissim. Quisque non tellus orci ac. Mattis enim ut tellus elementum sagittis vitae et. Interdum velit euismod in pellentesque massa placerat duis ultricies. Id nibh tortor id aliquet lectus. Massa placerat duis ultricies lacus sed. Convallis convallis tellus id interdum velit laoreet id donec. Amet luctus venenatis lectus magna fringilla urna porttitor rhoncus. Sodales ut eu sem integer vitae justo. Viverra ipsum nunc aliquet bibendum enim facilisis.\n" +
+                    "\n" +
+                    "Eget felis eget nunc lobortis mattis aliquam faucibus purus. Odio morbi quis commodo odio aenean sed adipiscing. Hac habitasse platea dictumst quisque sagittis purus sit. Nam libero justo laoreet sit. Et malesuada fames ac turpis egestas. Erat nam at lectus urna duis convallis convallis. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. Ut venenatis tellus in metus vulputate eu scelerisque felis imperdiet. At auctor urna nunc id cursus. Sed elementum tempus egestas sed. Lorem dolor sed viverra ipsum nunc aliquet bibendum. Orci eu lobortis elementum nibh tellus molestie. Porttitor leo a diam sollicitudin tempor. Adipiscing bibendum est ultricies integer quis auctor elit sed. Arcu cursus euismod quis viverra nibh. A diam sollicitudin tempor id eu nisl.\n" +
+                    "\n" +
+                    "Sapien eget mi proin sed libero enim sed faucibus turpis. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Integer enim neque volutpat ac tincidunt vitae semper. Euismod lacinia at quis risus sed vulputate. Ut venenatis tellus in metus vulputate eu scelerisque. Etiam erat velit scelerisque in dictum non consectetur. Viverra nam libero justo laoreet sit amet cursus sit. Arcu non sodales neque sodales. Vivamus arcu felis bibendum ut tristique et egestas quis. Sed adipiscing diam donec adipiscing tristique risus. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus vitae. Velit ut tortor pretium viverra suspendisse potenti nullam ac tortor. Non nisi est sit amet facilisis magna etiam. Tortor at risus viverra adipiscing. Donec ultrices tincidunt arcu non sodales neque sodales. Eget egestas purus viverra accumsan. Enim lobortis scelerisque fermentum dui faucibus in ornare. Porttitor massa id neque aliquam. Ut consequat semper viverra nam. Orci ac auctor augue mauris augue neque gravida.\n" +
+                    "\n" +
+                    "Lacus sed viverra tellus in hac habitasse platea dictumst. Nec ullamcorper sit amet risus nullam eget felis eget nunc. Semper feugiat nibh sed pulvinar. Consequat nisl vel pretium lectus quam id leo in. Volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque. Faucibus a pellentesque sit amet porttitor eget. Sed viverra tellus in hac habitasse platea dictumst vestibulum. Placerat vestibulum lectus mauris ultrices eros in cursus turpis. Sed tempus urna et pharetra pharetra massa massa ultricies mi. Ornare arcu odio ut sem. Ornare arcu dui vivamus arcu felis bibendum ut. Feugiat pretium nibh ipsum consequat. Consectetur adipiscing elit ut aliquam purus sit amet luctus venenatis. Felis eget velit aliquet sagittis id consectetur purus ut.", "Automotive", 45.22, "9/24/2020", "1", "http://cdn.sheknows.com/articles/2013/05/pet5.jpg");
             resultsProductList.add(a);
             resultsProductList.add(b);
             resultsProductList.add(c);
             resultsProductList.add(d);
             resultsProductList.add(e);
             resultsProductList.add(f);
+            resultsProductList.add(g);
         }
 
         // Create a list of all stores in the results so the user can filter by store name
