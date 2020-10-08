@@ -18,7 +18,7 @@ public class Requestor {
     String apiKey;
     OkHttpClient client;
 
-    Requestor(AuthManager authManager, String apiKey) {
+    public Requestor(AuthManager authManager, String apiKey) {
         this.authManager = authManager;
         this.apiKey = apiKey;
         client = new OkHttpClient();
