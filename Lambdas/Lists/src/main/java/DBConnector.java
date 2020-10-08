@@ -13,13 +13,12 @@ public class DBConnector {
     Connection connection;
 
     public DBConnector() throws IOException, SQLException, ClassNotFoundException {
-        this(loadProperties("dbProperties.json"));
+        this(loadProperties(DBConnector.class.getResource("dbProperties.json").getPath()));
     }
 
     public DBConnector(Properties dbProperties) throws SQLException, ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         System.out.println(dbProperties);
-        System.out.println(DBConnector.buildURL(dbProperties));
         connection = DriverManager.getConnection(dbProperties.get("url").toString(), dbProperties.get("user").toString(), dbProperties.get("password").toString());
         System.out.println(connection);
     }
@@ -42,12 +41,5 @@ public class DBConnector {
         JSONObject propertiesJSON = new JSONObject(propertiesJSONString);
         propertiesJSON.keys().forEachRemaining(key -> toReturn.setProperty(key, propertiesJSON.get(key).toString()));
         return toReturn;
-    }
-
-    public static String buildURL(Properties dbProperties) {
-        String dbURL = dbProperties.get("url").toString();
-        dbURL += "?user=" + dbProperties.get("user").toString();
-        dbURL += "&password=" + dbProperties.get("password").toString();
-        return dbURL;
     }
 }

@@ -4,6 +4,7 @@ import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUserGlobalSignOutRequest;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,12 +12,12 @@ import java.util.Properties;
 
 public class UserDeleter implements CallHandler {
 
-    private DBConnector connector;
+    private Connection connector;
     private String cognitoID;
 
     //private final String REMOVE_FROM_LIST = "DELETE FROM ListProduct WHERE (ProductID = ? AND ListID = ?);";
 
-    public UserDeleter(DBConnector connector, String cognitoID) {
+    public UserDeleter(Connection connector, String cognitoID) {
         this.connector = connector;
         this.cognitoID = cognitoID;
     }
