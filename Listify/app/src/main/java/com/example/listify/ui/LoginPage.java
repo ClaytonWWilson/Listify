@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.example.listify.R;
 import com.example.listify.AuthManager;
 import com.example.listify.MainActivity;
+import static com.example.listify.MainActivity.am;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -51,10 +52,8 @@ public class LoginPage extends AppCompatActivity {
                 String email = emailText.getText().toString();
                 String password = passwordText.getText().toString();
 
-                AuthManager authManager = new AuthManager();
-
                 try {
-                    authManager.signIn(email, password);
+                    am.signIn(email, password);
                     Intent intent = new Intent(LoginPage.this, MainActivity.class);
                     startActivity(intent);
                 }

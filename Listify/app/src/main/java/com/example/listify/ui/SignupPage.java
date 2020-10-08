@@ -10,14 +10,13 @@ import android.widget.EditText;
 import com.example.listify.R;
 import com.example.listify.AuthManager;
 import com.example.listify.MainActivity;
+import static com.example.listify.MainActivity.am;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SignupPage extends AppCompatActivity implements CodePage.CodeDialogListener {
     private Button button1; //Log in page button
     private Button button2; //Sign up button
-
-    AuthManager authManager = new AuthManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
                 String password = passwordText.getText().toString();
 
                 try {
-                    authManager.startSignUp(email, password);
+                    am.startSignUp(email, password);
                 }
                 catch(Exception e) {
                     return;
@@ -67,7 +66,7 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
         }
         else {
             try {
-                authManager.confirmSignUp(code);
+                am.confirmSignUp(code);
                 Intent intent = new Intent(SignupPage.this, MainActivity.class);
                 startActivity(intent);
             }
