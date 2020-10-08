@@ -1,6 +1,5 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 public class ItemEntry {
     Integer listID;
@@ -10,10 +9,29 @@ public class ItemEntry {
     Boolean purchased;
     public ItemEntry(Integer listID, ResultSet listRow) throws SQLException {
         this.listID = listID;
-        productID = listRow.getInt(1);
-        quantity = listRow.getInt(2);
-        addedDate = listRow.getTimestamp(3).toInstant().toEpochMilli();
-        purchased = listRow.getBoolean(4);
+        productID = listRow.getInt(2);
+        quantity = listRow.getInt(3);
+        addedDate = listRow.getTimestamp(4).toInstant().toEpochMilli();
+        purchased = listRow.getBoolean(5);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemEntry{" +
+                "listID=" + listID +
+                ", productID=" + productID +
+                ", quantity=" + quantity +
+                ", addedDate=" + addedDate +
+                ", purchased=" + purchased +
+                '}';
+    }
+
+    public Integer getListID() {
+        return listID;
+    }
+
+    public void setListID(Integer listID) {
+        this.listID = listID;
     }
 
     public Integer getProductID() {
