@@ -20,7 +20,7 @@ public class CreateListAddDialogFragment extends DialogFragment {
         void sendNewListName(String name, int quantity);
     }
 
-    public OnNewListAddListener onNewListListener;
+    public OnNewListAddListener onNewAddListListener;
 
     EditText etNewListName;
     EditText etQuantity;
@@ -44,7 +44,7 @@ public class CreateListAddDialogFragment extends DialogFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        onNewListListener.sendNewListName(etNewListName.getText().toString(), Integer.parseInt(etQuantity.getText().toString()));
+                        onNewAddListListener.sendNewListName(etNewListName.getText().toString(), Integer.parseInt(etQuantity.getText().toString()));
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -89,7 +89,7 @@ public class CreateListAddDialogFragment extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            onNewListListener = (OnNewListAddListener) getActivity();
+            onNewAddListListener = (OnNewListAddListener) getActivity();
         } catch (ClassCastException e) {
             Log.e("CreateListAddDialogFragment", "onAttach: ClassCastException: " + e.getMessage());
         }

@@ -28,7 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class ListsFragment extends Fragment implements CreateListAddDialogFragment.OnNewListAddListener {
+public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
     ArrayList<List> shoppingLists = new ArrayList<>();
     ListView shoppingListsView;
 
@@ -89,7 +89,7 @@ public class ListsFragment extends Fragment implements CreateListAddDialogFragme
     }
 
     @Override
-    public void sendNewListName(String name, int quantity) {
+    public void sendNewListName(String name) {
         AuthManager authManager = new AuthManager();
         try {
             authManager.signIn("merzn@purdue.edu", "Password123");

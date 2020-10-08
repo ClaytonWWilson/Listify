@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements CreateListAddDialogFragment.OnNewListAddListener {
+public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements CreateListAddDial
     }
 
     @Override
-    public void sendNewListName(String name, int quantity) {
+    public void sendNewListName(String name) {
         AuthManager authManager = new AuthManager();
         try {
             authManager.signIn("merzn@purdue.edu", "Password123");
