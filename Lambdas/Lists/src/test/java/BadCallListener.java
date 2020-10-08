@@ -1,3 +1,4 @@
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +9,8 @@ public class BadCallListener extends CallListener {
     static RuntimeException toThrowRuntime = null;
 
 
-    public BadCallListener(DBConnector connector, String cognitoID) {
-        super(connector, cognitoID);
+    public BadCallListener(Connection connection, String cognitoID) {
+        super(connection, cognitoID);
     }
 
     @Override

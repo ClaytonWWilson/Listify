@@ -9,7 +9,7 @@ public class TestInputUtils {
     @Test
     public void testGetBody() {
         Map<String, Object> testMap = new HashMap<>();
-        Map<String, String> bodyMap = addBody(testMap);
+        Map<String, Object> bodyMap = addBody(testMap);
         assert (InputUtils.getBody(testMap).equals(bodyMap));
     }
 
@@ -46,7 +46,7 @@ public class TestInputUtils {
         return cognitoID;
     }
 
-    public static Map<String, String> addQueryParams(Map<String, Object> testMap) {
+    public static HashMap<String, String> addQueryParams(Map<String, Object> testMap) {
         HashMap<String, Object> paramsMap = new HashMap<>();
         HashMap<String, String> queryMap = new HashMap<>();
         paramsMap.put("querystring", queryMap);
@@ -54,8 +54,8 @@ public class TestInputUtils {
         return queryMap;
     }
 
-    public static Map<String, String> addBody(Map<String, Object> testMap) {
-        HashMap<String, String> bodyMap = new HashMap<>();
+    public static Map<String, Object> addBody(Map<String, Object> testMap) {
+        HashMap<String, Object> bodyMap = new HashMap<>();
         testMap.put("body", bodyMap);
         return bodyMap;
     }

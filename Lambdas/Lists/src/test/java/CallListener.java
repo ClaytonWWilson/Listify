@@ -1,3 +1,4 @@
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,7 @@ public class CallListener implements CallHandler {
 
     static int creates = 0;
 
-    public CallListener(DBConnector connector, String cognitoID) {
+    public CallListener(Connection connection, String cognitoID) {
         creates++;
     }
 

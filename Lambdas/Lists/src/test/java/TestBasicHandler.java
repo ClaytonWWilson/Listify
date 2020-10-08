@@ -38,7 +38,7 @@ public class TestBasicHandler {
         }
     }
 
-    public Map<String, Object> buildFullSampleMap() {
+    public static Map<String, Object> buildFullSampleMap() {
         Map<String, Object> testMap = new HashMap<>();
         TestInputUtils.addBody(testMap);
         TestInputUtils.addCognitoID(testMap);
