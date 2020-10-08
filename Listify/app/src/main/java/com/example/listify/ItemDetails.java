@@ -5,8 +5,8 @@ import android.os.Bundle;
 import com.amplifyframework.auth.AuthException;
 import com.bumptech.glide.Glide;
 import com.example.listify.data.List;
+import com.example.listify.data.ListEntry;
 import com.example.listify.model.Product;
-import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,7 +24,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListDialogFragment.OnNewListListener {
+public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListAddDialogFragment.OnNewListAddListener {
     private Product curProduct;
     private LinearLayout linAddItem;
     private LinearLayout linCreateList;
@@ -109,8 +109,8 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             public void onClick(View v) {
                 closeFABMenu();
 
-                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
-                createListDialogFragment.show(getSupportFragmentManager(), "Create New List");
+                CreateListAddDialogFragment createListAddDialogFragment = new CreateListAddDialogFragment();
+                createListAddDialogFragment.show(getSupportFragmentManager(), "Create New List");
             }
         });
 
@@ -162,13 +162,41 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     }
 
 
+    // Add the viewed item to the selected list
     @Override
     public void sendListSelection(int selectedListIndex, int quantity) {
-        Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
+
+        AuthManager authManager = new AuthManager();
+        try {
+            authManager.signIn("merzn@purdue.edu", "Password123");
+        } catch (AuthException e) {
+            e.printStackTrace();
+        }
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+
+        try {
+            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getItemID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            requestor.postObject(entry);
+            Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
+    // Create a new list and add the item to it
     @Override
-    public void sendNewListName(String name) {AuthManager authManager = new AuthManager();
+    public void sendNewListName(String name, int quantity) {
+
+        AuthManager authManager = new AuthManager();
         try {
             authManager.signIn("merzn@purdue.edu", "Password123");
         } catch (AuthException e) {
@@ -187,10 +215,11 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);
-            System.out.println(idReceiver.await());
-            // TODO: add item to new list
-            newList.getItemID();
-            Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
+            int newListId = idReceiver.await();
+            ListEntry entry = new ListEntry(newListId, curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            requestor.postObject(entry);
+
+            Toast.makeText(this, String.format("%s created and item added", name), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
             e.printStackTrace();

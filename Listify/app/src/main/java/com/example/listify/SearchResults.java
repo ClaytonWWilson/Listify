@@ -5,31 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
-
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.adapter.SearchResultsListAdapter;
-import com.example.listify.data.Item;
 import com.example.listify.data.ItemSearch;
-import com.example.listify.data.ListEntry;
 import com.example.listify.model.Product;
-
 import org.json.JSONException;
-
 import java.io.IOException;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener {
     private ListView listView;
@@ -170,7 +160,8 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         try {
             results = itemReceiver.await();
             for (int i = 0; i < results.getResults().size(); i++) {
-                resultsProductList.add(new Product(results.getResults().get(i).getDescription(), results.getResults().get(i).getProductID(), Integer.toString(results.getResults().get(i).getChainID()), results.getResults().get(i).getChainID(), results.getResults().get(i).getUpc(), results.getResults().get(i).getDescription(), results.getResults().get(i).getPrice(), results.getResults().get(i).getImageURL(), results.getResults().get(i).getDepartment()));
+                // TODO: Change to dynamically grab chain name by id
+                resultsProductList.add(new Product(results.getResults().get(i).getDescription(), results.getResults().get(i).getProductID(), "Kroger", results.getResults().get(i).getChainID(), results.getResults().get(i).getUpc(), results.getResults().get(i).getDescription(), results.getResults().get(i).getPrice(), results.getResults().get(i).getImageURL(), results.getResults().get(i).getDepartment()));
             }
         } catch (Exception e) {
             e.printStackTrace();

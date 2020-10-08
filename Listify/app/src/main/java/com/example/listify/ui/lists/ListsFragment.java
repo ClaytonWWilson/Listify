@@ -8,20 +8,17 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.AuthManager;
+import com.example.listify.CreateListAddDialogFragment;
 import com.example.listify.CreateListDialogFragment;
-import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.Requestor;
 import com.example.listify.SynchronousReceiver;
 import com.example.listify.adapter.DisplayShoppingListsAdapter;
 import com.example.listify.data.List;
-import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -29,10 +26,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 
-public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
+public class ListsFragment extends Fragment implements CreateListAddDialogFragment.OnNewListAddListener {
     ArrayList<List> shoppingLists = new ArrayList<>();
     ListView shoppingListsView;
 
@@ -93,7 +89,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
     }
 
     @Override
-    public void sendNewListName(String name) {
+    public void sendNewListName(String name, int quantity) {
         AuthManager authManager = new AuthManager();
         try {
             authManager.signIn("merzn@purdue.edu", "Password123");
