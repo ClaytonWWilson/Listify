@@ -30,6 +30,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
 
+    public static AuthManager am = new AuthManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             List testList = new List(-1, "New List", "user filled by lambda", Instant.now().toEpochMilli());
             //Everything except addedDate is used for ItemEntry
             ListEntry entry = new ListEntry(1, 4, Math.abs(new Random().nextInt()), Instant.now().toEpochMilli(),false);
+          
             SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
             try {
                 requestor.postObject(testList, idReceiver, idReceiver);
