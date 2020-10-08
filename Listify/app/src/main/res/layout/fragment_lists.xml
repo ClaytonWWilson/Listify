@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_baseline_sort_28"
+        app:srcCompat="@drawable/ic_baseline_add_28"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"/>
 

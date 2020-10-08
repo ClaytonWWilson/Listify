@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.example.listify.CreateListDialogFragment;
 import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.adapter.DisplayShoppingListsAdapter;
@@ -20,7 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class ListsFragment extends Fragment {
+public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
     ListView shoppingListsView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,10 +54,16 @@ public class ListsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "yo", Toast.LENGTH_SHORT).show();
+                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
+                createListDialogFragment.show(getActivity().getSupportFragmentManager(), "Create New List");
             }
         });
 
         return root;
+    }
+
+    @Override
+    public void sendNewListName(String name) {
+        Toast.makeText(getActivity(), String.format("%s created", name), Toast.LENGTH_LONG).show();
     }
 }

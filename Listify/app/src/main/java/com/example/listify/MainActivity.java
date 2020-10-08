@@ -3,6 +3,7 @@ package com.example.listify;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -160,5 +161,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    // This function only exists for the create new list option in hamburger menu
+    public void onClickCreateList(MenuItem m) {
+        m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
+                createListDialogFragment.show(getSupportFragmentManager(), "Create New List");
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void sendNewListName(String name) {
+        
     }
 }
