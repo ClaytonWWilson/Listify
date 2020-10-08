@@ -1,5 +1,6 @@
 package com.example.listify.ui.lists;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,11 @@ import com.amplifyframework.auth.AuthException;
 import com.example.listify.AuthManager;
 import com.example.listify.CreateListAddDialogFragment;
 import com.example.listify.CreateListDialogFragment;
+import com.example.listify.ItemDetails;
+import com.example.listify.ListPage;
 import com.example.listify.R;
 import com.example.listify.Requestor;
+import com.example.listify.SearchResults;
 import com.example.listify.SynchronousReceiver;
 import com.example.listify.adapter.DisplayShoppingListsAdapter;
 import com.example.listify.data.List;
@@ -72,7 +76,11 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "open and display " + shoppingLists.get(position).getName(), Toast.LENGTH_SHORT).show();
+                Intent listPage = new Intent(getContext(), ListPage.class);
+
+                // Send the list ID
+                listPage.putExtra("listID", shoppingLists.get(position).getItemID());
+                startActivity(listPage);
             }
         });
 
