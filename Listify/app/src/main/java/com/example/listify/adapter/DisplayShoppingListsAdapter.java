@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.example.listify.R;
 import com.example.listify.model.ShoppingList;
-
 import java.util.ArrayList;
 
 public class DisplayShoppingListsAdapter extends BaseAdapter {

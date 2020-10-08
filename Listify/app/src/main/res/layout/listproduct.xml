@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -15,22 +16,22 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/buttonIncr"
+            android:id="@+id/buttonDecr"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="25dp"
-            android:text="+"
+            android:text="-"
             android:textSize="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/storeView" />
 
         <Button
-            android:id="@+id/buttonDecr"
+            android:id="@+id/buttonIncr"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="75dp"
-            android:text="-"
+            android:text="+"
             android:textSize="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -93,13 +94,13 @@
             app:layout_constraintTop_toBottomOf="@+id/storeView" />
 
         <TextView
-            android:id="@+id/textViewQuantity"
+            android:id="@+id/quantityView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1"
+            android:text="q"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonDecr"
-            app:layout_constraintStart_toEndOf="@+id/buttonIncr"
+            app:layout_constraintEnd_toStartOf="@+id/buttonIncr"
+            app:layout_constraintStart_toEndOf="@+id/buttonDecr"
             app:layout_constraintTop_toBottomOf="@+id/storeView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

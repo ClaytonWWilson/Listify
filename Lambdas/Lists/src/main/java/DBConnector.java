@@ -12,11 +12,11 @@ public class DBConnector {
 
     Connection connection;
 
-    DBConnector() throws IOException, SQLException, ClassNotFoundException {
+    public DBConnector() throws IOException, SQLException, ClassNotFoundException {
         this(loadProperties("dbProperties.json"));
     }
 
-    DBConnector(Properties dbProperties) throws SQLException, ClassNotFoundException {
+    public DBConnector(Properties dbProperties) throws SQLException, ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         System.out.println(dbProperties);
         System.out.println(DBConnector.buildURL(dbProperties));
