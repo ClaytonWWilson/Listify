@@ -5,6 +5,7 @@ import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthSession;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.auth.result.AuthResetPasswordResult;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
@@ -21,6 +22,7 @@ public class AuthManager {
     AWSCognitoAuthSession authSession = null;
     AuthSignUpResult authSignUpResult = null;
     AuthSignInResult authSignInResult = null;
+    AuthResetPasswordResult authResetPasswordResult = null;
     AuthException authError = null;
     String email = null;
     String password = null;
@@ -90,7 +92,16 @@ public class AuthManager {
         waiting = false;
     }
 
+    public void setAuthResetPasswordResult(AuthResetPasswordResult toSet) {
+        authResetPasswordResult = toSet;
+        waiting = false;
+    }
+
     public void signOutSuccess() {
+        waiting = false;
+    }
+
+    public void passwordResetSuccess() {
         waiting = false;
     }
 
@@ -142,6 +153,19 @@ public class AuthManager {
         authSession = null;
         waiting = true;
         Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
+        throwIfAuthError();
+    }
+
+    public void changePassword(String email) throws AuthException {
+        this.email = email;
+        waiting = true;
+        Amplify.Auth.resetPassword(email, result -> setAuthResetPasswordResult(result), error -> setAuthError(error));
+        throwIfAuthError();
+    }
+
+    public void confirmPasswordReset(String newPassword, String confirmationCode) throws AuthException {
+        waiting = true;
+        Amplify.Auth.confirmResetPassword(newPassword, confirmationCode, this::passwordResetSuccess, this::setAuthError);
         throwIfAuthError();
     }
 
