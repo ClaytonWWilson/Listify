@@ -15,6 +15,16 @@ public class TestListGetter {
     }
 
     @Test
+    public void testListIDGetterValid() {
+        conductListIDGetterTest(false);
+    }
+
+    @Test
+    public void testListIDGetterError() {
+        conductListIDGetterTest(false);
+    }
+
+    @Test
     public void testListGetterError() {
         conductListGetterTest(true);
     }
@@ -55,6 +65,38 @@ public class TestListGetter {
             assert (conductReturn.getClass() == List.class);
             List listReturn = (List) conductReturn;
             assert (listReturn.toString().equals("List{itemID=1, name='aname', owner='anowner', lastUpdated=1602192528688, entries=[ItemEntry{listID=1, productID=2, quantity=3, addedDate=1602192528689, purchased=false}]}"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            assert shouldThrow;
+        }
+    }
+
+    public void conductListIDGetterTest(boolean shouldThrow) {
+
+
+        ArrayList<Object> rsReturns = new ArrayList<>();
+        rsReturns.add(1);
+        rsReturns.add(2);
+        rsReturns.add(3);
+        rsReturns.add(4);
+
+        StatementInjector injector = null;
+        try {
+            injector = new StatementInjector(null, rsReturns, shouldThrow);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        ListGetter getter = new ListGetter(injector, "id");
+        Map<String, Object> ignore = new HashMap<>();
+        HashMap<String, String> queryParams = TestInputUtils.addQueryParams(ignore);
+        queryParams.put("id", "-1");
+        try {
+            Object conductReturn = getter.conductAction(TestInputUtils.addBody(ignore), queryParams, "cognitoID");
+            assert !shouldThrow;
+            assert (conductReturn.getClass() == ArrayList.class);
+            ArrayList<Integer> listIDsReturn = (ArrayList<Integer>) conductReturn;
+            System.out.println(listIDsReturn.toString());
+            assert (listIDsReturn.toString().equals("[1, 2, 3, 4]"));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             assert shouldThrow;
