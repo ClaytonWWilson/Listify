@@ -17,16 +17,12 @@ public class ListEntryDeleter implements CallHandler {
     }
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
-        try {
-            PreparedStatement statement = connection.prepareStatement(REMOVE_FROM_LIST);
-            statement.setInt(1, (Integer) bodyMap.get("ProductID"));
-            statement.setInt(2, (Integer) bodyMap.get("ListID"));
-            System.out.println(statement);
-            statement.executeUpdate();
-            connection.commit();
-        } finally {
-            connection.close();
-        }
+        PreparedStatement statement = connection.prepareStatement(REMOVE_FROM_LIST);
+        statement.setInt(1, (Integer) bodyMap.get("productID"));
+        statement.setInt(2, (Integer) bodyMap.get("listID"));
+        System.out.println(statement);
+        statement.executeUpdate();
+        connection.commit();
         return null;
     }
 }

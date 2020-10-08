@@ -19,19 +19,15 @@ public class ListEntryAdder implements CallHandler {
     }
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
-        try {
-            PreparedStatement statement = connection.prepareStatement(ITEM_TO_LIST);
-            statement.setInt(1, (Integer) bodyMap.get("productID"));
-            statement.setInt(2, (Integer) bodyMap.get("listID"));
-            statement.setInt(3, (Integer) bodyMap.get("quantity"));
-            statement.setObject(4, Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime());
-            statement.setBoolean(5, (Boolean) bodyMap.get("purchased"));
-            System.out.println(statement);
-            statement.executeUpdate();
-            connection.commit();
-        } finally {
-            connection.close();
-        }
+        PreparedStatement statement = connection.prepareStatement(ITEM_TO_LIST);
+        statement.setInt(1, (Integer) bodyMap.get("productID"));
+        statement.setInt(2, (Integer) bodyMap.get("listID"));
+        statement.setInt(3, (Integer) bodyMap.get("quantity"));
+        statement.setObject(4, Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime());
+        statement.setBoolean(5, (Boolean) bodyMap.get("purchased"));
+        System.out.println(statement);
+        statement.executeUpdate();
+        connection.commit();
         return null;
     }
 }

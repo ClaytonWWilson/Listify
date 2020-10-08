@@ -22,7 +22,7 @@ public class TestListAdder {
         ArrayList<Object> rsReturns = new ArrayList<>();
         rsReturns.add(1); //new listID
         try {
-            injector = new StatementInjector(null, null, shouldThrow);
+            injector = new StatementInjector(null, rsReturns, shouldThrow);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             assert false; //Error in test infrastructure
@@ -35,7 +35,11 @@ public class TestListAdder {
         try {
             Object rawIDReturn = listAdder.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
             assert !shouldThrow;
-            assert (rawIDReturn.getClass() == Integer.class);
+            if (!(rawIDReturn.getClass() == Integer.class)) {
+                assert false;
+                return;
+            }
+            assert (((Integer) rawIDReturn) == 1);
             assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?)[aname, cognitoID,"));
         } catch (SQLException throwables) {
             assert shouldThrow;
