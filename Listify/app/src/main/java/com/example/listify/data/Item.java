@@ -14,7 +14,7 @@ public class Item {
     Integer fetchCounts;
 
     public Item(Integer productID, Integer chainID, String upc, String description, BigDecimal price,
-         String imageURL, String department, long retrievedDate, Integer fetchCounts) {
+                String imageURL, String department, long retrievedDate, Integer fetchCounts) {
         this.productID = productID;
         this.chainID = chainID;
         this.upc = upc;

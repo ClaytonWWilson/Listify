@@ -1,6 +1,8 @@
 package com.example.listify.model;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private String itemName;
     private String itemId;
     private String chainName;

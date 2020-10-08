@@ -13,7 +13,7 @@ public class Item {
     long retrievedDate;
     Integer fetchCounts;
 
-    Item(ResultSet itemRow) throws SQLException {
+    public Item(ResultSet itemRow) throws SQLException {
         this.productID = itemRow.getInt(1);
         System.out.println(this.productID);
         this.chainID = itemRow.getInt(2);
