@@ -40,6 +40,7 @@
         <activity android:name="com.example.listify.ui.LoginPage" />
         <activity android:name="com.example.listify.ui.ForgotPasswordPage" />
         <activity android:name="com.example.listify.ListPage" />
+        <activity android:name="com.example.listify.SplashActivity" />
     </application>
 
 </manifest>
