@@ -2,7 +2,6 @@ package com.example.listify;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,22 +30,11 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
 
-    private static final int SPLASH_SCREEN_TIME = 3000; //in milliseconds
-
     public static AuthManager am = new AuthManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, SPLASH_SCREEN_TIME);
 
 
         //------------------------------Auth Testing---------------------------------------------//
