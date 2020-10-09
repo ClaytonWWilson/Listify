@@ -162,9 +162,6 @@ public class ListPage extends AppCompatActivity {
             if(Integer.parseInt(pQuantity.get(position)) <= 1) {
                 decrQuan.setEnabled(false);
             }
-            if(Integer.parseInt(pQuantity.get(position)) < 10) {
-                incrQuan.setEnabled(true);
-            }
 
             incrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -176,9 +173,6 @@ public class ListPage extends AppCompatActivity {
             });
             if(Integer.parseInt(pQuantity.get(position)) > 1) {
                 decrQuan.setEnabled(true);
-            }
-            if(Integer.parseInt(pQuantity.get(position)) >= 10) {
-                incrQuan.setEnabled(false);
             }
 
             removeItem.setOnClickListener(new View.OnClickListener() {
