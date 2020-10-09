@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import com.amplifyframework.auth.AuthException;
 import com.example.listify.adapter.SearchResultsListAdapter;
 import com.example.listify.data.ItemSearch;
 import com.example.listify.model.Product;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+
+import static com.example.listify.MainActivity.am;
 
 public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener {
     private ListView listView;
@@ -139,12 +140,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // Clear the old search results
         resultsProductList.clear();
 
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -152,7 +147,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             e.printStackTrace();
         }
 
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
 
         SynchronousReceiver<ItemSearch> itemReceiver = new SynchronousReceiver<>();
         requestor.getObject(query, ItemSearch.class, itemReceiver, itemReceiver);

@@ -32,6 +32,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import static com.example.listify.MainActivity.am;
+
 public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
     ArrayList<List> shoppingLists = new ArrayList<>();
     ListView shoppingListsView;
@@ -41,12 +43,6 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         shoppingListsView = root.findViewById(R.id.shopping_lists);
 
         // TODO: Switch this to async
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
@@ -54,7 +50,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
             e.printStackTrace();
         }
 
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
         SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
 
@@ -98,19 +94,14 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
     @Override
     public void sendNewListName(String name) {
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
+
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
         List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());

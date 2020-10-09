@@ -180,19 +180,13 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
 
     @Override
     public void sendNewListName(String name) {
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
         List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());

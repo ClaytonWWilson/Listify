@@ -24,6 +24,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import static com.example.listify.MainActivity.am;
+
 public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListAddDialogFragment.OnNewListAddListener {
     private Product curProduct;
     private LinearLayout linAddItem;
@@ -71,12 +73,6 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             public void onClick(View v) {
                 closeFABMenu();
 
-                AuthManager authManager = new AuthManager();
-                try {
-                    authManager.signIn("merzn@purdue.edu", "Password123");
-                } catch (AuthException e) {
-                    e.printStackTrace();
-                }
                 Properties configs = new Properties();
                 try {
                     configs = AuthManager.loadProperties(ItemDetails.this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -84,7 +80,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
                     e.printStackTrace();
                 }
 
-                Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+                Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                 SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
                 SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
 
@@ -166,19 +162,13 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     @Override
     public void sendListSelection(int selectedListIndex, int quantity) {
 
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
 
@@ -196,19 +186,13 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     @Override
     public void sendNewListName(String name, int quantity) {
 
-        AuthManager authManager = new AuthManager();
-        try {
-            authManager.signIn("merzn@purdue.edu", "Password123");
-        } catch (AuthException e) {
-            e.printStackTrace();
-        }
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
         com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
