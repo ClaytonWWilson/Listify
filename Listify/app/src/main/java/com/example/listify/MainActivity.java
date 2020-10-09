@@ -31,8 +31,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
 
-    private static final int SPLASH_SCREEN_TIME = 3000; //in milliseconds
-
     public static AuthManager am = new AuthManager();
 
     @Override
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                 startActivity(intent);
                 finish();
             }
-        }, SPLASH_SCREEN_TIME);
+        }, 1);
 
 
         //------------------------------Auth Testing---------------------------------------------//
