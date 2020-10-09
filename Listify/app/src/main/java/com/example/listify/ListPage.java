@@ -91,6 +91,7 @@ public class ListPage extends AppCompatActivity {
                     pPrices.add(item.getPrice().toString());
                     pQuantity.add("1");
                     pImages.add(R.drawable.placeholder);
+                    pListItemPair.add(entry);
                 }
             }
         }
@@ -189,7 +190,7 @@ public class ListPage extends AppCompatActivity {
                     pQuantity.remove(position);
                     pImages.remove(position);
 
-                    //requestor.deleteObject("39", ListEntry.class);
+                    requestor.deleteObject(pListItemPair.remove(position));
 
                     listView.setAdapter(myAdapter);
                 }
