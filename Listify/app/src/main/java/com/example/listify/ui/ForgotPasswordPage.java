@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ForgotPasswordPage extends AppCompatActivity implements CodePage.CodeDialogListener {
     private Button button1; //Code page button
 
+    String email;
+    String newPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +28,11 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
             @Override
             public void onClick(View v) {
                 EditText emailText = (EditText) findViewById(R.id.editTextTextEmailAddress2);
-                String email = emailText.getText().toString();
+                EditText newPasswordText = (EditText) findViewById(R.id.editTextTextPassword2);
+
+                email = emailText.getText().toString();
+                newPassword = newPasswordText.getText().toString();
+
                 try {
                     am.changePassword(email);
                 }
@@ -46,7 +53,7 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
     public void sendCode(String code, boolean cancel) {
         if(!cancel) {
             try {
-                am.confirmPasswordReset("qwertyuiop", code);
+                am.confirmPasswordReset(newPassword, code);
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());
