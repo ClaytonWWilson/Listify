@@ -61,6 +61,9 @@ public class CreateListDialogFragment extends DialogFragment {
         super.onAttach(context);
         try {
             onNewListListener = (OnNewListListener) getTargetFragment();
+            if (onNewListListener == null) {
+                onNewListListener = (OnNewListListener) getActivity();
+            }
         } catch (ClassCastException e) {
             Log.e("CreateListDialogFragment", "onAttach: ClassCastException: " + e.getMessage());
         }
