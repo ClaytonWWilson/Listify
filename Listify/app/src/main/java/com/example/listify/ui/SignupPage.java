@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.listify.R;
 import com.example.listify.AuthManager;
@@ -47,6 +48,8 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
+                    TextView invalidCred = findViewById(R.id.textView3);
+                    invalidCred.setText("Invalid credentials. Please try again.");
                     return;
                 }
 
