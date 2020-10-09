@@ -57,8 +57,8 @@ public class SearchResultsListAdapter extends BaseAdapter {
         Product product = productList.get(position);
         // TODO: If image url is broken, display @drawable/ic_baseline_broken_image_600.xml
         Glide.with(activity).load(product.getImageUrl()).into(productImage);
-        if (product.getItemName().length() >= 35) {
-            itemName.setText(product.getItemName().substring(0, 35) + "...");
+        if (product.getItemName().length() >= 60) {
+            itemName.setText(product.getItemName().substring(0, 60) + "...");
         } else {
             itemName.setText(product.getItemName());
         }

@@ -46,28 +46,26 @@ public class UserDeleter implements CallHandler {
         awsCognitoIdentityProvider.adminDeleteUser(adminDeleteUserRequest);
 
 
-        try {
-            PreparedStatement statement = connection.prepareStatement(GET_LISTS);
-            statement.setString(1, cognitoID);
-            System.out.println(statement);
-            ResultSet userLists = statement.executeQuery();
-            while (userLists.next()) {
-                int listID = userLists.getInt("listID");
 
-                statement = connection.prepareStatement(DELETE_LIST_PRODUCT);
-                statement.setInt(1, listID);
-                System.out.println(statement);
-                statement.executeQuery();
-            }
+        PreparedStatement statement = connection.prepareStatement(GET_LISTS);
+        statement.setString(1, cognitoID);
+        System.out.println(statement);
+        ResultSet userLists = statement.executeQuery();
+        while (userLists.next()) {
+            int listID = userLists.getInt("listID");
 
-            statement = connection.prepareStatement(DELETE_LISTS);
-            statement.setString(1, cognitoID);
+            statement = connection.prepareStatement(DELETE_LIST_PRODUCT);
+            statement.setInt(1, listID);
             System.out.println(statement);
             statement.executeQuery();
-            connection.commit();
-        } finally {
-            connection.close();
         }
+
+        statement = connection.prepareStatement(DELETE_LISTS);
+        statement.setString(1, cognitoID);
+        System.out.println(statement);
+        statement.executeQuery();
+        connection.commit();
+
         return null;
     }
 }
