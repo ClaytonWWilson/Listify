@@ -89,7 +89,7 @@ public class ListPage extends AppCompatActivity {
                     pNames.add(item.getDescription());
                     pStores.add("Kroger");
                     pPrices.add(item.getPrice().toString());
-                    pQuantity.add("1");
+                    pQuantity.add(entry.getQuantity().toString());
                     pImages.add(R.drawable.placeholder);
                     pListItemPair.add(entry);
                 }
