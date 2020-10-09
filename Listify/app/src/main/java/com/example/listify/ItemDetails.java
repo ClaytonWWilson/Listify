@@ -52,7 +52,6 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
         // Load Product object from search results activity
         curProduct = (Product) getIntent().getSerializableExtra("SelectedProduct");
-
         // Set up floating action buttons
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         linAddItem = (LinearLayout) findViewById(R.id.lin_add_item);
@@ -123,8 +122,8 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
         tvItemPrice = (TextView) findViewById(R.id.item_price);
         tvItemPrice.setText(String.format("$%.2f", curProduct.getPrice()));
 
-        tvItemDesc = (TextView) findViewById(R.id.item_desc);
-        tvItemDesc.setText(curProduct.getDescription());
+//        tvItemDesc = (TextView) findViewById(R.id.item_desc);
+//        tvItemDesc.setText(curProduct.getDescription());
 
         tvCreateNew = (TextView) findViewById(R.id.create_new_list);
         tvCreateNew.setVisibility(View.INVISIBLE);
