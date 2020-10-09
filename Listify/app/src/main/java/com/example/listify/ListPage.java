@@ -1,35 +1,25 @@
 package com.example.listify;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import com.example.listify.data.Item;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
-import com.example.listify.model.Product;
-import static com.example.listify.MainActivity.am;
-
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.listify.MainActivity.am;
 
 public class ListPage extends AppCompatActivity {
     ListView listView;
@@ -155,13 +145,21 @@ public class ListPage extends AppCompatActivity {
             decrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //int q = Integer.parseInt(pQuantity.get(position)) - 1;
-                    //pQuantity.set(position, Integer.toString(q));
+                    int q = Integer.parseInt(pQuantity.get(position)) - 1;
+                    pQuantity.set(position, Integer.toString(q));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
-                    requestor.deleteObject(le);
+                    pListItemPair.add(position, le);
+                    SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
+                    requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
-                        requestor.postObject(le);
+                        synchronousenforcer.await();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        requestor.postObject(le, synchronousenforcer, synchronousenforcer);
+                        synchronousenforcer.await();
                     }
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
@@ -176,13 +174,21 @@ public class ListPage extends AppCompatActivity {
             incrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //int q = Integer.parseInt(pQuantity.get(position)) + 1;
-                    //pQuantity.set(position, Integer.toString(q));
+                    int q = Integer.parseInt(pQuantity.get(position)) + 1;
+                    pQuantity.set(position, Integer.toString(q));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
-                    requestor.deleteObject(le);
+                    pListItemPair.add(position, le);
+                    SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
+                    requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
-                        requestor.postObject(le);
+                        synchronousenforcer.await();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        requestor.postObject(le, synchronousenforcer, synchronousenforcer);
+                        synchronousenforcer.await();
                     }
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
