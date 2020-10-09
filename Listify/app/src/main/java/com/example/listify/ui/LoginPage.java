@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.listify.R;
 import com.example.listify.AuthManager;
@@ -57,8 +58,10 @@ public class LoginPage extends AppCompatActivity {
                     Intent intent = new Intent(LoginPage.this, MainActivity.class);
                     startActivity(intent);
                 }
-                catch(Exception ex) {
-                    //Display "Incorrect email or password" message
+                catch(Exception e) {
+                    Log.i("Authentication", e.toString());
+                    TextView invalidCred = findViewById(R.id.textView5);
+                    invalidCred.setText("Incorrect email or password. Please try again.");
                 }
             }
         });
