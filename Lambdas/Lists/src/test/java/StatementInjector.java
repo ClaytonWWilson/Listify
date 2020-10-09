@@ -572,7 +572,10 @@ public class StatementInjector extends MariaDbConnection {
 
         @Override
         public boolean next() throws SQLException {
-            return !rsReturns.isEmpty();
+            if (rsReturns != null) {
+                return !rsReturns.isEmpty();
+            }
+            return false;
         }
 
         @Override
