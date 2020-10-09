@@ -39,9 +39,17 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
             public void onClick(View v) {
                 EditText emailText = (EditText) findViewById(R.id.editTextTextEmailAddress);
                 EditText passwordText = (EditText) findViewById(R.id.editTextTextPassword);
+                EditText confirmPasswordText = (EditText) findViewById(R.id.editTextTextPassword2);
 
                 String email = emailText.getText().toString();
                 String password = passwordText.getText().toString();
+                String confirmPassword = confirmPasswordText.getText().toString();
+
+                if(!password.equals(confirmPassword)) {
+                    TextView invalidCred = findViewById(R.id.textView3);
+                    invalidCred.setText("\"Confirm Password\" does not match \"Password\".");
+                    return;
+                }
 
                 try {
                     am.startSignUp(email, password);

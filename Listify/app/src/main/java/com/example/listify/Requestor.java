@@ -45,9 +45,13 @@ public class Requestor {
     }
 
     public void deleteObject(Object toDelete) {
+        deleteObject(toDelete, null, null);
+    }
+
+    public void deleteObject(Object toDelete, Receiver receiver, RequestErrorHandler errorHandler) {
         String deleteURL = DEV_BASEURL + "/" + toDelete.getClass().getSimpleName();
         Request deleteRequest = buildBaseRequest(deleteURL, "DELETE", new Gson().toJson(toDelete));
-        launchCall(deleteRequest, null, toDelete.getClass(), null);
+        launchCall(deleteRequest, receiver, toDelete.getClass(), errorHandler);
     }
 
     public void deleteObject(String id, Class classType, RequestErrorHandler failureHandler) {
