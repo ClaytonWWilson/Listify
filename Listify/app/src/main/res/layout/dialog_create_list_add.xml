@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_a_new_list"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:layout_marginTop="5dp"/>
+
+    <EditText
+        android:id="@+id/et_new_list_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
+        android:singleLine="true"
+        android:hint="@string/new_list_name"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_minus"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:text="@string/minus"/>
+
+        <EditText
+            android:id="@+id/et_quantity"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:text="@string/_1"
+            android:inputType="number"/>
+
+        <Button
+            android:id="@+id/btn_plus"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:text="@string/plus"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -48,6 +48,9 @@ public class ListPage extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // Read list ID from caller
+        final int listID = (int) getIntent().getSerializableExtra("listID");
+
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -57,7 +60,7 @@ public class ListPage extends AppCompatActivity {
         requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<List> lr = new SynchronousReceiver<>();
         //ListReceiver<List> lr = new ListReceiver<>();
-        requestor.getObject("39", List.class, lr);
+        requestor.getObject(Integer.toString(listID), List.class, lr);
 
         List list;
 

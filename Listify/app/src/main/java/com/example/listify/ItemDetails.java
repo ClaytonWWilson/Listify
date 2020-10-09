@@ -1,9 +1,12 @@
 package com.example.listify;
 
 import android.os.Bundle;
+
+import com.amplifyframework.auth.AuthException;
 import com.bumptech.glide.Glide;
+import com.example.listify.data.List;
+import com.example.listify.data.ListEntry;
 import com.example.listify.model.Product;
-import com.example.listify.model.ShoppingList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,9 +16,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.ArrayList;
 
-public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListDialogFragment.OnNewListListener {
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import static com.example.listify.MainActivity.am;
+
+public class ItemDetails extends AppCompatActivity implements ListPickerDialogFragment.OnListPickListener, CreateListAddDialogFragment.OnNewListAddListener {
     private Product curProduct;
     private LinearLayout linAddItem;
     private LinearLayout linCreateList;
@@ -28,7 +39,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     private TextView tvItemDesc;
     private ImageButton backToSearchbutton;
 
-    ArrayList<ShoppingList> shoppingLists = new ArrayList<>();
+    ArrayList<List> shoppingLists = new ArrayList<>();
 
     private boolean isFABOpen = false;
 
@@ -62,9 +73,26 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             public void onClick(View v) {
                 closeFABMenu();
 
-                // Hardcode shopping lists to demonstrate displaying lists
-                for (int i = 0; i < 10; i++) {
-                    shoppingLists.add(new ShoppingList(Integer.toString(i)));
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ItemDetails.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+                SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
+                SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+
+                requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
+                try {
+                    Integer[] listIds = listIdsReceiver.await();
+                    for (int i = 0; i < listIds.length; i++) {
+                        requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                        shoppingLists.add(listReceiver.await());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);
@@ -77,8 +105,8 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             public void onClick(View v) {
                 closeFABMenu();
 
-                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
-                createListDialogFragment.show(getSupportFragmentManager(), "Create New List");
+                CreateListAddDialogFragment createListAddDialogFragment = new CreateListAddDialogFragment();
+                createListAddDialogFragment.show(getSupportFragmentManager(), "Create New List");
             }
         });
 
@@ -130,13 +158,55 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     }
 
 
+    // Add the viewed item to the selected list
     @Override
     public void sendListSelection(int selectedListIndex, int quantity) {
-        Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+
+        try {
+            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getItemID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            requestor.postObject(entry);
+            Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
+    // Create a new list and add the item to it
     @Override
-    public void sendNewListName(String name) {
-        Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
+    public void sendNewListName(String name, int quantity) {
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+
+        try {
+            requestor.postObject(newList, idReceiver, idReceiver);
+            int newListId = idReceiver.await();
+            ListEntry entry = new ListEntry(newListId, curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            requestor.postObject(entry);
+
+            Toast.makeText(this, String.format("%s created and item added", name), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }

@@ -51,7 +51,6 @@ public class CreateListDialogFragment extends DialogFragment {
 
         etNewListName = (EditText) root.findViewById(R.id.et_new_list_name);
 
-
         return builder.create();
     }
 
