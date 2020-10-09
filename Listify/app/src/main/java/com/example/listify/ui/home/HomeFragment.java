@@ -2,6 +2,7 @@ package com.example.listify.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -43,10 +44,10 @@ public class HomeFragment extends Fragment {
         toListPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
-                //startActivity(intent);
+                Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
+                startActivity(intent);
 
-                try {
+                /*try {
                     Properties configs = new Properties();
                     try {
                         configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
@@ -56,7 +57,9 @@ public class HomeFragment extends Fragment {
                     Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                     am.deleteUser(requestor);
                 }
-                catch(Exception ex) {}
+                catch (Exception e) {
+                    Log.i("Authentication", e.toString());
+                }*/
             }
         });
 
