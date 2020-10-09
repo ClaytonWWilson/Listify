@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.listify.R;
+import static com.example.listify.MainActivity.am;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +24,14 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditText emailText = (EditText) findViewById(R.id.editTextTextEmailAddress2);
+                String email = emailText.getText().toString();
+                try {
+                    am.changePassword(email);
+                }
+                catch (Exception e) {
+                    Log.i("Authentication", e.toString());
+                }
                 openDialog();
             }
         });
@@ -34,15 +44,16 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
 
     @Override
     public void sendCode(String code, boolean cancel) {
-        Intent intent;
-
-        if(cancel) {
-            intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
+        if(!cancel) {
+            try {
+                am.confirmPasswordReset("qwertyuiop", code);
+            }
+            catch (Exception e) {
+                Log.i("Authentication", e.toString());
+            }
         }
-        else {
-            intent = new Intent(ForgotPasswordPage.this, ResetPasswordPage.class);
-        }
 
+        Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
         startActivity(intent);
     }
 }

@@ -45,7 +45,8 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
                 try {
                     am.startSignUp(email, password);
                 }
-                catch(Exception e) {
+                catch (Exception e) {
+                    Log.i("Authentication", e.toString());
                     return;
                 }
 
@@ -61,17 +62,14 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
 
     @Override
     public void sendCode(String code, boolean cancel) {
-        if(cancel) {
-            //Remove user from database
-        }
-        else {
+        if(!cancel) {
             try {
                 am.confirmSignUp(code);
                 Intent intent = new Intent(SignupPage.this, MainActivity.class);
                 startActivity(intent);
             }
             catch (Exception e) {
-                //Remove user from database
+                Log.i("Authentication", e.toString());
             }
         }
     }

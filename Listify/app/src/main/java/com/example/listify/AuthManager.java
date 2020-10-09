@@ -158,13 +158,13 @@ public class AuthManager {
 
     public void changePassword(String email) throws AuthException {
         this.email = email;
-        waiting = true;
+        //waiting = true;
         Amplify.Auth.resetPassword(email, result -> setAuthResetPasswordResult(result), error -> setAuthError(error));
         throwIfAuthError();
     }
 
     public void confirmPasswordReset(String newPassword, String confirmationCode) throws AuthException {
-        waiting = true;
+        //waiting = true;
         Amplify.Auth.confirmResetPassword(newPassword, confirmationCode, this::passwordResetSuccess, this::setAuthError);
         throwIfAuthError();
     }
