@@ -34,17 +34,6 @@ public class ItemEntry {
         this.listID = listID;
     }
 
-    @Override
-    public String toString() {
-        return "ItemEntry{" +
-                "listID=" + listID +
-                ", productID=" + productID +
-                ", quantity=" + quantity +
-                ", addedDate=" + addedDate +
-                ", purchased=" + purchased +
-                '}';
-    }
-
     public Integer getProductID() {
         return productID;
     }
