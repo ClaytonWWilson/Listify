@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.listify.R;
 import static com.example.listify.MainActivity.am;
@@ -38,6 +39,8 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
+                    TextView invalidCred = findViewById(R.id.textView6);
+                    invalidCred.setText("Password criteria not met. Please try again.");
                 }
                 openDialog();
             }

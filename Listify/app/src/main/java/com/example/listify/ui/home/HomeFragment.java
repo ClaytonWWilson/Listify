@@ -44,10 +44,10 @@ public class HomeFragment extends Fragment {
         toListPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
-                startActivity(intent);
+                //Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
+                //startActivity(intent);
 
-                /*try {
+                try {
                     Properties configs = new Properties();
                     try {
                         configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
-                }*/
+                }
             }
         });
 
