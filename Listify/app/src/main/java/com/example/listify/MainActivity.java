@@ -36,14 +36,14 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splashscreen);
+        /*setContentView(R.layout.activity_splashscreen);
         try {
             Thread.sleep(3000);
         }
         catch (Exception e) {
             Log.i("Authentication", e.toString());
         }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);*/
 
 
         //------------------------------Auth Testing---------------------------------------------//
