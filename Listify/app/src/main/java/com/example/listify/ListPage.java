@@ -67,7 +67,7 @@ public class ListPage extends AppCompatActivity {
         try {
             list = lr.await();
         }
-        catch(Exception e) {
+        catch (Exception e) {
             list = null;
         }
 
@@ -79,7 +79,8 @@ public class ListPage extends AppCompatActivity {
                 Item item;
                 try {
                     item = pr.await();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     item = null;
                 }
                 if(item != null) {

@@ -94,7 +94,9 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                 requestor.postObject(testList, idReceiver, idReceiver);
                 System.out.println(idReceiver.await());
                 requestor.postObject(entry);
-            } catch (Exception e) {
+            } 
+            catch (Exception e) {
+                Log.i("Authentication", e.toString());
                 e.printStackTrace();
             }
 
