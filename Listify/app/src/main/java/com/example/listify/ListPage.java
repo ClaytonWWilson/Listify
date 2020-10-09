@@ -3,6 +3,7 @@ package com.example.listify;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,8 +155,17 @@ public class ListPage extends AppCompatActivity {
             decrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int q = Integer.parseInt(pQuantity.get(position)) - 1;
-                    pQuantity.set(position, Integer.toString(q));
+                    //int q = Integer.parseInt(pQuantity.get(position)) - 1;
+                    //pQuantity.set(position, Integer.toString(q));
+                    ListEntry le = pListItemPair.remove(position);
+                    le.setQuantity(le.getQuantity() - 1);
+                    requestor.deleteObject(le);
+                    try {
+                        requestor.postObject(le);
+                    }
+                    catch (Exception e) {
+                        Log.i("Authentication", e.toString());
+                    }
                     listView.setAdapter(myAdapter);
                 }
             });
@@ -166,8 +176,17 @@ public class ListPage extends AppCompatActivity {
             incrQuan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int q = Integer.parseInt(pQuantity.get(position)) + 1;
-                    pQuantity.set(position, Integer.toString(q));
+                    //int q = Integer.parseInt(pQuantity.get(position)) + 1;
+                    //pQuantity.set(position, Integer.toString(q));
+                    ListEntry le = pListItemPair.remove(position);
+                    le.setQuantity(le.getQuantity() + 1);
+                    requestor.deleteObject(le);
+                    try {
+                        requestor.postObject(le);
+                    }
+                    catch (Exception e) {
+                        Log.i("Authentication", e.toString());
+                    }
                     listView.setAdapter(myAdapter);
                 }
             });
@@ -215,7 +234,7 @@ public class ListPage extends AppCompatActivity {
                 int product = entry.getProductID();
                 ProductReceiver<Item> pr = new ProductReceiver<>();
                 requestor.getObject(Integer.toString(product), Item.class, pr);
-                pQuantity.add("1");
+                pQuantity.add(entry.getQuantity().toString());
                 pListItemPair.add(entry);
             }
         }
