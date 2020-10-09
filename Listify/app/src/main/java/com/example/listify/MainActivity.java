@@ -33,24 +33,17 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
 
     public static AuthManager am = new AuthManager();
 
-    boolean showSplash = true;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(showSplash) {
-            showSplash = false;
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 1);
+        setContentView(R.layout.activity_splashscreen);
+        try {
+            Thread.sleep(3000);
         }
+        catch (Exception e) {
+            Log.i("Authentication", e.toString());
+        }
+        setContentView(R.layout.activity_main);
 
 
         //------------------------------Auth Testing---------------------------------------------//
