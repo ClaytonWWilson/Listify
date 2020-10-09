@@ -32,7 +32,7 @@
     <string name="menu_lists">My Lists</string>
     <string name="title_activity_item_details">ItemDetails</string>
     <string name="add_to_list">Add to list</string>
-    <string name="create_new_list">Create new list</string>
+    <string name="create_new_list">Add to new list</string>
     <string name="default_product_name">Product Name</string>
     <string name="default_store">Store</string>
     <string name="default__00_00">$00.00</string>

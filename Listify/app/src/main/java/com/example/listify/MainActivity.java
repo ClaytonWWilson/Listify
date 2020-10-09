@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -20,7 +21,6 @@ import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.google.android.material.navigation.NavigationView;
 import org.json.JSONException;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
@@ -182,6 +182,24 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
 
     @Override
     public void sendNewListName(String name) {
-        
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+
+        try {
+            requestor.postObject(newList, idReceiver, idReceiver);
+            System.out.println(idReceiver.await());
+            Toast.makeText(this, String.format("%s created", name), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }
