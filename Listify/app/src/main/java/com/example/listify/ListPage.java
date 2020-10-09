@@ -38,11 +38,13 @@ public class ListPage extends AppCompatActivity {
     Button decrQuan;
     Button removeItem;
 
-    ArrayList<String> pNames = new ArrayList<>(); //String[] pNames = {"Half-gallon organic whole milk"};
-    ArrayList<String> pStores = new ArrayList<>(); //String[] pStores = {"Kroger"};
-    ArrayList<String> pPrices = new ArrayList<>(); //String[] pPrices = {"$5.00"};
-    ArrayList<String> pQuantity = new ArrayList<>(); //String[] pQuantity = {"1"};
-    ArrayList<Integer> pImages = new ArrayList<>(); //int[] pImages = {R.drawable.milk};
+    ArrayList<String> pNames = new ArrayList<>();
+    ArrayList<String> pStores = new ArrayList<>();
+    ArrayList<String> pPrices = new ArrayList<>();
+    ArrayList<String> pQuantity = new ArrayList<>();
+    ArrayList<Integer> pImages = new ArrayList<>();
+
+    ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
     Requestor requestor;
 
@@ -93,7 +95,7 @@ public class ListPage extends AppCompatActivity {
             }
         }
 
-        pNames.add("Half-gallon organic whole milk");
+        /*pNames.add("Half-gallon organic whole milk");
         pStores.add("Kroger");
         pPrices.add("$5.00");
         pQuantity.add("1");
@@ -109,7 +111,7 @@ public class ListPage extends AppCompatActivity {
         pStores.add("Kroger");
         pPrices.add("$7.00");
         pQuantity.add("1");
-        pImages.add(R.drawable.peanutbutter);
+        pImages.add(R.drawable.peanutbutter);*/
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
@@ -122,11 +124,11 @@ public class ListPage extends AppCompatActivity {
 
     class MyAdapter extends ArrayAdapter<String> {
         Context context;
-        ArrayList<String> pNames; //String[] pNames;
-        ArrayList<String> pStores; //String[] pStores;
-        ArrayList<String> pPrices; //String[] pPrices;
-        ArrayList<String> pQuantity; //String[] pQuantity;
-        ArrayList<Integer> pImages; //int[] pImages;
+        ArrayList<String> pNames;
+        ArrayList<String> pStores;
+        ArrayList<String> pPrices;
+        ArrayList<String> pQuantity;
+        ArrayList<Integer> pImages;
 
         MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<Integer> images) {
             super(c, R.layout.listproduct, R.id.productView, names);
@@ -186,6 +188,9 @@ public class ListPage extends AppCompatActivity {
                     pPrices.remove(position);
                     pQuantity.remove(position);
                     pImages.remove(position);
+
+                    //requestor.deleteObject("39", ListEntry.class);
+
                     listView.setAdapter(myAdapter);
                 }
             });
@@ -216,6 +221,7 @@ public class ListPage extends AppCompatActivity {
                 ProductReceiver<Item> pr = new ProductReceiver<>();
                 requestor.getObject(Integer.toString(product), Item.class, pr);
                 pQuantity.add("1");
+                pListItemPair.add(entry);
             }
         }
     }
