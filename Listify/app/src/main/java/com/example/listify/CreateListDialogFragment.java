@@ -29,6 +29,7 @@ public class CreateListDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
         // Get the layout inflater
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -59,7 +60,7 @@ public class CreateListDialogFragment extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            onNewListListener = (OnNewListListener) getActivity();
+            onNewListListener = (OnNewListListener) getTargetFragment();
         } catch (ClassCastException e) {
             Log.e("CreateListDialogFragment", "onAttach: ClassCastException: " + e.getMessage());
         }

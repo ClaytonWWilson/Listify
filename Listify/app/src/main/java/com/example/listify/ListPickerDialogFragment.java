@@ -74,11 +74,11 @@ public class ListPickerDialogFragment extends DialogFragment {
         userListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (int i = 0; i < parent.getChildCount(); i++) {
-                    parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-                }
+//                for (int i = 0; i < parent.getChildCount(); i++) {
+//                    parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+//                }
 
-                parent.getChildAt(position).setBackgroundColor(Color.GREEN);
+//                parent.getChildAt(position).setBackgroundColor(Color.GREEN);
 //                view.setBackgroundColor(Color.GREEN);
                 selectedListIndex = position;
             }

@@ -36,6 +36,7 @@ import static com.example.listify.MainActivity.am;
 
 public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
     ArrayList<List> shoppingLists = new ArrayList<>();
+    DisplayShoppingListsAdapter displayShoppingListsAdapter;
     ListView shoppingListsView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
 
         // Set adapter and display this users lists
-        DisplayShoppingListsAdapter displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
+        displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
         shoppingListsView.setAdapter(displayShoppingListsAdapter);
         shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -81,11 +82,13 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         });
 
         FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
+        Fragment thisFragment = this;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
-                createListDialogFragment.show(getActivity().getSupportFragmentManager(), "Create New List");
+                createListDialogFragment.show(getFragmentManager(), "Create New List");
+                createListDialogFragment.setTargetFragment(thisFragment, 0);
             }
         });
 
@@ -108,7 +111,9 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);
-            System.out.println(idReceiver.await());
+            newList.setItemID(idReceiver.await());
+            shoppingLists.add(newList);
+            displayShoppingListsAdapter.notifyDataSetChanged();
             Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
