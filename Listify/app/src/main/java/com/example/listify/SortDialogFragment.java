@@ -10,9 +10,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 
@@ -135,6 +144,31 @@ public class SortDialogFragment extends DialogFragment {
         if (sortDropdown.getSelectedItemPosition() == 0) {
             sortDirectionButton.setEnabled(false);
         }
+
+        // Set up the seekbar for price
+        final CrystalRangeSeekbar priceSeekbar = (CrystalRangeSeekbar) root.findViewById(R.id.price_range_seekbar);
+        final TextView tvMin = (TextView) root.findViewById(R.id.tv_min_price);
+        final TextView tvMax = (TextView) root.findViewById(R.id.tv_max_price);
+
+        priceSeekbar.setMaxValue(367);
+
+        // Update price display
+        priceSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                tvMin.setText(String.format("$%.2f", minValue.doubleValue()));
+                tvMax.setText(String.format("$%.2f", maxValue.doubleValue()));
+            }
+        });
+
+        // Save price values when user finishes moving the slider
+        priceSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number minValue, Number maxValue) {
+                System.out.println(String.format("Min: $%.2f, Max: $%.2f", minValue.doubleValue(), maxValue.doubleValue()));
+            }
+        });
+
 
         return builder.create();
     }
