@@ -92,3 +92,4 @@ Lambdas/Lists/target/surefire-reports/TestInputUtils.txt
 Lambdas/Lists/target/surefire-reports/TEST-TestInputUtils.xml
 Lambdas/Scraping/scraperConfigs.json
 Lambdas/Scraping/dbConfigs.json
+Lambdas/Scraping/artifacts/*
