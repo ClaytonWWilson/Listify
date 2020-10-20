@@ -22,7 +22,7 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener {
+public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener, Requestor.Receiver {
     private ListView listView;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
@@ -148,32 +148,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         }
 
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
-
-        SynchronousReceiver<ItemSearch> itemReceiver = new SynchronousReceiver<>();
-        requestor.getObject(query, ItemSearch.class, itemReceiver, itemReceiver);
-        ItemSearch results;
-        try {
-            results = itemReceiver.await();
-            for (int i = 0; i < results.getResults().size(); i++) {
-                // TODO: Change to dynamically grab chain name by id
-                resultsProductList.add(new Product(results.getResults().get(i).getDescription(), results.getResults().get(i).getProductID(), "Kroger", results.getResults().get(i).getChainID(), results.getResults().get(i).getUpc(), results.getResults().get(i).getDescription(), results.getResults().get(i).getPrice(), results.getResults().get(i).getImageURL(), results.getResults().get(i).getDepartment()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Create a list of all stores in the results so the user can filter by store name
-        for (int i = 0; i < resultsProductList.size(); i++) {
-            if (!stores.contains(resultsProductList.get(i).getChainName())) {
-                stores.add(resultsProductList.get(i).getChainName());
-            }
-        }
-
-        // Add all results to the sorted list
-        resultsProductListSorted.addAll(resultsProductList);
-
-        // Apply selected sorting to the list
-        sortResults();
+        requestor.getObject(query, ItemSearch.class, this);
     }
 
     // Sorts the search results
@@ -258,6 +233,52 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             resultsProductListSorted.addAll(temp);
         }
 
-        searchResultsListAdapter.notifyDataSetChanged();
+        // Updates the list of search results. Runs on the main UI thread since other threads are
+        // not allowed to change UI elements
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                searchResultsListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    // This is called after the search results come back from the server
+    // TODO: Display a "no results" message if nothing is found when searching
+    @Override
+    public void acceptDelivery(Object delivered) {
+        ItemSearch results = (ItemSearch) delivered;
+
+        try {
+            for (int i = 0; i < results.getResults().size(); i++) {
+                // TODO: Change to dynamically grab chain name by id
+                resultsProductList.add(new Product(
+                        results.getResults().get(i).getDescription(),
+                        results.getResults().get(i).getProductID(),
+                        "Kroger",
+                        results.getResults().get(i).getChainID(),
+                        results.getResults().get(i).getUpc(),
+                        results.getResults().get(i).getDescription(),
+                        results.getResults().get(i).getPrice(),
+                        results.getResults().get(i).getImageURL(),
+                        results.getResults().get(i).getDepartment()
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Create a list of all stores in the results so the user can filter by store name
+        for (int i = 0; i < resultsProductList.size(); i++) {
+            if (!stores.contains(resultsProductList.get(i).getChainName())) {
+                stores.add(resultsProductList.get(i).getChainName());
+            }
+        }
+
+        // Add all results to the sorted list
+        resultsProductListSorted.addAll(resultsProductList);
+
+        // Apply selected sorting to the list
+        sortResults();
     }
 }
