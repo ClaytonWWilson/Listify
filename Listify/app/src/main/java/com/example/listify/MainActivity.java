@@ -21,6 +21,7 @@ import com.example.listify.data.Item;
 import com.example.listify.data.ItemSearch;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
+import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
 import static com.example.listify.SplashActivity.showSplash;
 
@@ -50,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                     finish();
                 }
             }, 1);
+        }
+
+        if(am.getEmail() == null) {
+            Intent intent = new Intent(MainActivity.this, LoginPage.class);
+            startActivity(intent);
         }
 
 

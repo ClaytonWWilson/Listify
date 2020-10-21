@@ -60,6 +60,10 @@ public class AuthManager {
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getPassword() {
         return password;
     }

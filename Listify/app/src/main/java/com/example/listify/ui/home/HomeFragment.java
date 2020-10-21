@@ -68,6 +68,9 @@ public class HomeFragment extends Fragment {
                                 }
                                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                                 am.deleteUser(requestor);
+
+                                Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
+                                startActivity(intent);
                             }
                             catch (Exception e) {
                                 Log.i("Authentication", e.toString());

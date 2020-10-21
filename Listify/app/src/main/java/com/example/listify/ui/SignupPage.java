@@ -76,7 +76,7 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
         if(!cancel) {
             try {
                 am.confirmSignUp(code);
-                Intent intent = new Intent(SignupPage.this, MainActivity.class);
+                Intent intent = new Intent(SignupPage.this, LoginPage.class);
                 startActivity(intent);
             }
             catch (Exception e) {
