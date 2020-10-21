@@ -48,7 +48,11 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
+                    TextView invalidCred = findViewById(R.id.textView6);
+                    invalidCred.setText("Password criteria not met. Please try again.");
+                    return;
                 }
+
                 openDialog();
             }
         });
@@ -64,15 +68,12 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
         if(!cancel) {
             try {
                 am.confirmPasswordReset(newPassword, code);
+                Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
+                startActivity(intent);
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());
-                TextView invalidCred = findViewById(R.id.textView6);
-                invalidCred.setText("Password criteria not met. Please try again.");
             }
         }
-
-        Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
-        startActivity(intent);
     }
 }

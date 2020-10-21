@@ -28,7 +28,6 @@ public class AuthManager {
     String password = null;
     volatile boolean waiting = false;
 
-
     void fetchAuthSession() throws AuthException {
         waiting = true;
         Amplify.Auth.fetchAuthSession(
@@ -60,7 +59,6 @@ public class AuthManager {
         }
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
-
 
     public void setAuthSession(AuthSession toSet) {
         authSession = (AWSCognitoAuthSession) toSet;
