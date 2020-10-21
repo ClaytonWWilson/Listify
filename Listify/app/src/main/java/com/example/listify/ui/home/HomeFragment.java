@@ -26,7 +26,7 @@ import java.util.Properties;
 
 public class HomeFragment extends Fragment {
     private Button toLoginPage;
-    private Button toListPage;
+    private Button toDeleteAccountPage;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -40,13 +40,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        toListPage = (Button) root.findViewById(R.id.button2);
-        toListPage.setOnClickListener(new View.OnClickListener() {
+        toDeleteAccountPage = (Button) root.findViewById(R.id.button2);
+        toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
-                //startActivity(intent);
-
                 try {
                     Properties configs = new Properties();
                     try {

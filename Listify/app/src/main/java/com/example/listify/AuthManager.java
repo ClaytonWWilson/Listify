@@ -117,7 +117,6 @@ public class AuthManager {
             error -> setAuthError(error)
         );
         throwIfAuthError();
-
     }
 
     public void confirmSignUp(String confirmationCode) throws AuthException {
