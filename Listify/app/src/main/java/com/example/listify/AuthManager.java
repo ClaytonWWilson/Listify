@@ -60,6 +60,10 @@ public class AuthManager {
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setAuthSession(AuthSession toSet) {
         authSession = (AWSCognitoAuthSession) toSet;
         waiting = false;
