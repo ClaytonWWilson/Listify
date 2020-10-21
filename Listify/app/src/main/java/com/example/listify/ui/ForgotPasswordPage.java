@@ -18,6 +18,7 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
 
     String email;
     String newPassword;
+    String confirmNewPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +29,19 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText emailText = (EditText) findViewById(R.id.editTextTextEmailAddress2);
-                EditText newPasswordText = (EditText) findViewById(R.id.editTextTextPassword2);
+                EditText emailText = (EditText) findViewById(R.id.editTextTextEmailAddress);
+                EditText newPasswordText = (EditText) findViewById(R.id.editTextTextPassword);
+                EditText confirmNewPasswordText = (EditText) findViewById(R.id.editTextTextPassword2);
 
                 email = emailText.getText().toString();
                 newPassword = newPasswordText.getText().toString();
+                confirmNewPassword = confirmNewPasswordText.getText().toString();
+
+                if(!newPassword.equals(confirmNewPassword)) {
+                    TextView invalidCred = findViewById(R.id.textView6);
+                    invalidCred.setText("\"Confirm New Password\" does not match \"New Password\".");
+                    return;
+                }
 
                 try {
                     am.changePassword(email);
@@ -41,7 +50,9 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
                     Log.i("Authentication", e.toString());
                     TextView invalidCred = findViewById(R.id.textView6);
                     invalidCred.setText("Password criteria not met. Please try again.");
+                    return;
                 }
+
                 openDialog();
             }
         });
@@ -57,13 +68,12 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
         if(!cancel) {
             try {
                 am.confirmPasswordReset(newPassword, code);
+                Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
+                startActivity(intent);
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());
             }
         }
-
-        Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
-        startActivity(intent);
     }
 }

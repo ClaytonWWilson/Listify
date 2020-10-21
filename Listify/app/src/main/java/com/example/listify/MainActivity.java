@@ -2,6 +2,7 @@ package com.example.listify;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,12 +15,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.Item;
 import com.example.listify.data.ItemSearch;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.google.android.material.navigation.NavigationView;
+import static com.example.listify.SplashActivity.showSplash;
+
 import org.json.JSONException;
 import java.io.IOException;
 import java.time.Instant;
@@ -29,12 +33,24 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
-
     public static AuthManager am = new AuthManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(showSplash) {
+            showSplash = false;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 1);
+        }
 
 
         //------------------------------Auth Testing---------------------------------------------//

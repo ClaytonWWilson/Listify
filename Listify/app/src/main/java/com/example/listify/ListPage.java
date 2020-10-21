@@ -123,7 +123,7 @@ public class ListPage extends AppCompatActivity {
         ArrayList<Integer> pImages;
 
         MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<Integer> images) {
-            super(c, R.layout.listproduct, R.id.productView, names);
+            super(c, R.layout.activity_listproductentry, R.id.productView, names);
             context = c;
             pNames = names;
             pStores = stores;
@@ -136,7 +136,7 @@ public class ListPage extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View listproduct = layoutInflater.inflate(R.layout.listproduct, parent,false);
+            View listproduct = layoutInflater.inflate(R.layout.activity_listproductentry, parent,false);
 
             decrQuan = (Button) listproduct.findViewById(R.id.buttonDecr);
             incrQuan = (Button) listproduct.findViewById(R.id.buttonIncr);
