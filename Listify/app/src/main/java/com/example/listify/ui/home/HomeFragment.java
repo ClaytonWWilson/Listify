@@ -39,6 +39,12 @@ public class HomeFragment extends Fragment {
         toLoginPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    am.signOutUser();
+                }
+                catch (Exception e) {
+                    Log.i("Authentication", e.toString());
+                }
                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                 startActivity(intent);
             }
@@ -68,7 +74,6 @@ public class HomeFragment extends Fragment {
                                 }
                                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                                 am.deleteUser(requestor);
-
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                                 startActivity(intent);
                             }
