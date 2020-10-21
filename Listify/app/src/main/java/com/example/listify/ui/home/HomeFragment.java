@@ -29,28 +29,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class HomeFragment extends Fragment {
-    private Button toLoginPage;
     private Button toDeleteAccountPage;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        toLoginPage = (Button) root.findViewById(R.id.button1);
-        toLoginPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    am.signOutUser();
-                }
-                catch (Exception e) {
-                    Log.i("Authentication", e.toString());
-                }
-                Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
-                startActivity(intent);
-            }
-        });
-
-        toDeleteAccountPage = (Button) root.findViewById(R.id.button2);
+        toDeleteAccountPage = (Button) root.findViewById(R.id.button);
         toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
