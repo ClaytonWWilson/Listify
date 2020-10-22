@@ -21,13 +21,14 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListPage extends AppCompatActivity {
+public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     ListView listView;
     MyAdapter myAdapter;
 
     Button incrQuan;
     Button decrQuan;
     Button removeItem;
+    ProgressBar loadingListItems;
 
     ArrayList<String> pNames = new ArrayList<>();
     ArrayList<String> pStores = new ArrayList<>();
@@ -39,10 +40,22 @@ public class ListPage extends AppCompatActivity {
 
     Requestor requestor;
 
+    // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Read list ID from caller
         final int listID = (int) getIntent().getSerializableExtra("listID");
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
+
+        listView = findViewById(R.id.listView);
+        myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
+
+        listView.setAdapter(myAdapter);
+
+        loadingListItems = findViewById(R.id.progress_loading_list_items);
+        loadingListItems.setVisibility(View.VISIBLE);
 
         Properties configs = new Properties();
         try {
@@ -51,18 +64,31 @@ public class ListPage extends AppCompatActivity {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        SynchronousReceiver<List> lr = new SynchronousReceiver<>();
         //ListReceiver<List> lr = new ListReceiver<>();
-        requestor.getObject(Integer.toString(listID), List.class, lr);
+        requestor.getObject(Integer.toString(listID), List.class, this);
 
-        List list;
+        /*pNames.add("Half-gallon organic whole milk");
+        pStores.add("Kroger");
+        pPrices.add("$5.00");
+        pQuantity.add("1");
+        pImages.add(R.drawable.milk);
 
-        try {
-            list = lr.await();
-        }
-        catch (Exception e) {
-            list = null;
-        }
+        pNames.add("5-bunch medium bananas");
+        pStores.add("Kroger");
+        pPrices.add("$3.00");
+        pQuantity.add("1");
+        pImages.add(R.drawable.bananas);
+
+        pNames.add("JIF 40-oz creamy peanut butter");
+        pStores.add("Kroger");
+        pPrices.add("$7.00");
+        pQuantity.add("1");
+        pImages.add(R.drawable.peanutbutter);*/
+    }
+
+    @Override
+    public void acceptDelivery(Object delivered) {
+        List list = (List) delivered;
 
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
@@ -87,31 +113,13 @@ public class ListPage extends AppCompatActivity {
             }
         }
 
-        /*pNames.add("Half-gallon organic whole milk");
-        pStores.add("Kroger");
-        pPrices.add("$5.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.milk);
-
-        pNames.add("5-bunch medium bananas");
-        pStores.add("Kroger");
-        pPrices.add("$3.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.bananas);
-
-        pNames.add("JIF 40-oz creamy peanut butter");
-        pStores.add("Kroger");
-        pPrices.add("$7.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.peanutbutter);*/
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-
-        listView = findViewById(R.id.listView);
-        myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
-
-        listView.setAdapter(myAdapter);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingListItems.setVisibility(View.GONE);
+                myAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     class MyAdapter extends ArrayAdapter<String> {
