@@ -60,6 +60,10 @@ public class AuthManager {
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -152,6 +156,8 @@ public class AuthManager {
 
     public void signOutUser() throws AuthException {
         authSession = null;
+        email = null;
+        password = null;
         waiting = true;
         Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
         throwIfAuthError();

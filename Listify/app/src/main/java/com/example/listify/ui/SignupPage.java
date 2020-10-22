@@ -19,10 +19,19 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
     private Button button1; //Log in page button
     private Button button2; //Sign up button
 
+    String email;
+    String password;
+    String confirmPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        if(am.getEmail() != null) {
+            Intent intent = new Intent(SignupPage.this, MainActivity.class);
+            startActivity(intent);
+        }
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -41,9 +50,9 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
                 EditText passwordText = (EditText) findViewById(R.id.editTextTextPassword);
                 EditText confirmPasswordText = (EditText) findViewById(R.id.editTextTextPassword2);
 
-                String email = emailText.getText().toString();
-                String password = passwordText.getText().toString();
-                String confirmPassword = confirmPasswordText.getText().toString();
+                email = emailText.getText().toString();
+                password = passwordText.getText().toString();
+                confirmPassword = confirmPasswordText.getText().toString();
 
                 if(!password.equals(confirmPassword)) {
                     TextView invalidCred = findViewById(R.id.textView3);
@@ -76,8 +85,10 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
         if(!cancel) {
             try {
                 am.confirmSignUp(code);
+                am.signIn(email, password);
                 Intent intent = new Intent(SignupPage.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());
