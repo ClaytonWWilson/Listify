@@ -32,7 +32,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
     private int storeSelection;
     private int sortMode;
     private boolean descending;
-    boolean doneLoading = false;
 
     @Override
     public void sendSort(int storeSelection, int sortMode, boolean descending) {
@@ -102,6 +101,14 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             public boolean onQueryTextSubmit(String query) {
                 // Show progress bar
                 loadingSearch.setVisibility(View.VISIBLE);
+
+                // Clear the old search results
+                resultsProductList.clear();
+
+                // Clear old search results from the view
+                resultsProductListSorted.clear();
+                searchResultsListAdapter.notifyDataSetChanged();
+
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -144,13 +151,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
     }
 
     private void doSearch(String query) {
-        // Clear the old search results
-        resultsProductList.clear();
-
-        // Clear old search results from the view
-        resultsProductListSorted.clear();
-        searchResultsListAdapter.notifyDataSetChanged();
-
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -242,21 +242,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             resultsProductListSorted.clear();
             resultsProductListSorted.addAll(temp);
         }
-
-        // Updates the list of search results. Runs on the main UI thread since other threads are
-        // not allowed to change UI elements
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (doneLoading) {
-                    doneLoading = false;
-                    searchResultsListAdapter.notifyDataSetChanged();
-
-                    // Hide progress bar
-                    loadingSearch.setVisibility(View.GONE);
-                }
-            }
-        });
     }
 
     // This is called after the search results come back from the server
@@ -297,6 +282,17 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         // Apply selected sorting to the list
         sortResults();
 
-        doneLoading = true;
+        // Updates the list of search results. Runs on the main UI thread since other threads are
+        // not allowed to change UI elements
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                searchResultsListAdapter.notifyDataSetChanged();
+
+                // Hide progress bar
+                loadingSearch.setVisibility(View.GONE);
+
+            }
+        });
     }
 }
