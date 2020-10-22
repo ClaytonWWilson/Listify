@@ -164,7 +164,7 @@ public class AuthManager {
     }
 
     public void changePassword(String email) throws AuthException {
-        this.email = email;
+        //this.email = email;
         //waiting = true;
         Amplify.Auth.resetPassword(email, result -> setAuthResetPasswordResult(result), error -> setAuthError(error));
         throwIfAuthError();

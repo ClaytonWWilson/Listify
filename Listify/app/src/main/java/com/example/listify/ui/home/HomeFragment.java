@@ -74,7 +74,6 @@ public class HomeFragment extends Fragment {
                         return;
                     }
                 });
-
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
