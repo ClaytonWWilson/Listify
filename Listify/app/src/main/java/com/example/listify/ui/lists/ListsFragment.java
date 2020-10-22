@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.AuthManager;
@@ -34,16 +36,19 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener {
+public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener, Requestor.Receiver {
     ArrayList<List> shoppingLists = new ArrayList<>();
     DisplayShoppingListsAdapter displayShoppingListsAdapter;
+    Requestor requestor;
     ListView shoppingListsView;
+    ProgressBar loadingLists;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_lists, container, false);
         shoppingListsView = root.findViewById(R.id.shopping_lists);
+        loadingLists = (ProgressBar) root.findViewById(R.id.progress_loading_lists);
+        loadingLists.setVisibility(View.VISIBLE);
 
-        // TODO: Switch this to async
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
@@ -51,35 +56,18 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
             e.printStackTrace();
         }
 
-        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
-        SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
 
-        requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
-        try {
-            Integer[] listIds = listIdsReceiver.await();
-            for (int i = 0; i < listIds.length; i++) {
-                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-                shoppingLists.add(listReceiver.await());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        // Set adapter and display this users lists
-        displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
-        shoppingListsView.setAdapter(displayShoppingListsAdapter);
-        shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final Requestor.Receiver<Integer[]> recv = this;
+        Thread t = new Thread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent listPage = new Intent(getContext(), ListPage.class);
-
-                // Send the list ID
-                listPage.putExtra("listID", shoppingLists.get(position).getItemID());
-                startActivity(listPage);
+            public void run() {
+                requestor.getListOfIds(List.class, recv, null);
             }
         });
+        t.start();
+
 
         FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
         Fragment thisFragment = this;
@@ -119,5 +107,42 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
             Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void acceptDelivery(Object delivered) {
+        SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+        Integer[] listIds = (Integer[]) delivered;
+        try {
+//            Integer[] listIds = listIdsReceiver.await();
+            for (int i = 0; i < listIds.length; i++) {
+                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                shoppingLists.add(listReceiver.await());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Set adapter and display this users lists
+        displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                shoppingListsView.setAdapter(displayShoppingListsAdapter);
+                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent listPage = new Intent(getContext(), ListPage.class);
+
+                        // Send the list ID
+                        listPage.putExtra("listID", shoppingLists.get(position).getItemID());
+                        startActivity(listPage);
+                    }
+                });
+                loadingLists.setVisibility(View.GONE);
+            }
+        });
+
     }
 }
