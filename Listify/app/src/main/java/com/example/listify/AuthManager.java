@@ -156,6 +156,8 @@ public class AuthManager {
 
     public void signOutUser() throws AuthException {
         authSession = null;
+        email = null;
+        password = null;
         waiting = true;
         Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
         throwIfAuthError();

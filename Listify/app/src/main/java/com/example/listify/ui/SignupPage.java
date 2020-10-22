@@ -28,6 +28,11 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        if(am.getEmail() != null) {
+            Intent intent = new Intent(SignupPage.this, MainActivity.class);
+            startActivity(intent);
+        }
+
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +88,7 @@ public class SignupPage extends AppCompatActivity implements CodePage.CodeDialog
                 am.signIn(email, password);
                 Intent intent = new Intent(SignupPage.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());

@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment {
                                 am.deleteUser(requestor);
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                                 startActivity(intent);
+                                getActivity().finish();
                             }
                             catch (Exception e) {
                                 Log.i("Authentication", e.toString());

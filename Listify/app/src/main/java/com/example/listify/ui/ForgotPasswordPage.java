@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.listify.MainActivity;
 import com.example.listify.R;
 import static com.example.listify.MainActivity.am;
 
@@ -24,6 +25,11 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpswd);
+
+        if(am.getEmail() != null) {
+            Intent intent = new Intent(ForgotPasswordPage.this, MainActivity.class);
+            startActivity(intent);
+        }
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +76,7 @@ public class ForgotPasswordPage extends AppCompatActivity implements CodePage.Co
                 am.confirmPasswordReset(newPassword, code);
                 Intent intent = new Intent(ForgotPasswordPage.this, LoginPage.class);
                 startActivity(intent);
+                finish();
             }
             catch (Exception e) {
                 Log.i("Authentication", e.toString());

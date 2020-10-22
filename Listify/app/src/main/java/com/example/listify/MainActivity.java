@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                     am.signOutUser();
                     Intent intent = new Intent(MainActivity.this, com.example.listify.ui.LoginPage.class);
                     startActivity(intent);
+                    finish();
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
