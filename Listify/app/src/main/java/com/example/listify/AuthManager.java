@@ -28,7 +28,6 @@ public class AuthManager {
     String password = null;
     volatile boolean waiting = false;
 
-
     void fetchAuthSession() throws AuthException {
         waiting = true;
         Amplify.Auth.fetchAuthSession(
@@ -61,6 +60,13 @@ public class AuthManager {
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public void setAuthSession(AuthSession toSet) {
         authSession = (AWSCognitoAuthSession) toSet;
@@ -117,7 +123,6 @@ public class AuthManager {
             error -> setAuthError(error)
         );
         throwIfAuthError();
-
     }
 
     public void confirmSignUp(String confirmationCode) throws AuthException {
@@ -151,13 +156,15 @@ public class AuthManager {
 
     public void signOutUser() throws AuthException {
         authSession = null;
+        email = null;
+        password = null;
         waiting = true;
         Amplify.Auth.signOut(this::signOutSuccess, error -> setAuthError(error));
         throwIfAuthError();
     }
 
     public void changePassword(String email) throws AuthException {
-        this.email = email;
+        //this.email = email;
         //waiting = true;
         Amplify.Auth.resetPassword(email, result -> setAuthResetPasswordResult(result), error -> setAuthError(error));
         throwIfAuthError();
