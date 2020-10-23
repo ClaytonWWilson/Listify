@@ -1,5 +1,8 @@
 package com.example.listify;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import com.amplifyframework.auth.AuthException;
@@ -11,6 +14,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,6 +76,17 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             @Override
             public void onClick(View v) {
                 closeFABMenu();
+                // Create and show a loading dialog
+                Dialog loadingDialog = new Dialog(ItemDetails.this);
+                loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // layout to display
+                loadingDialog.setContentView(R.layout.dialog_loading);
+                // set color transpartent
+                loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                loadingDialog.setCancelable(false);
+                loadingDialog.setCanceledOnTouchOutside(false);
+                loadingDialog.show();
 
                 Properties configs = new Properties();
                 try {
@@ -82,20 +98,27 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                 SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
                 SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
-
                 requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
-                try {
-                    Integer[] listIds = listIdsReceiver.await();
-                    for (int i = 0; i < listIds.length; i++) {
-                        requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-                        shoppingLists.add(listReceiver.await());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);
-                listPickerDialog.show(getSupportFragmentManager(), "User Lists");
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Integer[] listIds = listIdsReceiver.await();
+                            for (int i = 0; i < listIds.length; i++) {
+                                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                                shoppingLists.add(listReceiver.await());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        loadingDialog.cancel();
+                        ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);
+                        listPickerDialog.show(getSupportFragmentManager(), "User Lists");
+                    }
+                });
+                t.start();
             }
         });
 
@@ -184,6 +207,17 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     // Create a new list and add the item to it
     @Override
     public void sendNewListName(String name, int quantity) {
+        // Create and show a loading dialog
+        Dialog loadingDialog = new Dialog(this);
+        loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // layout to display
+        loadingDialog.setContentView(R.layout.dialog_loading);
+        // set color transpartent
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        loadingDialog.setCancelable(false);
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.show();
 
         Properties configs = new Properties();
         try {
@@ -196,16 +230,34 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
         com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
 
-        try {
-            requestor.postObject(newList, idReceiver, idReceiver);
-            int newListId = idReceiver.await();
-            ListEntry entry = new ListEntry(newListId, curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
-            requestor.postObject(entry);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestor.postObject(newList, idReceiver, idReceiver);
+                    int newListId = idReceiver.await();
+                    ListEntry entry = new ListEntry(newListId, curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+                    requestor.postObject(entry);
 
-            Toast.makeText(this, String.format("%s created and item added", name), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ItemDetails.this, String.format("%s created and item added", name), Toast.LENGTH_LONG).show();
+                            loadingDialog.cancel();
+                        }
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ItemDetails.this, "An error occurred", Toast.LENGTH_LONG).show();
+                            loadingDialog.cancel();
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+        });
+        t.start();
     }
 }

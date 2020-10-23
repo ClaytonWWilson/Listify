@@ -1,10 +1,15 @@
 package com.example.listify.ui.lists;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -85,6 +90,17 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
     @Override
     public void sendNewListName(String name) {
+        // Create and show a loading dialog
+        Dialog loadingDialog = new Dialog(getActivity());
+        loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // layout to display
+        loadingDialog.setContentView(R.layout.dialog_loading);
+        // set color transpartent
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        loadingDialog.setCancelable(false);
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.show();
 
         Properties configs = new Properties();
         try {
@@ -99,14 +115,39 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);
-            newList.setItemID(idReceiver.await());
-            shoppingLists.add(newList);
-            displayShoppingListsAdapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    newList.setItemID(idReceiver.await());
+                } catch (Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
+                            loadingDialog.cancel();
+                        }
+                    });
+                    e.printStackTrace();
+
+                }
+                shoppingLists.add(newList);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayShoppingListsAdapter.notifyDataSetChanged();
+                        loadingDialog.cancel();
+                        Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        t.start();
     }
 
     @Override
