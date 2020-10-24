@@ -31,12 +31,18 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
     private int storeSelection;
     private int sortMode;
     private boolean descending;
+    private double minPrice = 0;
+    private double maxPrice = 0;
 
     @Override
-    public void sendSort(int storeSelection, int sortMode, boolean descending) {
+    public void sendSort(int storeSelection, int sortMode, boolean descending, double maxPrice, double minPrice) {
         this.storeSelection = storeSelection;
         this.sortMode = sortMode;
         this.descending = descending;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        System.out.println(minPrice);
+        System.out.println(maxPrice);
         sortResults();
     }
 
@@ -118,7 +124,27 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                         return o1.compareTo(o2);
                     }
                 });
-                SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending);
+
+                // Determine the max price for the price slider
+                double maxProductPrice;
+                if (resultsProductList.isEmpty()) {
+                    // default to $100
+                    maxProductPrice = 100.00;
+
+                    minPrice = 0;
+                    maxPrice = 100;
+                } else {
+                    maxProductPrice = resultsProductList.get(0).getPrice().doubleValue();
+                    for (int i = 1; i < resultsProductList.size(); i++) {
+                        if (resultsProductList.get(i).getPrice().doubleValue() > maxProductPrice) {
+                            maxProductPrice = resultsProductList.get(i).getPrice().doubleValue();
+                        }
+                    }
+                    if (maxPrice == 0) {
+                        maxPrice = maxProductPrice;
+                    }
+                }
+                SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
                 sortDialog.show(getSupportFragmentManager(), "Sort");
             }
         });
