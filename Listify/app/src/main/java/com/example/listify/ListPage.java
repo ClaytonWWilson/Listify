@@ -17,6 +17,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
@@ -37,6 +39,8 @@ public class ListPage extends AppCompatActivity {
 
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
+    Map<String, Integer> numItemsFromStore = new HashMap<>();
+
     Requestor requestor;
 
     @Override
@@ -52,7 +56,6 @@ public class ListPage extends AppCompatActivity {
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<List> lr = new SynchronousReceiver<>();
-        //ListReceiver<List> lr = new ListReceiver<>();
         requestor.getObject(Integer.toString(listID), List.class, lr);
 
         List list;
@@ -77,33 +80,44 @@ public class ListPage extends AppCompatActivity {
                     item = null;
                 }
                 if(item != null) {
-                    pNames.add(item.getDescription());
-                    pStores.add("Kroger");
-                    pPrices.add(item.getPrice().toString());
-                    pQuantity.add(entry.getQuantity().toString());
-                    pImages.add(R.drawable.placeholder);
-                    pListItemPair.add(entry);
+                    if(!numItemsFromStore.containsKey("Kroger") || numItemsFromStore.get("Kroger") == 0) {
+                        pNames.add("Kroger");
+                        pStores.add("");
+                        pPrices.add("$?.??");
+                        pQuantity.add("0");
+                        pImages.add(-1);
+                        pListItemPair.add(null);
+
+                        numItemsFromStore.put("Kroger", 1);
+
+                        pNames.add(item.getDescription());
+                        pStores.add("Kroger");
+                        pPrices.add(item.getPrice().toString());
+                        pQuantity.add(entry.getQuantity().toString());
+                        pImages.add(R.drawable.placeholder);
+                        pListItemPair.add(entry);
+                    }
+                    else {
+                        int index = 0;
+
+                        while(index < pNames.size() && pNames.get(index).equals("Kroger")) {
+                            index++;
+                        }
+
+                        index++;
+
+                        pNames.add(index, item.getDescription());
+                        pStores.add(index, "Kroger");
+                        pPrices.add(index, item.getPrice().toString());
+                        pQuantity.add(index, entry.getQuantity().toString());
+                        pImages.add(index, R.drawable.placeholder);
+                        pListItemPair.add(index, entry);
+
+                        numItemsFromStore.put("Kroger", numItemsFromStore.get("Kroger") + 1);
+                    }
                 }
             }
         }
-
-        /*pNames.add("Half-gallon organic whole milk");
-        pStores.add("Kroger");
-        pPrices.add("$5.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.milk);
-
-        pNames.add("5-bunch medium bananas");
-        pStores.add("Kroger");
-        pPrices.add("$3.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.bananas);
-
-        pNames.add("JIF 40-oz creamy peanut butter");
-        pStores.add("Kroger");
-        pPrices.add("$7.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.peanutbutter);*/
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
@@ -230,30 +244,6 @@ public class ListPage extends AppCompatActivity {
             }
 
             return listproduct;
-        }
-    }
-
-    class ListReceiver<T> implements Requestor.Receiver<T> {
-        @Override
-        public void acceptDelivery(T delivered) {
-            for(ListEntry entry : ((List) delivered).getEntries()) {
-                int product = entry.getProductID();
-                ProductReceiver<Item> pr = new ProductReceiver<>();
-                requestor.getObject(Integer.toString(product), Item.class, pr);
-                pQuantity.add(entry.getQuantity().toString());
-                pListItemPair.add(entry);
-            }
-        }
-    }
-
-    class ProductReceiver<T> implements Requestor.Receiver<T> {
-        @Override
-        public void acceptDelivery(T delivered) {
-            Item i = (Item) delivered;
-            pNames.add(i.getDescription());
-            pStores.add("Kroger");
-            pPrices.add(i.getPrice().toString());
-            pImages.add(R.drawable.placeholder);
         }
     }
 }
