@@ -24,6 +24,7 @@ import com.example.listify.CreateListAddDialogFragment;
 import com.example.listify.CreateListDialogFragment;
 import com.example.listify.ItemDetails;
 import com.example.listify.ListPage;
+import com.example.listify.LoadingCircleDialog;
 import com.example.listify.R;
 import com.example.listify.Requestor;
 import com.example.listify.SearchResults;
@@ -90,16 +91,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
     @Override
     public void sendNewListName(String name) {
-        // Create and show a loading dialog
-        Dialog loadingDialog = new Dialog(getActivity());
-        loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // layout to display
-        loadingDialog.setContentView(R.layout.dialog_loading);
-        // set color transpartent
-        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loadingDialog.setCancelable(false);
-        loadingDialog.setCanceledOnTouchOutside(false);
+        LoadingCircleDialog loadingDialog = new LoadingCircleDialog(getActivity());
         loadingDialog.show();
 
         Properties configs = new Properties();

@@ -76,16 +76,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
             @Override
             public void onClick(View v) {
                 closeFABMenu();
-                // Create and show a loading dialog
-                Dialog loadingDialog = new Dialog(ItemDetails.this);
-                loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-                loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                // layout to display
-                loadingDialog.setContentView(R.layout.dialog_loading);
-                // set color transpartent
-                loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                loadingDialog.setCancelable(false);
-                loadingDialog.setCanceledOnTouchOutside(false);
+                LoadingCircleDialog loadingDialog = new LoadingCircleDialog(ItemDetails.this);
                 loadingDialog.show();
 
                 Properties configs = new Properties();
@@ -180,7 +171,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     }
 
 
-    // Add the viewed item to the selected list
+    // Add the selected item to the selected list
     @Override
     public void sendListSelection(int selectedListIndex, int quantity) {
 
@@ -207,16 +198,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
     // Create a new list and add the item to it
     @Override
     public void sendNewListName(String name, int quantity) {
-        // Create and show a loading dialog
-        Dialog loadingDialog = new Dialog(this);
-        loadingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        loadingDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // layout to display
-        loadingDialog.setContentView(R.layout.dialog_loading);
-        // set color transpartent
-        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loadingDialog.setCancelable(false);
-        loadingDialog.setCanceledOnTouchOutside(false);
+        LoadingCircleDialog loadingDialog = new LoadingCircleDialog(this);
         loadingDialog.show();
 
         Properties configs = new Properties();
