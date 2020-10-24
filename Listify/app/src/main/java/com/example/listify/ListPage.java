@@ -40,6 +40,7 @@ public class ListPage extends AppCompatActivity {
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
     Map<String, Double> totalPriceByStore = new HashMap<>();
+    Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
     Requestor requestor;
 
@@ -82,10 +83,11 @@ public class ListPage extends AppCompatActivity {
                 if(item != null) {
                     if(!totalPriceByStore.containsKey("Kroger")) {
                         totalPriceByStore.put("Kroger", item.getPrice().doubleValue() * entry.getQuantity());
+                        storeHeaderIndex.put("Kroger", pNames.size());
 
                         pNames.add("Kroger");
                         pStores.add("");
-                        pPrices.add("$" + totalPriceByStore.get("Kroger"));
+                        pPrices.add(totalPriceByStore.get("Kroger").toString());
                         pQuantity.add("-1");
                         pImages.add(-1);
                         pListItemPair.add(null);
@@ -105,7 +107,7 @@ public class ListPage extends AppCompatActivity {
                         }
 
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
-                        pPrices.set(index, "$" + totalPriceByStore.get("Kroger"));
+                        pPrices.set(index, totalPriceByStore.get("Kroger").toString());
 
                         index++;
 
@@ -115,6 +117,12 @@ public class ListPage extends AppCompatActivity {
                         pQuantity.add(index, entry.getQuantity().toString());
                         pImages.add(index, R.drawable.placeholder);
                         pListItemPair.add(index, entry);
+
+                        for(String store : storeHeaderIndex.keySet()) {
+                            if(storeHeaderIndex.get(store) > index) {
+                                storeHeaderIndex.put(store, storeHeaderIndex.get(store) + 1);
+                            }
+                        }
                     }
                 }
             }
@@ -162,7 +170,8 @@ public class ListPage extends AppCompatActivity {
                 public void onClick(View v) {
                     int q = Integer.parseInt(pQuantity.get(position)) - 1;
                     pQuantity.set(position, Integer.toString(q));
-                    totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) - 1.0);
+                    totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) - Double.parseDouble(pPrices.get(position)));
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
@@ -192,7 +201,8 @@ public class ListPage extends AppCompatActivity {
                 public void onClick(View v) {
                     int q = Integer.parseInt(pQuantity.get(position)) + 1;
                     pQuantity.set(position, Integer.toString(q));
-                    totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) + 1.0);
+                    totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) + Double.parseDouble(pPrices.get(position)));
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
@@ -220,7 +230,8 @@ public class ListPage extends AppCompatActivity {
             removeItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (1.0 * Integer.parseInt(pQuantity.get(position))));
+                    totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
 
                     pNames.remove(position);
                     pStores.remove(position);
@@ -243,7 +254,7 @@ public class ListPage extends AppCompatActivity {
             if(!pNames.isEmpty()) {
                 name.setText(pNames.get(position));
                 store.setText(pStores.get(position));
-                price.setText(pPrices.get(position));
+                price.setText("$" + pPrices.get(position));
 
                 if(pQuantity.get(position).equals("-1")) {
                     quantity.setVisibility(View.INVISIBLE);
