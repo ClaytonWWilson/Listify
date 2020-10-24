@@ -11,7 +11,7 @@ public class ListGetter implements CallHandler{
     private final String cognitoID;
 
     private final String GET_LIST = "SELECT * FROM List WHERE listID = ?;";
-    private final String GET_LISTS = "SELECT listID FROM List WHERE owner = ?;";
+    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ?;";
     private final String GET_ENTRIES = "SELECT * FROM ListProduct WHERE listID = ?;";
 
     public ListGetter(Connection connection, String cognitoID) {
