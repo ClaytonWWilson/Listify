@@ -66,13 +66,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
 
         final Requestor.Receiver<Integer[]> recv = this;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                requestor.getListOfIds(List.class, recv, null);
-            }
-        });
-        t.start();
+        requestor.getListOfIds(List.class, recv, null);
 
 
         FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
@@ -144,16 +138,36 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
 
     @Override
     public void acceptDelivery(Object delivered) {
-        SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
         Integer[] listIds = (Integer[]) delivered;
-        try {
-//            Integer[] listIds = listIdsReceiver.await();
-            for (int i = 0; i < listIds.length; i++) {
-                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-                shoppingLists.add(listReceiver.await());
+        // Create threads and add them to a list
+        Thread[] threads = new Thread[listIds.length];
+        List[] results = new List[listIds.length];
+        for (int i = 0; i < listIds.length; i++) {
+            SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+            requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+            int finalI = i;
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        results[finalI] = listReceiver.await();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            threads[i] = t;
+            t.start();
+        }
+
+        // Wait for each thread to finish and add results to shoppingLists
+        for (int i = 0; i < threads.length; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            shoppingLists.add(results[i]);
         }
 
         // Set adapter and display this users lists

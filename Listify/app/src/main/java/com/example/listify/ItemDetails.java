@@ -88,21 +88,49 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
                 SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
-                SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
                 requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
 
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        Integer[] listIds = null;
                         try {
-                            Integer[] listIds = listIdsReceiver.await();
-                            for (int i = 0; i < listIds.length; i++) {
-                                requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-                                shoppingLists.add(listReceiver.await());
-                            }
+                            listIds = listIdsReceiver.await();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+                        // Create threads and add them to a list
+                        Thread[] threads = new Thread[listIds.length];
+                        List[] results = new List[listIds.length];
+                        for (int i = 0; i < listIds.length; i++) {
+                            SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+                            requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+                            int finalI = i;
+                            Thread l = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        results[finalI] = listReceiver.await();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                            threads[i] = l;
+                            l.start();
+                        }
+
+                        // Wait for each thread to finish and add results to shoppingLists
+                        for (int i = 0; i < threads.length; i++) {
+                            try {
+                                threads[i].join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            shoppingLists.add(results[i]);
+                        }
+
 
                         loadingDialog.cancel();
                         ListPickerDialogFragment listPickerDialog = new ListPickerDialogFragment(shoppingLists);

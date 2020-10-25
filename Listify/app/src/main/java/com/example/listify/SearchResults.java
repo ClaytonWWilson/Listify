@@ -108,14 +108,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 // Clear old search results from the view
                 resultsProductListSorted.clear();
                 searchResultsListAdapter.notifyDataSetChanged();
-
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        doSearch(query);
-                    }
-                });
-                t.start();
+                doSearch(query);
                 return false;
             }
 
