@@ -100,11 +100,7 @@ public class ListPage extends AppCompatActivity {
                         pListItemPair.add(entry);
                     }
                     else {
-                        int index = 0;
-
-                        while(index < pNames.size() && !pNames.get(index).equals("Kroger")) {
-                            index++;
-                        }
+                        int index = storeHeaderIndex.get("Kroger");
 
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
                         pPrices.set(index, totalPriceByStore.get("Kroger").toString());
