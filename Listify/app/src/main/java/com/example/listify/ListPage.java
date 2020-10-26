@@ -53,6 +53,13 @@ public class ListPage extends AppCompatActivity {
         // Read list ID from caller
         final int listID = (int) getIntent().getSerializableExtra("listID");
 
+        pNames.add("Total Price");
+        pStores.add("");
+        pPrices.add("0.00");
+        pQuantity.add("-1");
+        pImages.add("-1");
+        pListItemPair.add(null);
+
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -89,6 +96,9 @@ public class ListPage extends AppCompatActivity {
                         totalPriceByStore.put("Kroger", item.getPrice().doubleValue() * entry.getQuantity());
                         storeHeaderIndex.put("Kroger", pNames.size());
 
+                        double newTotal = Double.parseDouble(pPrices.get(0)) + (item.getPrice().doubleValue() * entry.getQuantity());
+                        pPrices.set(0, String.valueOf(newTotal));
+
                         pNames.add("Kroger");
                         pStores.add("");
                         pPrices.add(totalPriceByStore.get("Kroger").toString());
@@ -108,6 +118,9 @@ public class ListPage extends AppCompatActivity {
 
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
                         pPrices.set(index, totalPriceByStore.get("Kroger").toString());
+
+                        double newTotal = Double.parseDouble(pPrices.get(0)) + (item.getPrice().doubleValue() * entry.getQuantity());
+                        pPrices.set(0, String.valueOf(newTotal));
 
                         index++;
 
@@ -172,6 +185,8 @@ public class ListPage extends AppCompatActivity {
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) - Double.parseDouble(pPrices.get(position)));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                    double newTotal = Double.parseDouble(pPrices.get(0)) - Double.parseDouble(pPrices.get(position));
+                    pPrices.set(0, String.valueOf(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
@@ -203,6 +218,8 @@ public class ListPage extends AppCompatActivity {
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) + Double.parseDouble(pPrices.get(position)));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                    double newTotal = Double.parseDouble(pPrices.get(0)) + Double.parseDouble(pPrices.get(position));
+                    pPrices.set(0, String.valueOf(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
@@ -232,6 +249,9 @@ public class ListPage extends AppCompatActivity {
                 public void onClick(View v) {
                     totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+
+                    double newTotal = Double.parseDouble(pPrices.get(0)) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position)));
+                    pPrices.set(0, String.valueOf(newTotal));
 
                     pNames.remove(position);
                     pStores.remove(position);
