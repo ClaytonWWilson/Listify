@@ -18,6 +18,7 @@ import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ import static com.example.listify.MainActivity.am;
 public class ListPage extends AppCompatActivity {
     ListView listView;
     MyAdapter myAdapter;
+    Requestor requestor;
 
     Button incrQuan;
     Button decrQuan;
@@ -46,7 +48,7 @@ public class ListPage extends AppCompatActivity {
     Map<String, Double> totalPriceByStore = new HashMap<>();
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
-    Requestor requestor;
+    DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,14 +103,14 @@ public class ListPage extends AppCompatActivity {
 
                         pNames.add("Kroger");
                         pStores.add("");
-                        pPrices.add(totalPriceByStore.get("Kroger").toString());
+                        pPrices.add(df.format(totalPriceByStore.get("Kroger")));
                         pQuantity.add("-1");
                         pImages.add("-1");
                         pListItemPair.add(null);
 
                         pNames.add(item.getDescription());
                         pStores.add("Kroger");
-                        pPrices.add(item.getPrice().toString());
+                        pPrices.add(df.format(item.getPrice()));
                         pQuantity.add(entry.getQuantity().toString());
                         pImages.add(item.getImageURL());
                         pListItemPair.add(entry);
@@ -117,16 +119,16 @@ public class ListPage extends AppCompatActivity {
                         int index = storeHeaderIndex.get("Kroger");
 
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
-                        pPrices.set(index, totalPriceByStore.get("Kroger").toString());
+                        pPrices.set(index, df.format(totalPriceByStore.get("Kroger")));
 
                         double newTotal = Double.parseDouble(pPrices.get(0)) + (item.getPrice().doubleValue() * entry.getQuantity());
-                        pPrices.set(0, String.valueOf(newTotal));
+                        pPrices.set(0, df.format(newTotal));
 
                         index++;
 
                         pNames.add(index, item.getDescription());
                         pStores.add(index, "Kroger");
-                        pPrices.add(index, item.getPrice().toString());
+                        pPrices.add(index, df.format(item.getPrice()));
                         pQuantity.add(index, entry.getQuantity().toString());
                         pImages.add(index, item.getImageURL());
                         pListItemPair.add(index, entry);
@@ -184,9 +186,9 @@ public class ListPage extends AppCompatActivity {
                     int q = Integer.parseInt(pQuantity.get(position)) - 1;
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) - Double.parseDouble(pPrices.get(position)));
-                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
                     double newTotal = Double.parseDouble(pPrices.get(0)) - Double.parseDouble(pPrices.get(position));
-                    pPrices.set(0, String.valueOf(newTotal));
+                    pPrices.set(0, df.format(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
@@ -217,9 +219,9 @@ public class ListPage extends AppCompatActivity {
                     int q = Integer.parseInt(pQuantity.get(position)) + 1;
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) + Double.parseDouble(pPrices.get(position)));
-                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
                     double newTotal = Double.parseDouble(pPrices.get(0)) + Double.parseDouble(pPrices.get(position));
-                    pPrices.set(0, String.valueOf(newTotal));
+                    pPrices.set(0, df.format(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
@@ -269,10 +271,10 @@ public class ListPage extends AppCompatActivity {
                     }
                     else {
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
-                        pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                        pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
 
                         double newTotal = Double.parseDouble(pPrices.get(0)) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position)));
-                        pPrices.set(0, String.valueOf(newTotal));
+                        pPrices.set(0, df.format(newTotal));
 
                         pNames.remove(position);
                         pStores.remove(position);
@@ -304,7 +306,7 @@ public class ListPage extends AppCompatActivity {
                     incrQuan.setVisibility(View.INVISIBLE);
 
                     if(position == 0) {
-
+                        removeItem.setText("Clear all");
                     }
                     else {
                         removeItem.setVisibility(View.INVISIBLE);
