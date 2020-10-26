@@ -121,6 +121,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
                             l.start();
                         }
 
+                        shoppingLists.clear();
                         // Wait for each thread to finish and add results to shoppingLists
                         for (int i = 0; i < threads.length; i++) {
                             try {
