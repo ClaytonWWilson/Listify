@@ -10,16 +10,20 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+
 import com.example.listify.data.Item;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.json.JSONException;
 
 import static com.example.listify.MainActivity.am;
 
@@ -35,7 +39,7 @@ public class ListPage extends AppCompatActivity {
     ArrayList<String> pStores = new ArrayList<>();
     ArrayList<String> pPrices = new ArrayList<>();
     ArrayList<String> pQuantity = new ArrayList<>();
-    ArrayList<Integer> pImages = new ArrayList<>();
+    ArrayList<String> pImages = new ArrayList<>();
 
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
@@ -89,14 +93,14 @@ public class ListPage extends AppCompatActivity {
                         pStores.add("");
                         pPrices.add(totalPriceByStore.get("Kroger").toString());
                         pQuantity.add("-1");
-                        pImages.add(-1);
+                        pImages.add("-1");
                         pListItemPair.add(null);
 
                         pNames.add(item.getDescription());
                         pStores.add("Kroger");
                         pPrices.add(item.getPrice().toString());
                         pQuantity.add(entry.getQuantity().toString());
-                        pImages.add(R.drawable.placeholder);
+                        pImages.add(item.getImageURL());
                         pListItemPair.add(entry);
                     }
                     else {
@@ -111,7 +115,7 @@ public class ListPage extends AppCompatActivity {
                         pStores.add(index, "Kroger");
                         pPrices.add(index, item.getPrice().toString());
                         pQuantity.add(index, entry.getQuantity().toString());
-                        pImages.add(index, R.drawable.placeholder);
+                        pImages.add(index, item.getImageURL());
                         pListItemPair.add(index, entry);
 
                         for(String store : storeHeaderIndex.keySet()) {
@@ -139,9 +143,9 @@ public class ListPage extends AppCompatActivity {
         ArrayList<String> pStores;
         ArrayList<String> pPrices;
         ArrayList<String> pQuantity;
-        ArrayList<Integer> pImages;
+        ArrayList<String> pImages;
 
-        MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<Integer> images) {
+        MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<String> images) {
             super(c, R.layout.activity_listproductentry, R.id.productView, names);
             context = c;
             pNames = names;
@@ -262,11 +266,11 @@ public class ListPage extends AppCompatActivity {
                     quantity.setText(pQuantity.get(position));
                 }
 
-                if(pImages.get(position) == -1) {
+                if(pImages.get(position).equals("-1")) {
                     image.setVisibility(View.INVISIBLE);
                 }
                 else {
-                    image.setImageResource(pImages.get(position));
+                    Glide.with(getContext()).load(pImages.get(position)).into(image);
                 }
             }
 
