@@ -22,13 +22,13 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import java.util.ArrayList;
 
 
-public class SortDialogFragment extends DialogFragment {
+public class FilterDialogFragment extends DialogFragment {
 
-    public interface OnSortingListener {
+    public interface OnFilterListener {
         void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice);
     }
 
-    public OnSortingListener onSortingListener;
+    public OnFilterListener onFilterListener;
 
     CrystalRangeSeekbar priceSeekbar;
 
@@ -40,7 +40,7 @@ public class SortDialogFragment extends DialogFragment {
     private double minPrice; // The selected min price
     private double maxPrice; // The selected max price
 
-    public SortDialogFragment(int storeSelection, ArrayList<String> stores, int sortMode, boolean descending, double maxProductPrice, double minPrice, double maxPrice) {
+    public FilterDialogFragment(int storeSelection, ArrayList<String> stores, int sortMode, boolean descending, double maxProductPrice, double minPrice, double maxPrice) {
         this.storeSelection = storeSelection;
         this.stores = stores;
         this.sortMode = sortMode;
@@ -59,18 +59,18 @@ public class SortDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View root = inflater.inflate(R.layout.dialog_sort, null);
+        View root = inflater.inflate(R.layout.dialog_filter, null);
         builder.setView(root)
                 // Add action buttons
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        onSortingListener.sendSort(storeSelection, sortMode, descending, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
+                        onFilterListener.sendSort(storeSelection, sortMode, descending, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SortDialogFragment.this.getDialog().cancel();
+                        FilterDialogFragment.this.getDialog().cancel();
                     }
                 });
 
@@ -175,9 +175,9 @@ public class SortDialogFragment extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            onSortingListener = (OnSortingListener) getActivity();
+            onFilterListener = (OnFilterListener) getActivity();
         } catch (ClassCastException e) {
-            Log.e("SortDialogFragment", "onAttach: ClassCastException: " + e.getMessage());
+            Log.e("FilterDialogFragment", "onAttach: ClassCastException: " + e.getMessage());
         }
     }
 }

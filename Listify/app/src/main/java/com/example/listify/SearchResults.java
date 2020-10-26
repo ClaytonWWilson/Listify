@@ -3,6 +3,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -22,7 +25,7 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener {
+public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener {
     private ListView listView;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
@@ -108,14 +111,26 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 return false;
             }
         });
+    }
 
-        // TODO: Change this to a menu in which sort and filter are two different options
-        // TODO: Sort should be disabled until a search is made
-        // Create a dialog for filtering and sorting search results
-        ImageButton sortButton = (ImageButton) findViewById(R.id.results_sort_button);
-        sortButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.search, menu);
+        MenuItem sortItem = menu.findItem(R.id.action_sort);
+        sortItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onMenuItemClick(MenuItem item) {
+                // TODO: Create a sort dialog
+                return false;
+            }
+        });
+
+        // TODO: filter should be disabled until a search is made
+        MenuItem filterItem = menu.findItem(R.id.action_filter);
+        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
                 // Sort the store list
                 stores.sort(new Comparator<String>() {
                     @Override
@@ -147,11 +162,12 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 // Round up to nearest whole number for display on price seekbar
                 maxProductPrice = Math.ceil(maxProductPrice);
 
-                SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
+                FilterDialogFragment sortDialog = new FilterDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
                 sortDialog.show(getSupportFragmentManager(), "Sort");
+                return false;
             }
         });
-
+        return true;
     }
 
 
