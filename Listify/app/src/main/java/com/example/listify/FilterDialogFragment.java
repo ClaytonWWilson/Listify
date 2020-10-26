@@ -8,24 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-
 import java.util.ArrayList;
 
 
 public class FilterDialogFragment extends DialogFragment {
 
     public interface OnFilterListener {
-        void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice);
+        void sendFilter(int storeSelection, double minPrice, double maxPrice);
     }
 
     public OnFilterListener onFilterListener;
@@ -33,18 +29,14 @@ public class FilterDialogFragment extends DialogFragment {
     CrystalRangeSeekbar priceSeekbar;
 
     private int storeSelection;
-    private int sortMode;
-    private boolean descending;
     private ArrayList<String> stores;
     private double maxProductPrice; // The highest price on the slider
     private double minPrice; // The selected min price
     private double maxPrice; // The selected max price
 
-    public FilterDialogFragment(int storeSelection, ArrayList<String> stores, int sortMode, boolean descending, double maxProductPrice, double minPrice, double maxPrice) {
+    public FilterDialogFragment(int storeSelection, ArrayList<String> stores, double maxProductPrice, double minPrice, double maxPrice) {
         this.storeSelection = storeSelection;
         this.stores = stores;
-        this.sortMode = sortMode;
-        this.descending = descending;
         this.maxProductPrice = maxProductPrice;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
@@ -61,18 +53,18 @@ public class FilterDialogFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         View root = inflater.inflate(R.layout.dialog_filter, null);
         builder.setView(root)
-                // Add action buttons
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        onFilterListener.sendSort(storeSelection, sortMode, descending, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
-                    }
-                })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        FilterDialogFragment.this.getDialog().cancel();
-                    }
-                });
+            // Add action buttons
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    onFilterListener.sendFilter(storeSelection, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
+                }
+            })
+            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    FilterDialogFragment.this.getDialog().cancel();
+                }
+            });
 
         Spinner storeDropdown = (Spinner) root.findViewById(R.id.sort_store_dropdown);
         String[] storeChoices = new String[stores.size() + 1];
@@ -96,57 +88,6 @@ public class FilterDialogFragment extends DialogFragment {
 
             }
         });
-
-        // Change the sort arrow to be pointing up or down based on ascending or descending
-        final ImageButton sortDirectionButton = root.findViewById(R.id.sort_direction_button);
-        if (descending) {
-            sortDirectionButton.setImageResource(R.drawable.ic_baseline_arrow_downward_50);
-        } else {
-            sortDirectionButton.setImageResource(R.drawable.ic_baseline_arrow_upward_50);
-        }
-
-        // Change arrow pointing direction whenever the user clicks the button
-        sortDirectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (descending) {
-                    descending = false;
-                    sortDirectionButton.setImageResource(R.drawable.ic_baseline_arrow_upward_50);
-                } else {
-                    descending = true;
-                    sortDirectionButton.setImageResource(R.drawable.ic_baseline_arrow_downward_50);
-                }
-            }
-        });
-
-        // Create the sort mode selection dropdown
-        Spinner sortDropdown = (Spinner) root.findViewById(R.id.sort_mode_dropdown);
-        String[] items = new String[] {"<Default>", "Name", "Price", "Store"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(root.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
-        sortDropdown.setAdapter(adapter);
-        sortDropdown.setSelection(this.sortMode);
-        sortDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sortMode = position;
-
-                // Update the sort direction button
-                if (position == 0) {
-                    sortDirectionButton.setEnabled(false);
-                } else {
-                    sortDirectionButton.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        // Disable the direction button if they have the default sorting mode selected
-        // Ascending and Descending are mostly irrelevant in the default sort mode
-        if (sortDropdown.getSelectedItemPosition() == 0) {
-            sortDirectionButton.setEnabled(false);
-        }
 
         // Set up the seekbar for price
         priceSeekbar = (CrystalRangeSeekbar) root.findViewById(R.id.price_range_seekbar);

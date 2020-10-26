@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener {
+public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener {
     private ListView listView;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
@@ -38,12 +38,17 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     private double maxPrice = -1;
 
     @Override
-    public void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice) {
+    public void sendFilter(int storeSelection, double minPrice, double maxPrice) {
         this.storeSelection = storeSelection;
-        this.sortMode = sortMode;
-        this.descending = descending;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
+        sortResults();
+    }
+
+    @Override
+    public void sendSort(int sortMode, boolean descending) {
+        this.sortMode = sortMode;
+        this.descending = descending;
         sortResults();
     }
 
@@ -122,11 +127,13 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: Create a sort dialog
+                SortDialogFragment sortDialog = new SortDialogFragment(sortMode, descending);
+                sortDialog.show(getSupportFragmentManager(), "Sort Dialog");
                 return false;
             }
         });
 
-        // TODO: filter should be disabled until a search is made
+        // TODO: price filter should be disabled until a search is made
         MenuItem filterItem = menu.findItem(R.id.action_filter);
         filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -162,8 +169,8 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 // Round up to nearest whole number for display on price seekbar
                 maxProductPrice = Math.ceil(maxProductPrice);
 
-                FilterDialogFragment sortDialog = new FilterDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
-                sortDialog.show(getSupportFragmentManager(), "Sort");
+                FilterDialogFragment sortDialog = new FilterDialogFragment(storeSelection, stores, maxProductPrice, minPrice, maxPrice);
+                sortDialog.show(getSupportFragmentManager(), "Filter Dialog");
                 return false;
             }
         });
