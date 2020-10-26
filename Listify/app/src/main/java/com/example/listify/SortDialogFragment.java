@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 
 import java.util.ArrayList;
@@ -140,9 +139,7 @@ public class SortDialogFragment extends DialogFragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         // Disable the direction button if they have the default sorting mode selected
@@ -157,7 +154,6 @@ public class SortDialogFragment extends DialogFragment {
         final TextView tvMax = (TextView) root.findViewById(R.id.tv_max_price);
 
         priceSeekbar.setMaxValue((float) this.maxProductPrice);
-        System.out.println(String.format("%f : %f", this.minPrice, this.maxPrice));
         priceSeekbar.setMinStartValue((float) this.minPrice);
         priceSeekbar.setMaxStartValue((float) this.maxPrice);
         priceSeekbar.apply();
@@ -170,17 +166,6 @@ public class SortDialogFragment extends DialogFragment {
                 tvMax.setText(String.format("$%.2f", maxValue.doubleValue()));
             }
         });
-
-//        // Save price values when user finishes moving the slider
-//        priceSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
-//            @Override
-//            public void finalValue(Number minValue, Number maxValue) {
-//                minPrice = minValue.doubleValue();
-//                maxPrice = maxValue.doubleValue();
-////                System.out.println(String.format("Min: $%.2f, Max: $%.2f", minValue.doubleValue(), maxValue.doubleValue()));
-//            }
-//        });
-
 
         return builder.create();
     }

@@ -32,17 +32,15 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
     private int sortMode;
     private boolean descending;
     private double minPrice = 0;
-    private double maxPrice = 0;
+    private double maxPrice = -1;
 
     @Override
-    public void sendSort(int storeSelection, int sortMode, boolean descending, double maxPrice, double minPrice) {
+    public void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice) {
         this.storeSelection = storeSelection;
         this.sortMode = sortMode;
         this.descending = descending;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
-        System.out.println(minPrice);
-        System.out.println(maxPrice);
         sortResults();
     }
 
@@ -89,7 +87,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(SearchResults.this, resultsProductListSorted.get(position).getItemName(), Toast.LENGTH_SHORT).show();
                 Intent itemDetailsPage = new Intent(SearchResults.this, ItemDetails.class);
 
                 // Send the selected product
@@ -112,6 +109,8 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             }
         });
 
+        // TODO: Change this to a menu in which sort and filter are two different options
+        // TODO: Sort should be disabled until a search is made
         // Create a dialog for filtering and sorting search results
         ImageButton sortButton = (ImageButton) findViewById(R.id.results_sort_button);
         sortButton.setOnClickListener(new View.OnClickListener() {
@@ -140,10 +139,14 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                             maxProductPrice = resultsProductList.get(i).getPrice().doubleValue();
                         }
                     }
-                    if (maxPrice == 0) {
+                    if (maxPrice == -1) {
                         maxPrice = maxProductPrice;
                     }
                 }
+
+                // Round up to nearest whole number for display on price seekbar
+                maxProductPrice = Math.ceil(maxProductPrice);
+
                 SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
                 sortDialog.show(getSupportFragmentManager(), "Sort");
             }
@@ -264,6 +267,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 break;
         }
 
+        // Flip the list if descending is selected
         if (this.sortMode != 0 & this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
@@ -283,6 +287,17 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             resultsProductListSorted.clear();
             resultsProductListSorted.addAll(temp);
         }
+
+        // Filter out products that don't fit price restraints
+        ArrayList<Product> temp = new ArrayList<>();
+        resultsProductListSorted.forEach(product -> {
+            if (product.getPrice().doubleValue() >= this.minPrice &&
+                    (this.maxPrice == -1 || product.getPrice().doubleValue() <= this.maxPrice)) {
+                temp.add(product);
+            }
+        });
+        resultsProductListSorted.clear();
+        resultsProductListSorted.addAll(temp);
 
         searchResultsListAdapter.notifyDataSetChanged();
     }
