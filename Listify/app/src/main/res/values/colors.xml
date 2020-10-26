@@ -11,4 +11,5 @@
     <color name="list_row_hover_start_color">#ebeef0</color>
     <color name="list_row_hover_end_color">#1c9ef4</color>
     <color name="light_gray">#e6e6e6</color>
+    <color name="white">#ffffffff</color>
 </resources>

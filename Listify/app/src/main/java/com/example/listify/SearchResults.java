@@ -32,7 +32,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     private List<Product> resultsProductListSorted = new ArrayList<>();
     private ArrayList<String> stores = new ArrayList<>();
     private int storeSelection;
-    private int sortMode;
+    private SortModes sortMode = SortModes.NONE;
     private boolean descending;
     private double minPrice = 0;
     private double maxPrice = -1;
@@ -46,7 +46,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     }
 
     @Override
-    public void sendSort(int sortMode, boolean descending) {
+    public void sendSort(SortModes sortMode, boolean descending) {
         this.sortMode = sortMode;
         this.descending = descending;
         sortResults();
@@ -243,10 +243,10 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
 
         // Sort based on mode
         switch (this.sortMode) {
-            case 0:
+            case NONE:
                 // Do nothing
                 break;
-            case 1:
+            case NAME:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -254,9 +254,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                     }
                 });
                 break;
-
-            // TODO: May need to change this depending on if price is stored as a string or a double
-            case 2:
+            case PRICE:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -271,7 +269,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 });
                 break;
 
-            case 3:
+            case STORE:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -280,7 +278,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 });
                 break;
 
-            case 4:
+            case UPC:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -291,7 +289,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         // Flip the list if descending is selected
-        if (this.sortMode != 0 & this.descending) {
+        if (this.sortMode != SortModes.NONE & this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
                 resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));

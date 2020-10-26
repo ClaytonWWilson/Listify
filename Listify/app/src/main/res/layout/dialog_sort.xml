@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="30dp">
 
+    <!--  I would've use a ListView here, but it doesn't offer enough customization  -->
     <TextView
         android:id="@+id/sort_none"
         android:layout_width="match_parent"
@@ -15,8 +16,7 @@
         android:gravity="center_vertical"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:soundEffectsEnabled="true"/>
+        android:foreground="?attr/selectableItemBackgroundBorderless" />
 
     <View
     android:layout_width="match_parent"
@@ -78,9 +78,14 @@
         android:background="@color/list_divider" />
 
     <LinearLayout
+        android:id="@+id/descending_container"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false">
 
         <TextView
             android:layout_width="wrap_content"
@@ -91,6 +96,7 @@
             android:paddingStart="16dp"/>
 
         <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_descending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
