@@ -16,6 +16,7 @@ import com.example.listify.data.ListEntry;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -64,6 +65,7 @@ public class ListPage extends AppCompatActivity {
             list = null;
         }
 
+        double totalPrice = 0;
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
                 int product = entry.getProductID();
@@ -83,6 +85,9 @@ public class ListPage extends AppCompatActivity {
                     pQuantity.add(entry.getQuantity().toString());
                     pImages.add(R.drawable.placeholder);
                     pListItemPair.add(entry);
+
+                    // Increment total price
+                    totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
                 }
             }
         }
@@ -112,6 +117,9 @@ public class ListPage extends AppCompatActivity {
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
 
         listView.setAdapter(myAdapter);
+
+        TextView tvTotalPrice = (TextView) findViewById(R.id.total_price);
+        tvTotalPrice.setText(String.format("$%.2f", totalPrice));
     }
 
     class MyAdapter extends ArrayAdapter<String> {
