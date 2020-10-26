@@ -247,19 +247,41 @@ public class ListPage extends AppCompatActivity {
             removeItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
-                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
+                    if(position == 0) {
+                        pNames.clear();
+                        pStores.clear();
+                        pPrices.clear();
+                        pQuantity.clear();
+                        pImages.clear();
 
-                    double newTotal = Double.parseDouble(pPrices.get(0)) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position)));
-                    pPrices.set(0, String.valueOf(newTotal));
+                        pNames.add("Total Price");
+                        pStores.add("");
+                        pPrices.add("0.00");
+                        pQuantity.add("-1");
+                        pImages.add("-1");
 
-                    pNames.remove(position);
-                    pStores.remove(position);
-                    pPrices.remove(position);
-                    pQuantity.remove(position);
-                    pImages.remove(position);
+                        while(pListItemPair.size() > 1) {
+                            try {
+                                requestor.deleteObject(pListItemPair.remove(1));
+                            }
+                            catch(Exception e) {}
+                        }
+                    }
+                    else {
+                        totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
+                        pPrices.set(storeHeaderIndex.get(pStores.get(position)), totalPriceByStore.get(pStores.get(position)).toString());
 
-                    requestor.deleteObject(pListItemPair.remove(position));
+                        double newTotal = Double.parseDouble(pPrices.get(0)) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position)));
+                        pPrices.set(0, String.valueOf(newTotal));
+
+                        pNames.remove(position);
+                        pStores.remove(position);
+                        pPrices.remove(position);
+                        pQuantity.remove(position);
+                        pImages.remove(position);
+
+                        requestor.deleteObject(pListItemPair.remove(position));
+                    }
 
                     listView.setAdapter(myAdapter);
                 }
@@ -280,7 +302,13 @@ public class ListPage extends AppCompatActivity {
                     quantity.setVisibility(View.INVISIBLE);
                     decrQuan.setVisibility(View.INVISIBLE);
                     incrQuan.setVisibility(View.INVISIBLE);
-                    removeItem.setVisibility(View.INVISIBLE);
+
+                    if(position == 0) {
+
+                    }
+                    else {
+                        removeItem.setVisibility(View.INVISIBLE);
+                    }
                 }
                 else {
                     quantity.setText(pQuantity.get(position));
