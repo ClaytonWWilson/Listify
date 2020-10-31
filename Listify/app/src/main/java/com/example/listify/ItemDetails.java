@@ -106,7 +106,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
                         for (int i = 0; i < listIds.length; i++) {
                             SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
                             requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-                            int finalI = i;
+                            final int finalI = i;
                             Thread l = new Thread(new Runnable() {
                                 @Override
                                 public void run() {

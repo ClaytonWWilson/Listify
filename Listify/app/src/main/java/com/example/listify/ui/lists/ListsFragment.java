@@ -48,6 +48,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
     Requestor requestor;
     ListView shoppingListsView;
     ProgressBar loadingLists;
+    int resultsIndex;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_lists, container, false);
@@ -145,7 +146,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         for (int i = 0; i < listIds.length; i++) {
             SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
             requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
-            int finalI = i;
+            final int finalI = i;
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
