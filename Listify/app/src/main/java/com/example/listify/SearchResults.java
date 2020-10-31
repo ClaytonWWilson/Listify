@@ -126,7 +126,6 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         sortItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                // TODO: Create a sort dialog
                 SortDialogFragment sortDialog = new SortDialogFragment(sortMode, descending);
                 sortDialog.show(getSupportFragmentManager(), "Sort Dialog");
                 return false;
@@ -289,7 +288,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         // Flip the list if descending is selected
-        if (this.sortMode != SortModes.NONE & this.descending) {
+        if (this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
                 resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));
