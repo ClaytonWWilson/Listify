@@ -1,0 +1,1 @@
+["wir", "wis", "wit", "wok", "wol", "wom", "won", "woo", "wor", "wou", "wra", "wre", "wri", "wro", "xyl", "yac", "yah", "yak", "yam", "yan", "yar", "yaw", "yea", "yel", "yes", "yew", "yin", "yog", "yok", "yol", "you", "yoy", "yur", "zam", "zeb", "zen", "zep", "zer", "zig", "zin", "zip", "zit", "zom", "zon", "zoo", "zuc"]
