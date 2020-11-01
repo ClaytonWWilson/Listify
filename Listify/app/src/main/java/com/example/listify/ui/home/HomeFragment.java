@@ -1,5 +1,7 @@
 package com.example.listify.ui.home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,8 @@ import android.widget.Button;
 
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -25,41 +29,51 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class HomeFragment extends Fragment {
-    private Button toLoginPage;
-    private Button toListPage;
+    private Button toDeleteAccountPage;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        toLoginPage = (Button) root.findViewById(R.id.button1);
-        toLoginPage.setOnClickListener(new View.OnClickListener() {
+        toDeleteAccountPage = (Button) root.findViewById(R.id.button);
+        toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
-                startActivity(intent);
-            }
-        });
-
-        toListPage = (Button) root.findViewById(R.id.button2);
-        toListPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(HomeFragment.this.getActivity(), com.example.listify.ListPage.class);
-                //startActivity(intent);
-
-                try {
-                    Properties configs = new Properties();
-                    try {
-                        configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                View passwordView = getLayoutInflater().inflate(R.layout.activity_code, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setView(passwordView);
+                builder.setTitle("Account deletion verification");
+                builder.setMessage("Are you sure you want to delete your account? If so, enter your password below and hit \"Yes\".");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText passwordText = (EditText) passwordView.findViewById(R.id.editTextCode);
+                        String password = passwordText.getText().toString();
+                        if(password.equals(am.getPassword())) {
+                            try {
+                                Properties configs = new Properties();
+                                try {
+                                    configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+                                } catch (IOException | JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+                                am.deleteUser(requestor);
+                                Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+                            catch (Exception e) {
+                                Log.i("Authentication", e.toString());
+                            }
+                        }
                     }
-                    Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
-                    am.deleteUser(requestor);
-                }
-                catch (Exception e) {
-                    Log.i("Authentication", e.toString());
-                }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 

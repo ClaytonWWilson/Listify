@@ -7,26 +7,24 @@ import java.util.Map;
 
 public class ItemSearcher implements CallHandler {
 
-    DBConnector connector;
+    Connection connection;
     String cognitoID;
 
-    private final String GET_ITEM_MATCHES = "SELECT * FROM Product WHERE description LIKE ?";
+    private final String GET_ITEM_MATCHES = "SELECT * FROM Product WHERE description LIKE ? LIMIT 100;";
 
-    public ItemSearcher(DBConnector connector, String cognitoID) {
-        this.connector = connector;
+    public ItemSearcher(Connection connection, String cognitoID) {
+        this.connection = connection;
         this.cognitoID = cognitoID;
     }
 
     @Override
     public Object conductAction(Map<String, Object> body, HashMap<String, String> queryParams, String s) throws SQLException {
-        try (Connection connection = connector.getConnection()) {
-            PreparedStatement getItemMatches = connection.prepareStatement(GET_ITEM_MATCHES);
-            getItemMatches.setString(1, "%" + queryParams.get("id") + "%");
-            System.out.println(getItemMatches);
-            ResultSet searchResults = getItemMatches.executeQuery();
-            ItemSearch searchResultsObject = new ItemSearch(searchResults);
-            System.out.println(searchResultsObject);
-            return searchResultsObject;
-        }
+        PreparedStatement getItemMatches = connection.prepareStatement(GET_ITEM_MATCHES);
+        getItemMatches.setString(1, "%" + queryParams.get("id") + "%");
+        System.out.println(getItemMatches);
+        ResultSet searchResults = getItemMatches.executeQuery();
+        ItemSearch searchResultsObject = new ItemSearch(searchResults);
+        System.out.println(searchResultsObject);
+        return searchResultsObject;
     }
 }

@@ -33,9 +33,9 @@
             android:name=".SearchResults"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
-  
+
+        <activity android:name="com.example.listify.SplashActivity" />
         <activity android:name="com.example.listify.ui.SignupPage" />
         <activity android:name="com.example.listify.ui.LoginPage" />
         <activity android:name="com.example.listify.ui.ForgotPasswordPage" />
