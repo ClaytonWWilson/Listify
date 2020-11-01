@@ -18,13 +18,13 @@ import com.example.listify.data.List;
 
 import java.util.ArrayList;
 
-public class DisplayShoppingListsAdapter extends BaseAdapter {
+public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
     private final ViewBinderHelper binderHelper;
 
-    public DisplayShoppingListsAdapter(Activity activity, ArrayList<List> lists){
+    public ShoppingListsSwipeableAdapter(Activity activity, ArrayList<List> lists){
         binderHelper = new ViewBinderHelper();
         this.activity = activity;
         this.lists = lists;
@@ -53,7 +53,7 @@ public class DisplayShoppingListsAdapter extends BaseAdapter {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.display_shopping_lists_item, null);
+            convertView = inflater.inflate(R.layout.shopping_lists_swipeable_name_item, null);
 
             holder = new ViewHolder();
             holder.swipeLayout = (SwipeRevealLayout)convertView.findViewById(R.id.swipe_layout);
