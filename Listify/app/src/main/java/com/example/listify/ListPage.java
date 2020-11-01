@@ -47,7 +47,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
-    Requestor requestor;
     double totalPrice = 0;
   
     Map<String, Double> totalPriceByStore = new HashMap<>();
@@ -163,9 +162,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         pQuantity.add(index, entry.getQuantity().toString());
                         pImages.add(index, item.getImageURL());
                         pListItemPair.add(index, entry);
-                      
-                      // Increment total price
-                      totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
 
                         for(String store : storeHeaderIndex.keySet()) {
                             if(storeHeaderIndex.get(store) > index) {
@@ -173,14 +169,21 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                             }
                         }
                     }
+
+                    // Increment total price
+                    System.out.println(totalPrice);
+                    System.out.println(item.getPrice().doubleValue());
+                    System.out.println(entry.getQuantity());
+                    totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
+                    System.out.println(totalPrice);
                 }
             }
 
-        tvTotalPrice = (TextView) findViewById(R.id.total_price);
-        tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+            tvTotalPrice = (TextView) findViewById(R.id.total_price);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
                     loadingListItems.setVisibility(View.GONE);
                     myAdapter.notifyDataSetChanged();
                 }
