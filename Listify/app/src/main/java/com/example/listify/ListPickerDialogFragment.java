@@ -2,7 +2,6 @@ package com.example.listify;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +13,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import com.example.listify.adapter.DisplayShoppingListsAdapter;
+import com.example.listify.adapter.ShoppingListsAdapter;
 import com.example.listify.data.List;
-import com.example.listify.model.ShoppingList;
+
 import java.util.ArrayList;
 
 
@@ -29,7 +28,7 @@ public class ListPickerDialogFragment extends DialogFragment {
     public OnListPickListener onListPickListener;
 
     ListView userListsView;
-    DisplayShoppingListsAdapter displayShoppingListsAdapter;
+    ShoppingListsAdapter shoppingListsAdapter;
     Button btnMinus;
     Button btnPlus;
     EditText etQuantity;
@@ -67,8 +66,8 @@ public class ListPickerDialogFragment extends DialogFragment {
 
         // Display user's shopping lists
         userListsView = (ListView) root.findViewById(R.id.user_lists);
-        displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), userLists);
-        userListsView.setAdapter(displayShoppingListsAdapter);
+        shoppingListsAdapter = new ShoppingListsAdapter(getActivity(), userLists);
+        userListsView.setAdapter(shoppingListsAdapter);
 
 //        TODO: fix highlighting error
         userListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
