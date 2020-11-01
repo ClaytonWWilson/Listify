@@ -37,7 +37,7 @@ public class ListSharer implements CallHandler {
         invokeRequest.setFunctionName("UserGET");
         invokeRequest.setPayload("{" +
                 "  \"body\": {" +
-                "      \"emailToCheck\": \"" + bodyMap.get("shareWith").toString() + "\"" +
+                "      \"emailToCheck\": \"" + bodyMap.get("shareWithEmail").toString() + "\"" +
                 "  }," +
                 "  \"params\": {" +
                 "      \"querystring\": {" +
