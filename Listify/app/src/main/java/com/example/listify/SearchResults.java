@@ -277,6 +277,13 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         });
         resultsProductListSorted.clear();
         resultsProductListSorted.addAll(temp);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                searchResultsListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     // This is called after the search results come back from the server
@@ -321,8 +328,6 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                searchResultsListAdapter.notifyDataSetChanged();
-
                 // Hide progress bar
                 loadingSearch.setVisibility(View.GONE);
 
