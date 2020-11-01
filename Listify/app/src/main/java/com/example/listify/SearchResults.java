@@ -32,15 +32,15 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
     private ArrayList<String> stores = new ArrayList<>();
-    private int storeSelection;
+    private ArrayList<String> selectedStores = new ArrayList<>();
     private SortModes sortMode = SortModes.NONE;
     private boolean descending;
     private double minPrice = 0;
     private double maxPrice = -1;
 
     @Override
-    public void sendFilter(int storeSelection, double minPrice, double maxPrice) {
-        this.storeSelection = storeSelection;
+    public void sendFilter(ArrayList<String> selectedStores, double minPrice, double maxPrice) {
+        this.selectedStores = selectedStores;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
         sortResults();
@@ -138,14 +138,6 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                // Sort the store list
-                stores.sort(new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        return o1.compareTo(o2);
-                    }
-                });
-
                 // Determine the max price for the price slider
                 double maxProductPrice;
                 if (resultsProductList.isEmpty()) {
@@ -169,7 +161,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 // Round up to nearest whole number for display on price seekbar
                 maxProductPrice = Math.ceil(maxProductPrice);
 
-                FilterDialogFragment sortDialog = new FilterDialogFragment(storeSelection, stores, maxProductPrice, minPrice, maxPrice);
+                FilterDialogFragment sortDialog = new FilterDialogFragment(selectedStores, stores, maxProductPrice, minPrice, maxPrice);
                 sortDialog.show(getSupportFragmentManager(), "Filter Dialog");
                 return false;
             }
@@ -226,6 +218,18 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 stores.add(resultsProductList.get(i).getChainName());
             }
         }
+
+        // Sort the store list
+        stores.sort(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+
+        // Reset selected stores on search so that every store is selected
+        this.selectedStores.clear();
+        this.selectedStores.addAll(stores);
 
         // Add all results to the sorted list
         resultsProductListSorted.addAll(resultsProductList);
@@ -311,10 +315,10 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         // Only keep results that match the current store selection
-        if (this.storeSelection != 0) {
+        if (!this.selectedStores.equals(this.stores)) {
             ArrayList<Product> temp = new ArrayList<>();
             resultsProductListSorted.forEach(product -> {
-                if (product.getChainName().equals(this.stores.get(this.storeSelection - 1))) {
+                if (this.selectedStores.contains(product.getChainName())) {
                     temp.add(product);
                 }
             });

@@ -6,36 +6,37 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.example.listify.adapter.CheckBoxListViewAdapter;
+
 import java.util.ArrayList;
 
 
 public class FilterDialogFragment extends DialogFragment {
 
     public interface OnFilterListener {
-        void sendFilter(int storeSelection, double minPrice, double maxPrice);
+        void sendFilter(ArrayList<String> selectedStores, double minPrice, double maxPrice);
     }
 
     public OnFilterListener onFilterListener;
 
     CrystalRangeSeekbar priceSeekbar;
+    CheckBoxListViewAdapter checkBoxAdapter;
 
-    private int storeSelection;
+    private ArrayList<String> selectedStores;
     private ArrayList<String> stores;
     private double maxProductPrice; // The highest price on the slider
     private double minPrice; // The selected min price
     private double maxPrice; // The selected max price
 
-    public FilterDialogFragment(int storeSelection, ArrayList<String> stores, double maxProductPrice, double minPrice, double maxPrice) {
-        this.storeSelection = storeSelection;
+    public FilterDialogFragment(ArrayList<String> selectedStores, ArrayList<String> stores, double maxProductPrice, double minPrice, double maxPrice) {
+        this.selectedStores = selectedStores;
         this.stores = stores;
         this.maxProductPrice = maxProductPrice;
         this.minPrice = minPrice;
@@ -57,7 +58,8 @@ public class FilterDialogFragment extends DialogFragment {
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                    onFilterListener.sendFilter(storeSelection, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
+                    selectedStores = checkBoxAdapter.getChecked();
+                    onFilterListener.sendFilter(selectedStores, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
                 }
             })
             .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -66,28 +68,15 @@ public class FilterDialogFragment extends DialogFragment {
                 }
             });
 
-        Spinner storeDropdown = (Spinner) root.findViewById(R.id.sort_store_dropdown);
-        String[] storeChoices = new String[stores.size() + 1];
-        storeChoices[0] = "All";
-        for (int i = 1; i < stores.size() + 1; i++) {
-            storeChoices[i] = stores.get(i - 1);
-        }
+        ListView storesList = root.findViewById(R.id.store_name_list);
 
-        // Create the store selection dropdown
-        ArrayAdapter<String> storeAdapter = new ArrayAdapter<>(root.getContext(), android.R.layout.simple_spinner_dropdown_item, storeChoices);
-        storeDropdown.setAdapter(storeAdapter);
-        storeDropdown.setSelection(this.storeSelection);
-        storeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                storeSelection = position;
-            }
+        // Create arraylist of stores from search results
+        ArrayList<String> storeChoices = new ArrayList<>(stores);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        // Create adapter and send stores and selected stores
+        checkBoxAdapter = new CheckBoxListViewAdapter(getActivity(), storeChoices, this.selectedStores);
 
-            }
-        });
+        storesList.setAdapter(checkBoxAdapter);
 
         // Set up the seekbar for price
         priceSeekbar = (CrystalRangeSeekbar) root.findViewById(R.id.price_range_seekbar);
