@@ -168,13 +168,14 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     }
                 }
             }
-          runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loadingListItems.setVisibility(View.GONE);
-                myAdapter.notifyDataSetChanged();
-            }
-        });
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingListItems.setVisibility(View.GONE);
+                    myAdapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 
