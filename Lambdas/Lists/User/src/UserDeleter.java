@@ -19,6 +19,8 @@ public class UserDeleter implements CallHandler {
     private final String GET_LISTS = "SELECT * FROM List WHERE (owner = ?);";
     private final String DELETE_LIST_PRODUCT = "DELETE FROM ListProduct WHERE (listID = ?);";
     private final String DELETE_LISTS = "DELETE FROM List WHERE (owner = ?);";
+    private final String DELETE_LIST_SHARES = "DELETE FROM ListSharee WHERE (listID = ?);";
+    private final String DELETE_LIST_ACCESS = "DELETE FROM ListSharee WHERE (userID = ?);";
 
     public UserDeleter(Connection connection, String cognitoID) {
         this.connection = connection;
@@ -57,13 +59,23 @@ public class UserDeleter implements CallHandler {
             statement = connection.prepareStatement(DELETE_LIST_PRODUCT);
             statement.setInt(1, listID);
             System.out.println(statement);
-            statement.executeQuery();
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement(DELETE_LIST_SHARES);
+            statement.setInt(1, listID);
+            System.out.println(statement);
+            statement.executeUpdate();
         }
 
         statement = connection.prepareStatement(DELETE_LISTS);
         statement.setString(1, cognitoID);
         System.out.println(statement);
-        statement.executeQuery();
+        statement.executeUpdate();
+        statement = connection.prepareStatement(DELETE_LIST_ACCESS);
+        statement.setString(1, cognitoID);
+        System.out.println(statement);
+        statement.executeUpdate();
+
         connection.commit();
 
         return null;
