@@ -36,6 +36,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button incrQuan;
     Button decrQuan;
     Button removeItem;
+    TextView tvTotalPrice;
     ProgressBar loadingListItems;
 
     ArrayList<String> pNames = new ArrayList<>();
@@ -46,6 +47,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
+    double totalPrice = 0;
+  
     Map<String, Double> totalPriceByStore = new HashMap<>();
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
@@ -83,7 +86,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-      
+
         requestor.getObject(Integer.toString(listID), List.class, this);
 
         /*pNames.add("Half-gallon organic whole milk");
@@ -166,17 +169,23 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                             }
                         }
                     }
+
+                    // Increment total price
+                    totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
                 }
             }
 
+            tvTotalPrice = (TextView) findViewById(R.id.total_price);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
                     loadingListItems.setVisibility(View.GONE);
                     myAdapter.notifyDataSetChanged();
                 }
             });
         }
+      
     }
 
     class MyAdapter extends ArrayAdapter<String> {
@@ -219,6 +228,10 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
+
+                    totalPrice -= Double.parseDouble(pPrices.get(position));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+
                     SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
                     requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
@@ -252,6 +265,10 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
+
+                    totalPrice += Double.parseDouble(pPrices.get(position));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+
                     SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
                     requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
@@ -276,6 +293,10 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             removeItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    totalPrice -= (Double.parseDouble(pPrices.get(position)) *
+                            Double.parseDouble(pQuantity.get(position)));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+
                     if(position == 0) {
                         pNames.clear();
                         pStores.clear();

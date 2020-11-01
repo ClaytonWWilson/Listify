@@ -155,6 +155,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         requestor.getObject(query, ItemSearch.class, this);
     }
 
+    // TODO: Scroll the list back to the top when a search, sort, or filter is performed
     // Sorts the search results
     private void sortResults() {
         // Reset the filtered list
