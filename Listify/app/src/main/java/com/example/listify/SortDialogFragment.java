@@ -10,30 +10,44 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+
 import java.util.ArrayList;
 
 
 public class SortDialogFragment extends DialogFragment {
 
     public interface OnSortingListener {
-        void sendSort(int storeSelection, int sortMode, boolean descending);
+        void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice);
     }
 
     public OnSortingListener onSortingListener;
+
+    CrystalRangeSeekbar priceSeekbar;
 
     private int storeSelection;
     private int sortMode;
     private boolean descending;
     private ArrayList<String> stores;
+    private double maxProductPrice; // The highest price on the slider
+    private double minPrice; // The selected min price
+    private double maxPrice; // The selected max price
 
-    public SortDialogFragment(int storeSelection, ArrayList<String> stores, int sortMode, boolean descending) {
+    public SortDialogFragment(int storeSelection, ArrayList<String> stores, int sortMode, boolean descending, double maxProductPrice, double minPrice, double maxPrice) {
         this.storeSelection = storeSelection;
         this.stores = stores;
         this.sortMode = sortMode;
         this.descending = descending;
+        this.maxProductPrice = maxProductPrice;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
     }
 
 
@@ -51,7 +65,7 @@ public class SortDialogFragment extends DialogFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        onSortingListener.sendSort(storeSelection, sortMode, descending);
+                        onSortingListener.sendSort(storeSelection, sortMode, descending, priceSeekbar.getSelectedMinValue().doubleValue(), priceSeekbar.getSelectedMaxValue().doubleValue());
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -91,7 +105,7 @@ public class SortDialogFragment extends DialogFragment {
             sortDirectionButton.setImageResource(R.drawable.ic_baseline_arrow_upward_50);
         }
 
-        // Change array pointing direction whenever the user clicks the button
+        // Change arrow pointing direction whenever the user clicks the button
         sortDirectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,9 +139,7 @@ public class SortDialogFragment extends DialogFragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         // Disable the direction button if they have the default sorting mode selected
@@ -135,6 +147,25 @@ public class SortDialogFragment extends DialogFragment {
         if (sortDropdown.getSelectedItemPosition() == 0) {
             sortDirectionButton.setEnabled(false);
         }
+
+        // Set up the seekbar for price
+        priceSeekbar = (CrystalRangeSeekbar) root.findViewById(R.id.price_range_seekbar);
+        final TextView tvMin = (TextView) root.findViewById(R.id.tv_min_price);
+        final TextView tvMax = (TextView) root.findViewById(R.id.tv_max_price);
+
+        priceSeekbar.setMaxValue((float) this.maxProductPrice);
+        priceSeekbar.setMinStartValue((float) this.minPrice);
+        priceSeekbar.setMaxStartValue((float) this.maxPrice);
+        priceSeekbar.apply();
+
+        // Update price display
+        priceSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                tvMin.setText(String.format("$%.2f", minValue.doubleValue()));
+                tvMax.setText(String.format("$%.2f", maxValue.doubleValue()));
+            }
+        });
 
         return builder.create();
     }

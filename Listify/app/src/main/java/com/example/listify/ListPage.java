@@ -28,7 +28,7 @@ import org.json.JSONException;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListPage extends AppCompatActivity {
+public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     ListView listView;
     MyAdapter myAdapter;
     Requestor requestor;
@@ -37,6 +37,8 @@ public class ListPage extends AppCompatActivity {
     Button decrQuan;
     Button removeItem;
     Button clearAll;
+    TextView tvTotalPrice;
+    ProgressBar loadingListItems;
 
     ArrayList<String> pNames = new ArrayList<>();
     ArrayList<String> pStores = new ArrayList<>();
@@ -46,17 +48,31 @@ public class ListPage extends AppCompatActivity {
 
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
+    double totalPrice = 0;
+  
     Map<String, Double> totalPriceByStore = new HashMap<>();
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
     DecimalFormat df = new DecimalFormat("0.00");
 
+    // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
         final int listID = (int) getIntent().getSerializableExtra("listID");
+      
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
+
+        listView = findViewById(R.id.listView);
+        myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
+
+        listView.setAdapter(myAdapter);
+
+        loadingListItems = findViewById(R.id.progress_loading_list_items);
+        loadingListItems.setVisibility(View.VISIBLE);
 
         clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +95,7 @@ public class ListPage extends AppCompatActivity {
             }
         });
 
+
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -86,17 +103,13 @@ public class ListPage extends AppCompatActivity {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        SynchronousReceiver<List> lr = new SynchronousReceiver<>();
-        requestor.getObject(Integer.toString(listID), List.class, lr);
 
-        List list;
+        requestor.getObject(Integer.toString(listID), List.class, this);
+    }
 
-        try {
-            list = lr.await();
-        }
-        catch (Exception e) {
-            list = null;
-        }
+    @Override
+    public void acceptDelivery(Object delivered) {
+        List list = (List) delivered;
 
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
@@ -150,13 +163,23 @@ public class ListPage extends AppCompatActivity {
                             }
                         }
                     }
+
+                    // Increment total price
+                    totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
                 }
             }
-        }
 
-        listView = findViewById(R.id.listView);
-        myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
-        listView.setAdapter(myAdapter);
+
+            tvTotalPrice = (TextView) findViewById(R.id.total_price);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+                    loadingListItems.setVisibility(View.GONE);
+                    myAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     class MyAdapter extends ArrayAdapter<String> {
@@ -197,6 +220,10 @@ public class ListPage extends AppCompatActivity {
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
+
+                    totalPrice -= Double.parseDouble(pPrices.get(position));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+
                     SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
                     requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
@@ -228,6 +255,10 @@ public class ListPage extends AppCompatActivity {
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
+
+                    totalPrice += Double.parseDouble(pPrices.get(position));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+
                     SynchronousReceiver<Integer> synchronousenforcer = new SynchronousReceiver<>();
                     requestor.deleteObject(le, synchronousenforcer, synchronousenforcer);
                     try {
@@ -254,6 +285,10 @@ public class ListPage extends AppCompatActivity {
                 public void onClick(View v) {
                     totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
+
+                    totalPrice -= (Double.parseDouble(pPrices.get(position)) *
+                            Double.parseDouble(pQuantity.get(position)));
+                    tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
                     pNames.remove(position);
                     pStores.remove(position);
