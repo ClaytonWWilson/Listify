@@ -27,6 +27,7 @@ import static com.example.listify.MainActivity.am;
 
 public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener {
     private ListView listView;
+    private MenuItem filterItem;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
@@ -133,7 +134,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         });
 
         // TODO: price filter should be disabled until a search is made
-        MenuItem filterItem = menu.findItem(R.id.action_filter);
+        filterItem = menu.findItem(R.id.action_filter);
         filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -173,6 +174,12 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 return false;
             }
         });
+
+        // Disable filtering by default until a search is made
+        if (resultsProductList.isEmpty()) {
+            filterItem.setEnabled(false);
+        }
+
         return true;
     }
 
@@ -222,6 +229,13 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
 
         // Add all results to the sorted list
         resultsProductListSorted.addAll(resultsProductList);
+
+        // Filtering should only be allowed if there are items in the results
+        if (resultsProductList.isEmpty()) {
+            filterItem.setEnabled(false);
+        } else {
+            filterItem.setEnabled(true);
+        }
 
         // Apply selected sorting to the list
         sortResults();
