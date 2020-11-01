@@ -171,11 +171,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     }
 
                     // Increment total price
-                    System.out.println(totalPrice);
-                    System.out.println(item.getPrice().doubleValue());
-                    System.out.println(entry.getQuantity());
                     totalPrice += (item.getPrice().doubleValue() * entry.getQuantity());
-                    System.out.println(totalPrice);
                 }
             }
 
