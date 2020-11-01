@@ -178,16 +178,16 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
             @Override
             public void run() {
                 shoppingListsView.setAdapter(displayShoppingListsAdapter);
-                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent listPage = new Intent(getContext(), ListPage.class);
-
-                        // Send the list ID
-                        listPage.putExtra("listID", shoppingLists.get(position).getItemID());
-                        startActivity(listPage);
-                    }
-                });
+//                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        Intent listPage = new Intent(getContext(), ListPage.class);
+//
+//                        // Send the list ID
+//                        listPage.putExtra("listID", shoppingLists.get(position).getItemID());
+//                        startActivity(listPage);
+//                    }
+//                });
                 loadingLists.setVisibility(View.GONE);
             }
         });
