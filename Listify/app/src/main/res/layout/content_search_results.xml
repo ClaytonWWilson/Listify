@@ -12,6 +12,16 @@
     tools:context=".SearchResults"
     tools:showIn="@layout/activity_search_results">
 
+    <ProgressBar
+        android:id="@+id/progress_loading_search"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/search_results_list"
         android:layout_width="fill_parent"
