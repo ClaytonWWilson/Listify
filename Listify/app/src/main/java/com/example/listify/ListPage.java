@@ -62,9 +62,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         setContentView(R.layout.activity_list);
 
         final int listID = (int) getIntent().getSerializableExtra("listID");
-      
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -78,6 +75,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("clicked");
                 pNames.clear();
                 pStores.clear();
                 pPrices.clear();
@@ -91,7 +89,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     catch(Exception e) {}
                 }
 
-                listView.setAdapter(myAdapter);
+                totalPrice = 0;
+                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+                myAdapter.notifyDataSetChanged();
             }
         });
 
