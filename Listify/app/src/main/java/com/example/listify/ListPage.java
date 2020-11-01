@@ -36,6 +36,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button incrQuan;
     Button decrQuan;
     Button removeItem;
+    Button clearAll;
     TextView tvTotalPrice;
     ProgressBar loadingListItems;
 
@@ -57,11 +58,10 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        // Read list ID from caller
-        final int listID = (int) getIntent().getSerializableExtra("listID");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        final int listID = (int) getIntent().getSerializableExtra("listID");
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -71,12 +71,29 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         loadingListItems = findViewById(R.id.progress_loading_list_items);
         loadingListItems.setVisibility(View.VISIBLE);
 
-        pNames.add("Total Price");
-        pStores.add("");
-        pPrices.add("0.00");
-        pQuantity.add("-1");
-        pImages.add("-1");
-        pListItemPair.add(null);
+        clearAll = (Button) findViewById(R.id.buttonClear);
+        clearAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("clicked");
+                pNames.clear();
+                pStores.clear();
+                pPrices.clear();
+                pQuantity.clear();
+                pImages.clear();
+
+                while(!pListItemPair.isEmpty()) {
+                    try {
+                        requestor.deleteObject(pListItemPair.remove(0));
+                    }
+                    catch(Exception e) {}
+                }
+
+                totalPrice = 0;
+                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+                myAdapter.notifyDataSetChanged();
+            }
+        });
 
 
         Properties configs = new Properties();
@@ -88,24 +105,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         requestor = new Requestor(am, configs.getProperty("apiKey"));
 
         requestor.getObject(Integer.toString(listID), List.class, this);
-
-        /*pNames.add("Half-gallon organic whole milk");
-        pStores.add("Kroger");
-        pPrices.add("$5.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.milk);
-
-        pNames.add("5-bunch medium bananas");
-        pStores.add("Kroger");
-        pPrices.add("$3.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.bananas);
-
-        pNames.add("JIF 40-oz creamy peanut butter");
-        pStores.add("Kroger");
-        pPrices.add("$7.00");
-        pQuantity.add("1");
-        pImages.add(R.drawable.peanutbutter);*/
     }
 
     @Override
@@ -129,9 +128,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         totalPriceByStore.put("Kroger", item.getPrice().doubleValue() * entry.getQuantity());
                         storeHeaderIndex.put("Kroger", pNames.size());
 
-                        double newTotal = Double.parseDouble(pPrices.get(0)) + (item.getPrice().doubleValue() * entry.getQuantity());
-                        pPrices.set(0, String.valueOf(newTotal));
-
                         pNames.add("Kroger");
                         pStores.add("");
                         pPrices.add(df.format(totalPriceByStore.get("Kroger")));
@@ -152,8 +148,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
                         pPrices.set(index, df.format(totalPriceByStore.get("Kroger")));
 
-                        double newTotal = Double.parseDouble(pPrices.get(0)) + (item.getPrice().doubleValue() * entry.getQuantity());
-                        pPrices.set(0, df.format(newTotal));
                         index++;
 
                         pNames.add(index, item.getDescription());
@@ -175,6 +169,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             }
 
+
             tvTotalPrice = (TextView) findViewById(R.id.total_price);
             runOnUiThread(new Runnable() {
                 @Override
@@ -185,7 +180,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             });
         }
-      
     }
 
     class MyAdapter extends ArrayAdapter<String> {
@@ -223,8 +217,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) - Double.parseDouble(pPrices.get(position)));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
-                    double newTotal = Double.parseDouble(pPrices.get(0)) - Double.parseDouble(pPrices.get(position));
-                    pPrices.set(0, df.format(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() - 1);
                     pListItemPair.add(position, le);
@@ -260,8 +252,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pQuantity.set(position, Integer.toString(q));
                     totalPriceByStore.put(pStores.get(position), totalPriceByStore.get(pStores.get(position)) + Double.parseDouble(pPrices.get(position)));
                     pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
-                    double newTotal = Double.parseDouble(pPrices.get(0)) + Double.parseDouble(pPrices.get(position));
-                    pPrices.set(0, df.format(newTotal));
                     ListEntry le = pListItemPair.remove(position);
                     le.setQuantity(le.getQuantity() + 1);
                     pListItemPair.add(position, le);
@@ -293,45 +283,20 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             removeItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
+                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
+
                     totalPrice -= (Double.parseDouble(pPrices.get(position)) *
                             Double.parseDouble(pQuantity.get(position)));
                     tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
-                    if(position == 0) {
-                        pNames.clear();
-                        pStores.clear();
-                        pPrices.clear();
-                        pQuantity.clear();
-                        pImages.clear();
+                    pNames.remove(position);
+                    pStores.remove(position);
+                    pPrices.remove(position);
+                    pQuantity.remove(position);
+                    pImages.remove(position);
 
-                        pNames.add("Total Price");
-                        pStores.add("");
-                        pPrices.add("0.00");
-                        pQuantity.add("-1");
-                        pImages.add("-1");
-
-                        while(pListItemPair.size() > 1) {
-                            try {
-                                requestor.deleteObject(pListItemPair.remove(1));
-                            }
-                            catch(Exception e) {}
-                        }
-                    }
-                    else {
-                        totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
-                        pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
-
-                        double newTotal = Double.parseDouble(pPrices.get(0)) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position)));
-                        pPrices.set(0, df.format(newTotal));
-
-                        pNames.remove(position);
-                        pStores.remove(position);
-                        pPrices.remove(position);
-                        pQuantity.remove(position);
-                        pImages.remove(position);
-
-                        requestor.deleteObject(pListItemPair.remove(position));
-                    }
+                    requestor.deleteObject(pListItemPair.remove(position));
 
                     listView.setAdapter(myAdapter);
                 }
@@ -349,23 +314,17 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 price.setText("$" + pPrices.get(position));
 
                 if(pQuantity.get(position).equals("-1")) {
-                    quantity.setVisibility(View.INVISIBLE);
-                    decrQuan.setVisibility(View.INVISIBLE);
-                    incrQuan.setVisibility(View.INVISIBLE);
-
-                    if(position == 0) {
-                        removeItem.setText("Clear all");
-                    }
-                    else {
-                        removeItem.setVisibility(View.INVISIBLE);
-                    }
+                    quantity.setVisibility(View.GONE);
+                    decrQuan.setVisibility(View.GONE);
+                    incrQuan.setVisibility(View.GONE);
+                    removeItem.setVisibility(View.GONE);
                 }
                 else {
                     quantity.setText(pQuantity.get(position));
                 }
 
                 if(pImages.get(position).equals("-1")) {
-                    image.setVisibility(View.INVISIBLE);
+                    image.setVisibility(View.GONE);
                 }
                 else {
                     Glide.with(getContext()).load(pImages.get(position)).into(image);
