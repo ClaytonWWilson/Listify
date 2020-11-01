@@ -1,6 +1,9 @@
 package com.example.listify;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.example.listify.data.Item;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
+import com.example.listify.data.ListShare;
+import com.example.listify.ui.SignupPage;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -37,6 +42,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button decrQuan;
     Button removeItem;
     Button clearAll;
+    Button shareList;
+
     TextView tvTotalPrice;
     ProgressBar loadingListItems;
 
@@ -65,7 +72,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
-
         listView.setAdapter(myAdapter);
 
         loadingListItems = findViewById(R.id.progress_loading_list_items);
@@ -75,7 +81,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("clicked");
                 pNames.clear();
                 pStores.clear();
                 pPrices.clear();
@@ -95,6 +100,48 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             }
         });
 
+        shareList = (Button) findViewById(R.id.buttonShare);
+        shareList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View codeView = getLayoutInflater().inflate(R.layout.activity_sharedemail, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListPage.this);
+                builder.setView(codeView);
+                builder.setTitle("Verification code");
+                builder.setMessage("Please enter the 6-digit verification code sent to your email.");
+                builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
+                        String sharedEmail = sharedEmailText.getText().toString();
+                        //String[] sharedEmailList = sharedEmails.split(", ");
+                        //for(String email : sharedEmailList) {
+                        //Properties configs = new Properties();
+                        //try {
+                        //    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                        //} catch (IOException | JSONException e) {
+                        //    e.printStackTrace();
+                        //}
+                        //Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+                        //SynchronousReceiver<Integer> ls = new SynchronousReceiver<>();
+                        ListShare listShare = new ListShare(listID, sharedEmail);
+                        try {
+                            requestor.postObject(listShare);
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                        //}
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         Properties configs = new Properties();
         try {
@@ -103,7 +150,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-
         requestor.getObject(Integer.toString(listID), List.class, this);
     }
 
