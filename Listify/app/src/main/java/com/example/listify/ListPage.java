@@ -114,16 +114,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        //String[] sharedEmailList = sharedEmails.split(", ");
-                        //for(String email : sharedEmailList) {
-                        //Properties configs = new Properties();
-                        //try {
-                        //    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
-                        //} catch (IOException | JSONException e) {
-                        //    e.printStackTrace();
-                        //}
-                        //Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
-                        //SynchronousReceiver<Integer> ls = new SynchronousReceiver<>();
                         ListShare listShare = new ListShare(listID, sharedEmail);
                         try {
                             requestor.postObject(listShare);
@@ -131,7 +121,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         catch(Exception e) {
                             e.printStackTrace();
                         }
-                        //}
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
