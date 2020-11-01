@@ -18,13 +18,13 @@ import com.example.listify.data.List;
 
 import java.util.ArrayList;
 
-public class DisplayShoppingListsAdapter extends BaseAdapter {
+public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
     private final ViewBinderHelper binderHelper;
 
-    public DisplayShoppingListsAdapter(Activity activity, ArrayList<List> lists){
+    public ShoppingListsSwipeableAdapter(Activity activity, ArrayList<List> lists){
         binderHelper = new ViewBinderHelper();
         this.activity = activity;
         this.lists = lists;

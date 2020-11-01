@@ -1,35 +1,22 @@
 package com.example.listify.ui.lists;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
 
-import com.amplifyframework.auth.AuthException;
 import com.example.listify.AuthManager;
-import com.example.listify.CreateListAddDialogFragment;
 import com.example.listify.CreateListDialogFragment;
-import com.example.listify.ItemDetails;
-import com.example.listify.ListPage;
 import com.example.listify.LoadingCircleDialog;
 import com.example.listify.R;
 import com.example.listify.Requestor;
-import com.example.listify.SearchResults;
 import com.example.listify.SynchronousReceiver;
-import com.example.listify.adapter.DisplayShoppingListsAdapter;
+import com.example.listify.adapter.ShoppingListsSwipeableAdapter;
 import com.example.listify.data.List;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -44,7 +31,7 @@ import static com.example.listify.MainActivity.am;
 
 public class ListsFragment extends Fragment implements CreateListDialogFragment.OnNewListListener, Requestor.Receiver {
     ArrayList<List> shoppingLists = new ArrayList<>();
-    DisplayShoppingListsAdapter displayShoppingListsAdapter;
+    ShoppingListsSwipeableAdapter shoppingListsSwipeableAdapter;
     Requestor requestor;
     ListView shoppingListsView;
     ProgressBar loadingLists;
@@ -127,7 +114,7 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        displayShoppingListsAdapter.notifyDataSetChanged();
+                        shoppingListsSwipeableAdapter.notifyDataSetChanged();
                         loadingDialog.cancel();
                         Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
                     }
@@ -172,12 +159,12 @@ public class ListsFragment extends Fragment implements CreateListDialogFragment.
         }
 
         // Set adapter and display this users lists
-        displayShoppingListsAdapter = new DisplayShoppingListsAdapter(getActivity(), shoppingLists);
+        shoppingListsSwipeableAdapter = new ShoppingListsSwipeableAdapter(getActivity(), shoppingLists);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                shoppingListsView.setAdapter(displayShoppingListsAdapter);
+                shoppingListsView.setAdapter(shoppingListsSwipeableAdapter);
 //                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //                    @Override
 //                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
