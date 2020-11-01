@@ -1,14 +1,17 @@
 import org.junit.Test;
 
+import java.nio.file.NoSuchFileException;
 import java.sql.SQLException;
 
 public class TestUserDeleter {
     @Test
-    public void TestUserDelete(){
-        try {
-            testUserDeleter(false);
-            assert(false);
-        } catch (Exception e) {}
+    public void testUserDeleteFileUsage(){
+        testUserDeleter(false);
+    }
+
+    @Test
+    public void testUserDeleteInvalid(){
+        testUserDeleter(true);
     }
 
     public void testUserDeleter(boolean shouldThrow) {
@@ -24,7 +27,9 @@ public class TestUserDeleter {
         try {
             userDeleter.conductAction(null, null, cognitoID);
         } catch (SQLException e) {
-            e.printStackTrace();
+            assert shouldThrow;
+        } catch (Exception e) {
+            assert e.getClass().equals(NoSuchFileException.class);
         }
     }
 }

@@ -40,7 +40,7 @@ public class TestListAdder {
                 return;
             }
             assert (((Integer) rawIDReturn) == 1);
-            assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?)[aname, cognitoID,"));
+            assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]"));
         } catch (SQLException throwables) {
             assert shouldThrow;
             throwables.printStackTrace();
