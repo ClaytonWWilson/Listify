@@ -1,5 +1,6 @@
 #!/bin/bash
 #Currently to be run only from the Scraping directory
+rm artifacts/kohlsScraper.zip
 OLDPWD=$(pwd)
 cd build/
 zip -r9 ${OLDPWD}/artifacts/kohlsScraper.zip .

@@ -2,10 +2,11 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-
 import pymysql.cursors
 import time
+from random import randint
 import re
+
 
 def lambda_handler(event, context):
     print(event["toScrape"])
@@ -19,14 +20,27 @@ def lambda_handler(event, context):
     }
 
     params = (
-       ("url","https://www.kohls.com/search.jsp?submit-search=web-regular&search="+ event["toScrape"]),
+       ("url","https://www.kohls.com/search.jsp?submit-search=web-regular&search=" + event["toScrape"]),
        ("location","na"),
     );
 
     response = requests.get("https://app.zenscrape.com/api/v1/get", headers=headers, params=params)
-
+    
+    retry_counter = 1
+    while response.status_code == 500:
+        print("Retry #" + str(retry_counter))
+        retry_counter += 1
+        time.sleep(randint(5,20))
+        response = requests.get("https://app.zenscrape.com/api/v1/get", headers=headers, params=params)
+        
+    if response.status_code != 200:
+        print("Scraping status code: " + str(response.status_code ))
+        print(response.text)
+        
+    
     soup = BeautifulSoup(response.text, "html.parser")
 
+        
     insert_params = []
 
     for match in soup.find_all(id=re.compile(".*_prod_price")):

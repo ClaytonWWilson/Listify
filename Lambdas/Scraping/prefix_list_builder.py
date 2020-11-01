@@ -1,3 +1,7 @@
+import json
+
+LIST_SIZE = 100
+
 wordlist = []
 with open("nounlist.txt") as nounlist:
   for noun in nounlist:
@@ -7,19 +11,23 @@ prefix_list = []
 for word in wordlist:
   prefix_list.append(word[:min(len(word), 3)])
 
-short_list = []
-short_list2 = []
+word_lists = []
+for i in range(int(len(prefix_list) / LIST_SIZE)):
+  word_lists.append([])
+
+current_list_len = 0
+current_list = 0
 for prefix in prefix_list:
   prefix = prefix.strip()
-  if len(short_list) < 700:
-    if (len(short_list) == 0 or short_list[-1] != prefix):
-      short_list.append(prefix)
-  else:
-    if ((len(short_list2) == 0 or short_list2[-1] != prefix) and short_list[-1] != prefix):
-      short_list2.append(prefix)
+  if current_list_len >= LIST_SIZE:
+    if (word_lists[current_list][-1] != prefix):
+      current_list_len = 0
+      current_list += 1
+  if (current_list_len == 0 or word_lists[current_list][-1] != prefix):
+    word_lists[current_list].append(prefix)
+    current_list_len += 1
 
-with open("prefix_list_part1.txt", "w") as prefix_list_part1:
-  json.dump(short_list, prefix_list_part1)
+for i in range(current_list + 1):
+  with open("prefix_list_part" + str(i + 1) + ".txt", "w") as prefix_list_part:
+    json.dump(word_lists[i], prefix_list_part)
 
-with open("prefix_list_part2.txt", "w") as prefix_list_part2:
-  json.dump(short_list2, prefix_list_part2)
