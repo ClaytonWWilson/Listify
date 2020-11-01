@@ -107,8 +107,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 View codeView = getLayoutInflater().inflate(R.layout.activity_sharedemail, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListPage.this);
                 builder.setView(codeView);
-                builder.setTitle("Verification code");
-                builder.setMessage("Please enter the 6-digit verification code sent to your email.");
+                builder.setTitle("Share list");
+                builder.setMessage("Please enter the email of the user who you want to share the list with.");
                 builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
