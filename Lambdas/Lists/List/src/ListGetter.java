@@ -11,7 +11,8 @@ public class ListGetter implements CallHandler{
     private final String cognitoID;
 
     private final String GET_LIST = "SELECT * FROM List WHERE listID = ?;";
-    private final String GET_LISTS = "SELECT listID FROM List WHERE owner = ?;";
+    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ?;";
+    private final String SHARE_CHECK = "SELECT * FROM ListSharee WHERE listID = ?;";
     private final String GET_ENTRIES = "SELECT * FROM ListProduct WHERE listID = ?;";
 
     public ListGetter(Connection connection, String cognitoID) {
@@ -34,13 +35,25 @@ public class ListGetter implements CallHandler{
             }
             return listIds;
         }
+        PreparedStatement checkAccess = connection.prepareStatement(SHARE_CHECK);
+        checkAccess.setInt(1, id);
+        System.out.println(checkAccess);
+        ResultSet accessResults = checkAccess.executeQuery();
+        int sharees = 0;
+        while (sharees < 2 && accessResults.next()) {
+            sharees++;
+        }
+        boolean shared = false;
+        if (sharees > 1) {
+            shared = true;
+        }
         PreparedStatement getList = connection.prepareStatement(GET_LIST);
         getList.setInt(1, id);
         System.out.println(getList);
         ResultSet getListResults = getList.executeQuery();
         getListResults.first();
         System.out.println(getListResults);
-        List retrievedList = new List(getListResults);
+        List retrievedList = new List(getListResults, shared);
         System.out.println(retrievedList);
         PreparedStatement getListEntries = connection.prepareStatement(GET_ENTRIES);
         getListEntries.setInt(1, id);

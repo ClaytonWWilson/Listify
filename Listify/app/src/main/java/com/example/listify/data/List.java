@@ -8,17 +8,19 @@ public class List {
     String owner;
     long lastUpdated;
     final ListEntry[] entries;
+    boolean shared;
 
-    public List(Integer itemID, String name, String owner, long lastUpdated, ListEntry[] entries) {
+    public List(Integer itemID, String name, String owner, long lastUpdated, ListEntry[] entries, boolean shared) {
         this.itemID = itemID;
         this.name = name;
         this.owner = owner;
         this.lastUpdated = lastUpdated;
         this.entries = entries;
+        this.shared = false;
     }
 
     public List(Integer itemID, String name, String owner, long lastUpdated) {
-        this(itemID,  name,  owner,  lastUpdated, null);
+        this(itemID,  name,  owner,  lastUpdated, null, false);
     }
 
     @Override
@@ -29,6 +31,7 @@ public class List {
                 ", owner='" + owner + '\'' +
                 ", lastUpdated=" + lastUpdated +
                 ", entries=" + Arrays.toString(entries) +
+                ", shared=" + shared +
                 '}';
     }
 
@@ -66,5 +69,13 @@ public class List {
 
     public ListEntry[] getEntries() {
         return entries;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
     }
 }

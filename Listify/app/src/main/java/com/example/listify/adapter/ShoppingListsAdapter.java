@@ -11,12 +11,12 @@ import com.example.listify.R;
 import com.example.listify.data.List;
 import java.util.ArrayList;
 
-public class DisplayShoppingListsAdapter extends BaseAdapter {
+public class ShoppingListsAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
 
-    public DisplayShoppingListsAdapter(Activity activity, ArrayList<List> lists){
+    public ShoppingListsAdapter(Activity activity, ArrayList<List> lists){
         this.activity = activity;
         this.lists = lists;
     }
@@ -42,7 +42,7 @@ public class DisplayShoppingListsAdapter extends BaseAdapter {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.display_shopping_lists_item, null);
+            convertView = inflater.inflate(R.layout.shopping_lists_name_item, null);
         }
 
         List curList = lists.get(position);

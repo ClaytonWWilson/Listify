@@ -70,9 +70,7 @@ public class HomeFragment extends Fragment {
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        return;
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();

@@ -3,7 +3,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import com.example.listify.adapter.SearchResultsListAdapter;
 import com.example.listify.data.ItemSearch;
@@ -25,9 +25,10 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener {
+public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener, Requestor.Receiver {
     private ListView listView;
     private MenuItem filterItem;
+    private ProgressBar loadingSearch;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
@@ -60,6 +61,8 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        loadingSearch = (ProgressBar) findViewById(R.id.progress_loading_search);
+
         // Back button closes this activity and returns to previous activity (MainActivity)
         ImageButton backButton = (ImageButton) findViewById(R.id.backToHomeButton);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +93,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         });
 
-        listView = (ListView) findViewById(R.id.search_results_list);
+        ListView listView = (ListView) findViewById(R.id.search_results_list);
         searchResultsListAdapter = new SearchResultsListAdapter(this, resultsProductListSorted);
         listView.setAdapter(searchResultsListAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -108,6 +111,15 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                // Show progress bar
+                loadingSearch.setVisibility(View.VISIBLE);
+
+                // Clear the old search results
+                resultsProductList.clear();
+
+                // Clear old search results from the view
+                resultsProductListSorted.clear();
+                searchResultsListAdapter.notifyDataSetChanged();
                 doSearch(query);
                 return false;
             }
@@ -175,9 +187,6 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         return true;
     }
 
-
-
-
     // Override default phone back button to add animation
     @Override
     public void onBackPressed() {
@@ -186,10 +195,6 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     }
 
     private void doSearch(String query) {
-
-        // Clear the old search results
-        resultsProductList.clear();
-
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -198,53 +203,10 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
-
-        SynchronousReceiver<ItemSearch> itemReceiver = new SynchronousReceiver<>();
-        requestor.getObject(query, ItemSearch.class, itemReceiver, itemReceiver);
-        ItemSearch results;
-        try {
-            results = itemReceiver.await();
-            for (int i = 0; i < results.getResults().size(); i++) {
-                // TODO: Change to dynamically grab chain name by id
-                resultsProductList.add(new Product(results.getResults().get(i).getDescription(), results.getResults().get(i).getProductID(), "Kroger", results.getResults().get(i).getChainID(), results.getResults().get(i).getUpc(), results.getResults().get(i).getDescription(), results.getResults().get(i).getPrice(), results.getResults().get(i).getImageURL(), results.getResults().get(i).getDepartment()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Create a list of all stores in the results so the user can filter by store name
-        for (int i = 0; i < resultsProductList.size(); i++) {
-            if (!stores.contains(resultsProductList.get(i).getChainName())) {
-                stores.add(resultsProductList.get(i).getChainName());
-            }
-        }
-
-        // Sort the store list
-        stores.sort(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
-        // Reset selected stores on search so that every store is selected
-        this.selectedStores.clear();
-        this.selectedStores.addAll(stores);
-
-        // Add all results to the sorted list
-        resultsProductListSorted.addAll(resultsProductList);
-
-        // Filtering should only be allowed if there are items in the results
-        if (resultsProductList.isEmpty()) {
-            filterItem.setEnabled(false);
-        } else {
-            filterItem.setEnabled(true);
-        }
-
-        // Apply selected sorting to the list
-        sortResults();
+        requestor.getObject(query, ItemSearch.class, this);
     }
 
+    // TODO: Scroll the list back to the top when a search, sort, or filter is performed
     // Sorts the search results
     private void sortResults() {
         // Reset the filtered list
@@ -263,6 +225,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             case NONE:
                 // Do nothing
                 break;
+            
             case NAME:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
@@ -271,6 +234,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                     }
                 });
                 break;
+            
             case PRICE:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
@@ -325,8 +289,8 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             resultsProductListSorted.clear();
             resultsProductListSorted.addAll(temp);
         }
-
-        // Filter out products that don't fit price restraints
+      
+      // Filter out products that don't fit price restraints
         ArrayList<Product> temp = new ArrayList<>();
         resultsProductListSorted.forEach(product -> {
             if (product.getPrice().doubleValue() >= this.minPrice &&
@@ -337,6 +301,67 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         resultsProductListSorted.clear();
         resultsProductListSorted.addAll(temp);
 
-        searchResultsListAdapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                searchResultsListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    // This is called after the search results come back from the server
+    // TODO: Display a "no results" message if nothing is found when searching
+    @Override
+    public void acceptDelivery(Object delivered) {
+        ItemSearch results = (ItemSearch) delivered;
+        try {
+            for (int i = 0; i < results.getResults().size(); i++) {
+                // TODO: Change to dynamically grab chain name by id
+                resultsProductList.add(new Product(
+                        results.getResults().get(i).getDescription(),
+                        results.getResults().get(i).getProductID(),
+                        "Kroger",
+                        results.getResults().get(i).getChainID(),
+                        results.getResults().get(i).getUpc(),
+                        results.getResults().get(i).getDescription(),
+                        results.getResults().get(i).getPrice(),
+                        results.getResults().get(i).getImageURL(),
+                        results.getResults().get(i).getDepartment()
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Create a list of all stores in the results so the user can filter by store name
+        for (int i = 0; i < resultsProductList.size(); i++) {
+            if (!stores.contains(resultsProductList.get(i).getChainName())) {
+                stores.add(resultsProductList.get(i).getChainName());
+            }
+        }
+
+        // Add all results to the sorted list
+        resultsProductListSorted.addAll(resultsProductList);
+      
+        // Filtering should only be allowed if there are items in the results
+        if (resultsProductList.isEmpty()) {
+            filterItem.setEnabled(false);
+        } else {
+            filterItem.setEnabled(true);
+        }
+
+        // Apply selected sorting to the list
+        sortResults();
+
+        // Updates the list of search results. Runs on the main UI thread since other threads are
+        // not allowed to change UI elements
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Hide progress bar
+                loadingSearch.setVisibility(View.GONE);
+
+            }
+        });
     }
 }

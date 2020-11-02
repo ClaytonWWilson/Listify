@@ -208,6 +208,24 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         });
     }
 
+    public void onClickSignout(MenuItem m) {
+        m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                try {
+                    am.signOutUser();
+                    Intent intent = new Intent(MainActivity.this, com.example.listify.ui.LoginPage.class);
+                    startActivity(intent);
+                    finish();
+                }
+                catch (Exception e) {
+                    Log.i("Authentication", e.toString());
+                }
+                return false;
+            }
+        });
+    }
+
     @Override
     public void sendNewListName(String name) {
         Properties configs = new Properties();
