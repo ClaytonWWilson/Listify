@@ -42,7 +42,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button decrQuan;
     Button removeItem;
     Button clearAll;
-    Button shareList;
+    //Button shareList;
 
     TextView tvTotalPrice;
     ProgressBar loadingListItems;
@@ -69,6 +69,15 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         setContentView(R.layout.activity_list);
 
         final int listID = (int) getIntent().getSerializableExtra("listID");
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
+        requestor.getObject(Integer.toString(listID), List.class, this);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -100,7 +109,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             }
         });
 
-        shareList = (Button) findViewById(R.id.buttonShare);
+        /*shareList = (Button) findViewById(R.id.buttonShare);
         shareList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,16 +139,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        });
-
-        Properties configs = new Properties();
-        try {
-            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        requestor = new Requestor(am, configs.getProperty("apiKey"));
-        requestor.getObject(Integer.toString(listID), List.class, this);
+        });*/
     }
 
     @Override

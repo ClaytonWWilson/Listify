@@ -61,6 +61,14 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+
         if (inflater == null) {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -89,14 +97,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO: Add database call to delete the list on the server
-                
-                Properties configs = new Properties();
-                try {
-                    configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-                Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+
                 try {
                     requestor.deleteObject(Integer.toString(curList.getItemID()), List.class);
                 }
@@ -117,8 +118,8 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             public void onClick(View v) {
                 // TODO: Add database call to share list
 
-                /*View codeView = getLayoutInflater().inflate(R.layout.activity_sharedemail, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListPage.this);
+                View codeView = inflater.inflate(R.layout.activity_sharedemail, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setView(codeView);
                 builder.setTitle("Share list");
                 builder.setMessage("Please enter the email of the user who you want to share the list with.");
@@ -127,7 +128,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(listID, sharedEmail);
+                        ListShare listShare = new ListShare(curList.getItemID(), sharedEmail);
                         try {
                             requestor.postObject(listShare);
                         }
@@ -141,7 +142,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {}
                 });
                 AlertDialog dialog = builder.create();
-                dialog.show();*/
+                dialog.show();
 
                 Toast.makeText(activity, String.format("Share %s", curList.getName()), Toast.LENGTH_SHORT).show();
 
