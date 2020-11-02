@@ -133,7 +133,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         });
 
-        // TODO: price filter should be disabled until a search is made
+        // TODO: Reset upper and lower limits on price filter when a new search is made
         filterItem = menu.findItem(R.id.action_filter);
         filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
