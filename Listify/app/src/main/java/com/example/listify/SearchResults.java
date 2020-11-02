@@ -340,15 +340,24 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         }
 
+        // Reset selected stores on search so that every store is selected
+        this.selectedStores.clear();
+        this.selectedStores.addAll(stores);
+
         // Add all results to the sorted list
         resultsProductListSorted.addAll(resultsProductList);
       
         // Filtering should only be allowed if there are items in the results
-        if (resultsProductList.isEmpty()) {
-            filterItem.setEnabled(false);
-        } else {
-            filterItem.setEnabled(true);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (resultsProductList.isEmpty()) {
+                    filterItem.setEnabled(false);
+                } else {
+                    filterItem.setEnabled(true);
+                }
+            }
+        });
 
         // Apply selected sorting to the list
         sortResults();
