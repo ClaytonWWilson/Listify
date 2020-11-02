@@ -12,6 +12,7 @@ public class ListDeleter implements CallHandler {
 
     private final String GET_LISTS = "SELECT * FROM List WHERE (owner = ? AND listID = ?);";
     private final String DELETE_LIST = "DELETE FROM List WHERE listID = ?;";
+    private final String DELETE_REQUESTOR_ACCESS = "DELETE FROM ListSharee where listID = ? AND userID = ?;";
     private final String DELETE_LIST_ACCESS = "DELETE FROM ListSharee where listID = ?;";
     private final String DELETE_LIST_ENTRIES = "DELETE FROM ListProduct where listID = ?;";
 
@@ -23,12 +24,17 @@ public class ListDeleter implements CallHandler {
     @Override
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
         Integer listID = Integer.parseInt(queryMap.get("id"));
+        PreparedStatement cleanRequestorAccess = connection.prepareStatement(DELETE_REQUESTOR_ACCESS);
+        cleanRequestorAccess.setInt(1, listID);
+        cleanRequestorAccess.setString(2, cognitoID);
+        System.out.println(cleanRequestorAccess);
+        cleanRequestorAccess.executeUpdate();
+
         PreparedStatement accessCheck = connection.prepareStatement(GET_LISTS);
         accessCheck.setString(1, cognitoID);
         accessCheck.setInt(2, listID);
         System.out.println(accessCheck);
         ResultSet userLists = accessCheck.executeQuery();
-
         if (!userLists.next()) {
             throw new AccessControlException("User does not have access to list");
         }
