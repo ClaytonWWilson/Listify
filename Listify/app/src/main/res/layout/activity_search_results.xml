@@ -23,10 +23,12 @@
                 android:id="@+id/backToHomeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:translationX="-10dp"
+                android:padding="10dp"
                 app:srcCompat="@drawable/abc_vector_test"
                 android:background="@null"
-                android:contentDescription="@string/backButton"/>
+                android:contentDescription="@string/backButton"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
             <SearchView
                 android:id="@+id/searchBar"
@@ -35,14 +37,6 @@
                 android:queryHint="Search Here"
                 >
             </SearchView>
-
-            <ImageButton
-                android:id="@+id/results_sort_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/sort_button_desc"
-                android:background="@null"
-                app:srcCompat="@drawable/ic_baseline_sort_28" />
 
         </androidx.appcompat.widget.Toolbar>
 

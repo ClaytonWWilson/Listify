@@ -1,93 +1,104 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="30dp">
+
+    <!--  I would've use a ListView here, but it doesn't offer enough customization  -->
+    <TextView
+        android:id="@+id/sort_none"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="None"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingStart="16dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/list_divider" />
 
     <TextView
-        android:id="@+id/tv_store_selection"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="15dp"
-        android:text="@string/store_selection" />
+        android:id="@+id/sort_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Name"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingStart="16dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"/>
 
-    <Spinner
-        android:id="@+id/sort_store_dropdown"
-        android:layout_width="265dp"
-        android:layout_marginStart="15dp"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/spinner_dropdown_background"
-        android:spinnerMode="dropdown"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider" />
 
     <TextView
-        android:id="@+id/tv_sort_by"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="15dp"
-        android:text="Sort by" />
+        android:id="@+id/sort_price"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Price"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingStart="16dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider" />
+
+    <TextView
+        android:id="@+id/sort_store"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Store"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingStart="16dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider" />
 
     <LinearLayout
+        android:id="@+id/descending_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="15dp">
-
-        <Spinner
-            android:id="@+id/sort_mode_dropdown"
-            android:layout_width="265dp"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/spinner_dropdown_background"
-            android:spinnerMode="dropdown"/>
-
-        <ImageButton
-            android:id="@+id/sort_direction_button"
-            android:layout_marginTop="-6dp"
-            android:layout_width="57dp"
-            android:layout_height="70dp"
-            android:background="@null"
-            android:src="@drawable/ic_baseline_arrow_upward_50"/>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_price_label"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="15dp"
-        android:text="Price" />
-
-    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-        android:id="@+id/price_range_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false">
 
         <TextView
-            android:id="@+id/tv_min_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="15dp"
-            android:text="$00.00" />
-        <TextView
-            android:id="@+id/tv_max_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="15dp"
-            android:gravity="end"
-            android:text="$00.00" />
+            android:text="Descending"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:paddingStart="16dp"/>
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_descending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 

@@ -225,6 +225,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         ArrayList<String> pQuantity;
         ArrayList<String> pImages;
 
+
         MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<String> images) {
             super(c, R.layout.activity_listproductentry, R.id.productView, names);
             context = c;
