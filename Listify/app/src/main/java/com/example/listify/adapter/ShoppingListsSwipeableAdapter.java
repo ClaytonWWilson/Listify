@@ -92,7 +92,12 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         // Bind the view to the unique list ID
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getItemID()));
 
-        holder.textView.setText(curList.getName());
+        if(curList.isShared()) {
+            holder.textView.setText(curList.getName() + " (shared)");
+        }
+        else {
+            holder.textView.setText(curList.getName());
+        }
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
