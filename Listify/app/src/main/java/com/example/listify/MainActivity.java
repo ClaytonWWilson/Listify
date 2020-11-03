@@ -190,18 +190,6 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
-    // This function only exists for the create new list option in hamburger menu
-    public void onClickCreateList(MenuItem m) {
-        m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
-                createListDialogFragment.show(getSupportFragmentManager(), "Create New List");
-                return false;
-            }
-        });
-    }
-
     public void onClickSignout(MenuItem m) {
         m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override

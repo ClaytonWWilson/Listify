@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -23,25 +25,32 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class SearchResults extends AppCompatActivity implements SortDialogFragment.OnSortingListener, Requestor.Receiver {
+public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener, Requestor.Receiver {
+    private ListView listView;
+    private MenuItem filterItem;
     private ProgressBar loadingSearch;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
     private ArrayList<String> stores = new ArrayList<>();
-    private int storeSelection;
-    private int sortMode;
+    private ArrayList<String> selectedStores = new ArrayList<>();
+    private SortModes sortMode = SortModes.NONE;
     private boolean descending;
     private double minPrice = 0;
     private double maxPrice = -1;
 
     @Override
-    public void sendSort(int storeSelection, int sortMode, boolean descending, double minPrice, double maxPrice) {
-        this.storeSelection = storeSelection;
-        this.sortMode = sortMode;
-        this.descending = descending;
+    public void sendFilter(ArrayList<String> selectedStores, double minPrice, double maxPrice) {
+        this.selectedStores = selectedStores;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
+        sortResults();
+    }
+
+    @Override
+    public void sendSort(SortModes sortMode, boolean descending) {
+        this.sortMode = sortMode;
+        this.descending = descending;
         sortResults();
     }
 
@@ -120,22 +129,27 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 return false;
             }
         });
+    }
 
-        // TODO: Change this to a menu in which sort and filter are two different options
-        // TODO: Sort should be disabled until a search is made
-        // Create a dialog for filtering and sorting search results
-        ImageButton sortButton = (ImageButton) findViewById(R.id.results_sort_button);
-        sortButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.search, menu);
+        MenuItem sortItem = menu.findItem(R.id.action_sort);
+        sortItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                // Sort the store list
-                stores.sort(new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        return o1.compareTo(o2);
-                    }
-                });
+            public boolean onMenuItemClick(MenuItem item) {
+                SortDialogFragment sortDialog = new SortDialogFragment(sortMode, descending);
+                sortDialog.show(getSupportFragmentManager(), "Sort Dialog");
+                return false;
+            }
+        });
 
+        // TODO: Reset upper and lower limits on price filter when a new search is made
+        filterItem = menu.findItem(R.id.action_filter);
+        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
                 // Determine the max price for the price slider
                 double maxProductPrice;
                 if (resultsProductList.isEmpty()) {
@@ -159,10 +173,18 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 // Round up to nearest whole number for display on price seekbar
                 maxProductPrice = Math.ceil(maxProductPrice);
 
-                SortDialogFragment sortDialog = new SortDialogFragment(storeSelection, stores, sortMode, descending, maxProductPrice, minPrice, maxPrice);
-                sortDialog.show(getSupportFragmentManager(), "Sort");
+                FilterDialogFragment sortDialog = new FilterDialogFragment(selectedStores, stores, maxProductPrice, minPrice, maxPrice);
+                sortDialog.show(getSupportFragmentManager(), "Filter Dialog");
+                return false;
             }
         });
+
+        // Disable filtering by default until a search is made
+        if (resultsProductList.isEmpty()) {
+            filterItem.setEnabled(false);
+        }
+
+        return true;
     }
 
     // Override default phone back button to add animation
@@ -200,10 +222,11 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
 
         // Sort based on mode
         switch (this.sortMode) {
-            case 0:
+            case NONE:
                 // Do nothing
                 break;
-            case 1:
+            
+            case NAME:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -211,8 +234,8 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                     }
                 });
                 break;
-
-            case 2:
+            
+            case PRICE:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -227,7 +250,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 });
                 break;
 
-            case 3:
+            case STORE:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -236,7 +259,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
                 });
                 break;
 
-            case 4:
+            case UPC:
                 resultsProductListSorted.sort(new Comparator<Product>() {
                     @Override
                     public int compare(Product a, Product b) {
@@ -247,7 +270,7 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         }
 
         // Flip the list if descending is selected
-        if (this.sortMode != 0 & this.descending) {
+        if (this.descending) {
             for (int i = 0; i < resultsProductListSorted.size() / 2; i++) {
                 Product temp = resultsProductListSorted.get(i);
                 resultsProductListSorted.set(i, resultsProductListSorted.get(resultsProductListSorted.size() - i - 1));
@@ -256,10 +279,10 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
         }
 
         // Only keep results that match the current store selection
-        if (this.storeSelection != 0) {
+        if (!this.selectedStores.equals(this.stores)) {
             ArrayList<Product> temp = new ArrayList<>();
             resultsProductListSorted.forEach(product -> {
-                if (product.getChainName().equals(this.stores.get(this.storeSelection - 1))) {
+                if (this.selectedStores.contains(product.getChainName())) {
                     temp.add(product);
                 }
             });
@@ -317,8 +340,24 @@ public class SearchResults extends AppCompatActivity implements SortDialogFragme
             }
         }
 
+        // Reset selected stores on search so that every store is selected
+        this.selectedStores.clear();
+        this.selectedStores.addAll(stores);
+
         // Add all results to the sorted list
         resultsProductListSorted.addAll(resultsProductList);
+      
+        // Filtering should only be allowed if there are items in the results
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (resultsProductList.isEmpty()) {
+                    filterItem.setEnabled(false);
+                } else {
+                    filterItem.setEnabled(true);
+                }
+            }
+        });
 
         // Apply selected sorting to the list
         sortResults();
