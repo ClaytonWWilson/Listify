@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ import com.example.listify.AuthManager;
 import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.Requestor;
+import com.example.listify.ui.ForgotPasswordPage;
 import com.example.listify.ui.LoginPage;
 
 import org.json.JSONException;
@@ -57,6 +59,16 @@ public class HomeFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+
+                                try {
+                                    am.changePassword(am.getEmail());
+                                }
+                                catch (Exception e) {}
+                                try {
+                                    am.confirmPasswordReset("", "");
+                                }
+                                catch (Exception e) {}
+
                                 am.deleteUser(requestor);
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                                 startActivity(intent);
