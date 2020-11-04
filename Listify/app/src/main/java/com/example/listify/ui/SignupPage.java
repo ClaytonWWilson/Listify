@@ -33,20 +33,25 @@ public class SignupPage extends AppCompatActivity {
     String confirmPassword;
 
     @Override
+    public void onBackPressed() {
+        String prev = getIntent().getStringExtra("prev");
+
+        if (prev != null && (prev.equals("Log in") || prev.equals("Forgot password"))) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
-        if(am.getEmail() != null) {
-            Intent intent = new Intent(SignupPage.this, MainActivity.class);
-            startActivity(intent);
-        }
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignupPage.this, LoginPage.class);
+                intent.putExtra("prev", "Sign up");
                 startActivity(intent);
             }
         });
@@ -73,6 +78,7 @@ public class SignupPage extends AppCompatActivity {
                     am.startSignUp(email, password);
                 }
                 catch (Exception e) {
+                    am.nullify();
                     Log.i("Authentication", e.toString());
                     TextView invalidCred = findViewById(R.id.textView3);
                     invalidCred.setText("Invalid credentials. Please try again.");
@@ -93,10 +99,11 @@ public class SignupPage extends AppCompatActivity {
                             am.confirmSignUp(code);
                             am.signIn(email, password);
                             Intent intent = new Intent(SignupPage.this, MainActivity.class);
+                            intent.putExtra("prev", "Sign up");
                             startActivity(intent);
-                            finish();
                         }
                         catch (Exception e) {
+                            am.nullify();
                             Log.i("Authentication", e.toString());
                         }
                     }

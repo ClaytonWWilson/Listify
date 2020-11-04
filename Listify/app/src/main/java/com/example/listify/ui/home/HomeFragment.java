@@ -78,7 +78,6 @@ public class HomeFragment extends Fragment {
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello, this email is to confirm that you have deleted your Listify account.");
                                 try {
                                     startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-                                    getActivity().finish();
                                     Log.i("Finished sending email...", "");
                                     System.out.println("A");
                                 } catch (Exception e) {
@@ -87,9 +86,9 @@ public class HomeFragment extends Fragment {
                                 }*/
 
                                 am.deleteUser(requestor);
+                                am.nullify();
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                                 startActivity(intent);
-                                getActivity().finish();
                             }
                             catch (Exception e) {
                                 Log.i("Authentication", e.toString());

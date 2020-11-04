@@ -37,6 +37,15 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
     public static AuthManager am = new AuthManager();
 
     @Override
+    public void onBackPressed() {
+        String prev = getIntent().getStringExtra("prev");
+
+        if (prev == null) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -48,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                 public void run() {
                     Intent intent = new Intent(MainActivity.this, SplashActivity.class);
                     startActivity(intent);
-                    finish();
                 }
             }, 1);
         }
@@ -198,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                     am.signOutUser();
                     Intent intent = new Intent(MainActivity.this, com.example.listify.ui.LoginPage.class);
                     startActivity(intent);
-                    finish();
                 }
                 catch (Exception e) {
                     Log.i("Authentication", e.toString());
