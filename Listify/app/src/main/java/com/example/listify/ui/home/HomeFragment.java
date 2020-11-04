@@ -3,6 +3,7 @@ package com.example.listify.ui.home;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -64,10 +65,26 @@ public class HomeFragment extends Fragment {
                                     am.changePassword(am.getEmail());
                                 }
                                 catch (Exception e) {}
-                                try {
+                                /*try {
                                     am.confirmPasswordReset("", "");
                                 }
-                                catch (Exception e) {}
+                                
+                                String[] TO = {am.getEmail()};
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setData(Uri.parse("mailto:"));
+                                emailIntent.setType("text/plain");
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Listify account deleted");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello, this email is to confirm that you have deleted your Listify account.");
+                                try {
+                                    startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                                    getActivity().finish();
+                                    Log.i("Finished sending email...", "");
+                                    System.out.println("A");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    System.out.println("B");
+                                }*/
 
                                 am.deleteUser(requestor);
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);

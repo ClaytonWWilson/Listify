@@ -26,14 +26,14 @@
             android:text="Clear All"
             android:textSize="10sp"/>
 
-        <!--<Button
+        <Button
             android:id="@+id/buttonShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="26dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
             android:text="Share"
-            android:textSize="10sp"/>-->
+            android:textSize="10sp"/>
 
     </LinearLayout>
 

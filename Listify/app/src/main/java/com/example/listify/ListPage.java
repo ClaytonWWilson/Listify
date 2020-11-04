@@ -42,7 +42,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button decrQuan;
     Button removeItem;
     Button clearAll;
-    //Button shareList;
+    Button shareList;
 
     TextView tvTotalPrice;
     ProgressBar loadingListItems;
@@ -109,7 +109,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             }
         });
 
-        /*shareList = (Button) findViewById(R.id.buttonShare);
+        shareList = (Button) findViewById(R.id.buttonShare);
         shareList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +139,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        });*/
+        });
     }
 
     @Override
