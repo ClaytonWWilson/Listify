@@ -21,20 +21,25 @@ public class LoginPage extends AppCompatActivity {
     private Button button3; //Log in button
 
     @Override
+    public void onBackPressed() {
+        String prev = getIntent().getStringExtra("prev");
+
+        if (prev != null && (prev.equals("Sign up") || prev.equals("Forgot password"))) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        if(am.getEmail() != null) {
-            Intent intent = new Intent(LoginPage.this, MainActivity.class);
-            startActivity(intent);
-        }
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginPage.this, SignupPage.class);
+                intent.putExtra("prev", "Log in");
                 startActivity(intent);
             }
         });
@@ -44,6 +49,7 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginPage.this, ForgotPasswordPage.class);
+                intent.putExtra("prev", "Log in");
                 startActivity(intent);
             }
         });
@@ -61,10 +67,11 @@ public class LoginPage extends AppCompatActivity {
                 try {
                     am.signIn(email, password);
                     Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                    intent.putExtra("prev", "Login");
                     startActivity(intent);
-                    finish();
                 }
                 catch(Exception e) {
+                    am.nullify();
                     Log.i("Authentication", e.toString());
                     TextView invalidCred = findViewById(R.id.textView5);
                     invalidCred.setText("Incorrect email or password. Please try again.");

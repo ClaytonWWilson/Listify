@@ -3,6 +3,7 @@ package com.example.listify.ui.home;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,6 +23,7 @@ import com.example.listify.AuthManager;
 import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.Requestor;
+import com.example.listify.ui.ForgotPasswordPage;
 import com.example.listify.ui.LoginPage;
 
 import org.json.JSONException;
@@ -57,10 +60,35 @@ public class HomeFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+
+                                try {
+                                    am.changePassword(am.getEmail());
+                                }
+                                catch (Exception e) {}
+                                /*try {
+                                    am.confirmPasswordReset("", "");
+                                }
+                                
+                                String[] TO = {am.getEmail()};
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setData(Uri.parse("mailto:"));
+                                emailIntent.setType("text/plain");
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Listify account deleted");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello, this email is to confirm that you have deleted your Listify account.");
+                                try {
+                                    startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                                    Log.i("Finished sending email...", "");
+                                    System.out.println("A");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    System.out.println("B");
+                                }*/
+
                                 am.deleteUser(requestor);
+                                am.nullify();
                                 Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
                                 startActivity(intent);
-                                getActivity().finish();
                             }
                             catch (Exception e) {
                                 Log.i("Authentication", e.toString());

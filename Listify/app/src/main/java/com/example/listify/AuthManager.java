@@ -68,6 +68,11 @@ public class AuthManager {
         return password;
     }
 
+    public void nullify() {
+        email = null;
+        password = null;
+    }
+
     public void setAuthSession(AuthSession toSet) {
         authSession = (AWSCognitoAuthSession) toSet;
         waiting = false;
