@@ -377,6 +377,17 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         });
 
+        // Reset price filter
+        double max = 0;
+        for (int i = 0; i < resultsProductListSorted.size(); i++){
+            if (resultsProductListSorted.get(i).getPrice().doubleValue() > max) {
+                max = resultsProductListSorted.get(i).getPrice().doubleValue();
+            }
+        }
+
+        this.minPrice = 0;
+        this.maxPrice = max;
+
         // Apply selected sorting to the list
         sortResults();
 
