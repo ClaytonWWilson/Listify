@@ -352,6 +352,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         // Create a list of all stores in the results so the user can filter by store name
+        stores.clear();
         for (int i = 0; i < resultsProductList.size(); i++) {
             if (!stores.contains(resultsProductList.get(i).getChainName())) {
                 stores.add(resultsProductList.get(i).getChainName());
@@ -376,6 +377,17 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 }
             }
         });
+
+        // Reset price filter
+        double max = 0;
+        for (int i = 0; i < resultsProductListSorted.size(); i++){
+            if (resultsProductListSorted.get(i).getPrice().doubleValue() > max) {
+                max = resultsProductListSorted.get(i).getPrice().doubleValue();
+            }
+        }
+
+        this.minPrice = 0;
+        this.maxPrice = max;
 
         // Apply selected sorting to the list
         sortResults();
