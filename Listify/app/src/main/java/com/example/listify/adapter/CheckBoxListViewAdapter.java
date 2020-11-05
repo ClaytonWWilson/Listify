@@ -55,19 +55,30 @@ public class CheckBoxListViewAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.store_name);
             holder.checkBox = (CheckBox)convertView.findViewById(R.id.store_check_box);
-
-            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int getPosition = (Integer) buttonView.getTag();
+                public void onClick(View v) {
+                    int getPosition = (Integer) ((CompoundButton)(v)).getTag();
 
-                    if (isChecked) {
+                    if (((CompoundButton) v).isChecked()) {
                         checkedList.add(list.get(getPosition));
                     } else {
                         checkedList.remove(list.get(getPosition));
                     }
                 }
             });
+//            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    int getPosition = (Integer) buttonView.getTag();
+//
+//                    if (isChecked) {
+//                        checkedList.add(list.get(getPosition));
+//                    } else {
+//                        checkedList.remove(list.get(getPosition));
+//                    }
+//                }
+//            });
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override

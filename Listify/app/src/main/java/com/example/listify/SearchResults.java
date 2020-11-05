@@ -352,6 +352,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         }
 
         // Create a list of all stores in the results so the user can filter by store name
+        stores.clear();
         for (int i = 0; i < resultsProductList.size(); i++) {
             if (!stores.contains(resultsProductList.get(i).getChainName())) {
                 stores.add(resultsProductList.get(i).getChainName());
