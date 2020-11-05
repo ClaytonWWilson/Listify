@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
+import com.example.listify.data.Chain;
 import com.example.listify.data.Item;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
@@ -56,7 +57,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     ArrayList<ListEntry> pListItemPair = new ArrayList<>();
 
     double totalPrice = 0;
-  
+
+    HashMap<Integer, String> storeID2Name = new HashMap<>();
     Map<String, Double> totalPriceByStore = new HashMap<>();
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
@@ -159,34 +161,54 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     item = null;
                 }
                 if(item != null) {
-                    if(!totalPriceByStore.containsKey("Kroger")) {
-                        totalPriceByStore.put("Kroger", item.getPrice().doubleValue() * entry.getQuantity());
-                        storeHeaderIndex.put("Kroger", pNames.size());
+                    int storeID = (Integer)(item.getChainID());
+                    if(!storeID2Name.containsKey(storeID)) {
+                        Properties configs = new Properties();
+                        try {
+                            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
 
-                        pNames.add("Kroger");
+                        SynchronousReceiver<Chain> chainReciever = new SynchronousReceiver<>();
+                        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+                        requestor.getObject(Integer.toString(item.getChainID()), Chain.class, chainReciever);
+
+                        try {
+                            storeID2Name.put(storeID, chainReciever.await().getName());
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(!totalPriceByStore.containsKey(storeID2Name.get(storeID))) {
+                        totalPriceByStore.put(storeID2Name.get(storeID), item.getPrice().doubleValue() * entry.getQuantity());
+                        storeHeaderIndex.put(storeID2Name.get(storeID), pNames.size());
+
+                        pNames.add(storeID2Name.get(storeID));
                         pStores.add("");
-                        pPrices.add(df.format(totalPriceByStore.get("Kroger")));
+                        pPrices.add(df.format(totalPriceByStore.get(storeID2Name.get(storeID))));
                         pQuantity.add("-1");
                         pImages.add("-1");
                         pListItemPair.add(null);
 
                         pNames.add(item.getDescription());
-                        pStores.add("Kroger");
+                        pStores.add(storeID2Name.get(storeID));
                         pPrices.add(df.format(item.getPrice()));
                         pQuantity.add(entry.getQuantity().toString());
                         pImages.add(item.getImageURL());
                         pListItemPair.add(entry);
                     }
                     else {
-                        int index = storeHeaderIndex.get("Kroger");
+                        int index = storeHeaderIndex.get(storeID2Name.get(storeID));
 
-                        totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") + (item.getPrice().doubleValue() * entry.getQuantity()));
-                        pPrices.set(index, df.format(totalPriceByStore.get("Kroger")));
+                        totalPriceByStore.put(storeID2Name.get(storeID), totalPriceByStore.get(storeID2Name.get(storeID)) + (item.getPrice().doubleValue() * entry.getQuantity()));
+                        pPrices.set(index, df.format(totalPriceByStore.get(storeID2Name.get(storeID))));
 
                         index++;
 
                         pNames.add(index, item.getDescription());
-                        pStores.add(index, "Kroger");
+                        pStores.add(index, storeID2Name.get(storeID));
                         pPrices.add(index, df.format(item.getPrice()));
                         pQuantity.add(index, entry.getQuantity().toString());
                         pImages.add(index, item.getImageURL());
@@ -319,21 +341,21 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             removeItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    totalPriceByStore.put("Kroger", totalPriceByStore.get("Kroger") - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
-                    pPrices.set(storeHeaderIndex.get(pStores.get(position)), df.format(totalPriceByStore.get(pStores.get(position))));
+                    String storeName = pStores.remove(position);
 
-                    totalPrice -= (Double.parseDouble(pPrices.get(position)) *
-                            Double.parseDouble(pQuantity.get(position)));
+                    totalPriceByStore.put(storeName, totalPriceByStore.get(storeName) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
+                    pPrices.set(storeHeaderIndex.get(storeName), df.format(totalPriceByStore.get(storeName)));
+
+                    totalPrice -= (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)));
                     tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
                     pNames.remove(position);
-                    pStores.remove(position);
+                    //pStores.remove(position);
                     pPrices.remove(position);
                     pQuantity.remove(position);
                     pImages.remove(position);
 
                     requestor.deleteObject(pListItemPair.remove(position));
-
                     listView.setAdapter(myAdapter);
                 }
             });
