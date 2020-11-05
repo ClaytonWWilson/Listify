@@ -14,12 +14,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import com.example.listify.adapter.SearchResultsListAdapter;
+import com.example.listify.data.Chain;
 import com.example.listify.data.ItemSearch;
 import com.example.listify.model.Product;
 import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -315,12 +317,28 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     public void acceptDelivery(Object delivered) {
         ItemSearch results = (ItemSearch) delivered;
         try {
+            HashMap<Integer,String> chainNameMap = new HashMap<>();
             for (int i = 0; i < results.getResults().size(); i++) {
-                // TODO: Change to dynamically grab chain name by id
+                // Use hash map to save chain name to avoid lots of requests
+                if (!chainNameMap.containsKey((Integer)results.getResults().get(i).getChainID())) {
+                    Properties configs = new Properties();
+                    try {
+                        configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    SynchronousReceiver<Chain> chainReciever = new SynchronousReceiver<>();
+                    Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+                    requestor.getObject(Integer.toString(results.getResults().get(i).getChainID()), Chain.class, chainReciever);
+
+                    chainNameMap.put((Integer)results.getResults().get(i).getChainID(), chainReciever.await().getName());
+                }
+
                 resultsProductList.add(new Product(
                         results.getResults().get(i).getDescription(),
                         results.getResults().get(i).getProductID(),
-                        "Kroger",
+                        chainNameMap.get(results.getResults().get(i).getChainID()),
                         results.getResults().get(i).getChainID(),
                         results.getResults().get(i).getUpc(),
                         results.getResults().get(i).getDescription(),
