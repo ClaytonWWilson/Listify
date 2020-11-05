@@ -3,33 +3,24 @@ package com.example.listify.ui.home;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-
-import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
-import static com.example.listify.MainActivity.am;
-
 import com.example.listify.AuthManager;
-import com.example.listify.MainActivity;
 import com.example.listify.R;
 import com.example.listify.Requestor;
-import com.example.listify.ui.ForgotPasswordPage;
-import com.example.listify.ui.LoginPage;
-
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Properties;
+
+import static com.example.listify.MainActivity.am;
 
 public class HomeFragment extends Fragment {
     private Button toDeleteAccountPage;
@@ -61,10 +52,10 @@ public class HomeFragment extends Fragment {
                                 }
                                 Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
 
-                                try {
-                                    am.changePassword(am.getEmail());
-                                }
-                                catch (Exception e) {}
+//                                try {
+//                                    am.changePassword(am.getEmail());
+//                                }
+//                                catch (Exception e) {}
                                 /*try {
                                     am.confirmPasswordReset("", "");
                                 }
