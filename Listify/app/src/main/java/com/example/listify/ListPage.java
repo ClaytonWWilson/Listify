@@ -370,7 +370,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             if(!pNames.isEmpty()) {
                 name.setText(pNames.get(position));
                 store.setText(pStores.get(position));
-                if (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)) < 0) {
+                if (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)) <= 0) {
                     price.setText(String.format("$%s", pPrices.get(position)));
                 } else {
                     price.setText(String.format("$%s   ($%.2f)", pPrices.get(position), Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position))));
