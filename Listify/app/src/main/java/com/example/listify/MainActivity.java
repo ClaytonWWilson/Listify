@@ -15,7 +15,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.Item;
 import com.example.listify.data.ItemSearch;
@@ -23,14 +22,15 @@ import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
-import static com.example.listify.SplashActivity.showSplash;
-
 import org.json.JSONException;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
+
+import static com.example.listify.SplashActivity.showSplash;
 
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             }, 1);
         }
 
-        if(am.getEmail() == null) {
+        if(am.getUserToken().equals("")) {
+            am.nullify();
             Intent intent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(intent);
         }

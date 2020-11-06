@@ -69,6 +69,12 @@ public class AuthManager {
     }
 
     public void nullify() {
+        authSession = null;
+        authSignUpResult = null;
+        authSignInResult = null;
+        authResetPasswordResult = null;
+        authError = null;
+        email = null;
         email = null;
         password = null;
     }
