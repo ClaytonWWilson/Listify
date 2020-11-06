@@ -8,10 +8,6 @@ import java.util.Map;
 
 public class TestListDelete {
 
-    @Test
-    public void testListDeleterValid() {
-        testListDeleterCore(false, true);
-    }
 
     @Test
     public void testListDeleterWOAccess() {

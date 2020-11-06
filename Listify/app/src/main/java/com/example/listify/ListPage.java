@@ -346,6 +346,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     totalPriceByStore.put(storeName, totalPriceByStore.get(storeName) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
                     pPrices.set(storeHeaderIndex.get(storeName), df.format(totalPriceByStore.get(storeName)));
 
+
                     totalPrice -= (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)));
                     tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
@@ -369,7 +370,11 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             if(!pNames.isEmpty()) {
                 name.setText(pNames.get(position));
                 store.setText(pStores.get(position));
-                price.setText("$" + pPrices.get(position));
+                if (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)) <= 0) {
+                    price.setText(String.format("$%s", pPrices.get(position)));
+                } else {
+                    price.setText(String.format("$%s   ($%.2f)", pPrices.get(position), Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position))));
+                }
 
                 if(pQuantity.get(position).equals("-1")) {
                     quantity.setVisibility(View.GONE);
