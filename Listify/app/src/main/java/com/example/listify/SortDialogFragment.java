@@ -101,11 +101,9 @@ public class SortDialogFragment extends DialogFragment {
             }
         });
 
-        // TODO: set onclick listener for descending switch
         llDescendingContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("linear");
                 swDescending.performClick();
 //                handleClicked(sortMode, swDescending.isChecked());
             }
@@ -114,7 +112,6 @@ public class SortDialogFragment extends DialogFragment {
         swDescending.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("switch");
                 descending = swDescending.isChecked();
                 onSortListener.sendSort(sortMode, swDescending.isChecked());
             }
