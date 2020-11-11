@@ -1,101 +1,184 @@
 package com.example.listify.ui.home;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.example.listify.AuthManager;
+import com.example.listify.CreateListDialogFragment;
+import com.example.listify.LoadingCircleDialog;
 import com.example.listify.R;
 import com.example.listify.Requestor;
+import com.example.listify.SynchronousReceiver;
+import com.example.listify.adapter.ShoppingListsSwipeableAdapter;
+import com.example.listify.data.List;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class HomeFragment extends Fragment {
-    private Button toDeleteAccountPage;
+public class HomeFragment extends Fragment implements CreateListDialogFragment.OnNewListListener, Requestor.Receiver {
+    ArrayList<List> shoppingLists = new ArrayList<>();
+    ShoppingListsSwipeableAdapter shoppingListsSwipeableAdapter;
+    Requestor requestor;
+    ListView shoppingListsView;
+    ProgressBar loadingLists;
+    int resultsIndex;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        shoppingListsView = root.findViewById(R.id.shopping_lists);
+        loadingLists = (ProgressBar) root.findViewById(R.id.progress_loading_lists);
+        loadingLists.setVisibility(View.VISIBLE);
 
-        toDeleteAccountPage = (Button) root.findViewById(R.id.button);
-        toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
+
+        final Requestor.Receiver<Integer[]> recv = this;
+        requestor.getListOfIds(List.class, recv, null);
+
+
+        FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
+        Fragment thisFragment = this;
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View passwordView = getLayoutInflater().inflate(R.layout.activity_code, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setView(passwordView);
-                builder.setTitle("Account deletion verification");
-                builder.setMessage("Are you sure you want to delete your account? If so, enter your password below and hit \"Yes\".");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText passwordText = (EditText) passwordView.findViewById(R.id.editTextCode);
-                        String password = passwordText.getText().toString();
-                        if(password.equals(am.getPassword())) {
-                            try {
-                                Properties configs = new Properties();
-                                try {
-                                    configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
-                                } catch (IOException | JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
-
-//                                try {
-//                                    am.changePassword(am.getEmail());
-//                                }
-//                                catch (Exception e) {}
-                                /*try {
-                                    am.confirmPasswordReset("", "");
-                                }
-                                
-                                String[] TO = {am.getEmail()};
-                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                                emailIntent.setData(Uri.parse("mailto:"));
-                                emailIntent.setType("text/plain");
-                                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Listify account deleted");
-                                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello, this email is to confirm that you have deleted your Listify account.");
-                                try {
-                                    startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-                                    Log.i("Finished sending email...", "");
-                                    System.out.println("A");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    System.out.println("B");
-                                }*/
-
-                                am.deleteUser(requestor);
-                                am.nullify();
-                                Intent intent = new Intent(getActivity(), com.example.listify.ui.LoginPage.class);
-                                startActivity(intent);
-                            }
-                            catch (Exception e) {
-                                Log.i("Authentication", e.toString());
-                            }
-                        }
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {}
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
+                createListDialogFragment.show(getFragmentManager(), "Create New List");
+                createListDialogFragment.setTargetFragment(thisFragment, 0);
             }
         });
 
         return root;
+    }
+
+
+    @Override
+    public void sendNewListName(String name) {
+        LoadingCircleDialog loadingDialog = new LoadingCircleDialog(getActivity());
+        loadingDialog.show();
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
+
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+
+        try {
+            requestor.postObject(newList, idReceiver, idReceiver);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    newList.setItemID(idReceiver.await());
+                } catch (Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
+                            loadingDialog.cancel();
+                        }
+                    });
+                    e.printStackTrace();
+
+                }
+                shoppingLists.add(newList);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        shoppingListsSwipeableAdapter.notifyDataSetChanged();
+                        loadingDialog.cancel();
+                        Toast.makeText(getContext(), String.format("%s created", name), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        t.start();
+    }
+
+    @Override
+    public void acceptDelivery(Object delivered) {
+        Integer[] listIds = (Integer[]) delivered;
+        // Create threads and add them to a list
+        Thread[] threads = new Thread[listIds.length];
+        List[] results = new List[listIds.length];
+        for (int i = 0; i < listIds.length; i++) {
+            SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
+            requestor.getObject(Integer.toString(listIds[i]), List.class, listReceiver, listReceiver);
+            final int finalI = i;
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        results[finalI] = listReceiver.await();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            threads[i] = t;
+            t.start();
+        }
+
+        // Wait for each thread to finish and add results to shoppingLists
+        for (int i = 0; i < threads.length; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            shoppingLists.add(results[i]);
+        }
+
+        // Set adapter and display this users lists
+        shoppingListsSwipeableAdapter = new ShoppingListsSwipeableAdapter(getActivity(), shoppingLists);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                shoppingListsView.setAdapter(shoppingListsSwipeableAdapter);
+//                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        Intent listPage = new Intent(getContext(), ListPage.class);
+//
+//                        // Send the list ID
+//                        listPage.putExtra("listID", shoppingLists.get(position).getItemID());
+//                        startActivity(listPage);
+//                    }
+//                });
+                loadingLists.setVisibility(View.GONE);
+            }
+        });
+
     }
 }
