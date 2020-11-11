@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,13 +36,14 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
     Requestor requestor;
     ListView shoppingListsView;
     ProgressBar loadingLists;
-    int resultsIndex;
+    TextView emptyMessage;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         shoppingListsView = root.findViewById(R.id.shopping_lists);
         loadingLists = (ProgressBar) root.findViewById(R.id.progress_loading_lists);
         loadingLists.setVisibility(View.VISIBLE);
+        emptyMessage = (TextView) root.findViewById(R.id.textViewEmpty);
 
         Properties configs = new Properties();
         try {
@@ -90,6 +92,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);
+            emptyMessage.setVisibility(View.GONE);
         } catch (Exception e) {
             Toast.makeText(getContext(), "An error occurred", Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -177,6 +180,10 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
 //                    }
 //                });
                 loadingLists.setVisibility(View.GONE);
+
+                if(listIds.length == 0) {
+                    emptyMessage.setVisibility(View.VISIBLE);
+                }
             }
         });
 
