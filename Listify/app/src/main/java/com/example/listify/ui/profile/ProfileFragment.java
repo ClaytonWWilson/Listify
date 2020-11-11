@@ -1,4 +1,4 @@
-package com.example.listify.ui.lists;
+package com.example.listify.ui.profile;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -24,11 +24,11 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListsFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     private Button toDeleteAccountPage;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_lists, container, false);
+        View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         toDeleteAccountPage = (Button) root.findViewById(R.id.button);
         toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {

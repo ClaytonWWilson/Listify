@@ -17,7 +17,7 @@
 <!--        android:icon="@drawable/ic_menu_slideshow"-->
 <!--        android:title="@string/menu_slideshow" />-->
         <item
-            android:id="@+id/nav_lists"
+            android:id="@+id/nav_profile"
             android:icon="@drawable/ic_baseline_list_alt_28"
             android:title="@string/menu_lists" />
 <!--    <item-->
