@@ -101,8 +101,6 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add database call to delete the list on the server
-
                 try {
                     requestor.deleteObject(Integer.toString(curList.getItemID()), List.class);
                 }
@@ -121,8 +119,6 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         holder.shareList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add database call to share list
-
                 View codeView = inflater.inflate(R.layout.activity_sharedemail, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setView(codeView);
