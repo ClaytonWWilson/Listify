@@ -2,13 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_sort"
-        android:orderInCategory="101"
-        android:title="Sort"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_filter"
-        android:orderInCategory="101"
-        android:title="Filter"
-        app:showAsAction="never" />
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title=""
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/action_sort"
+                android:icon="@drawable/ic_baseline_sort_24"
+                android:title="Sort"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_filter"
+                android:icon="@drawable/ic_baseline_filter_list_24"
+                android:title="Filter"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>
