@@ -37,6 +37,11 @@ public class ListDeleter implements CallHandler {
         ResultSet userLists = accessCheck.executeQuery();
         if (!userLists.next()) {
             throw new AccessControlException("User does not have access to list");
+        } else {
+            Integer permissionLevel = userLists.getInt("permissionLevel");
+            if (!ListPermissions.hasPermission(permissionLevel, "Delete")) {
+                throw new AccessControlException("User " + cognitoID + " does not have permission to delete list " + listID);
+            }
         }
         PreparedStatement cleanAccess = connection.prepareStatement(DELETE_LIST_ACCESS);
         cleanAccess.setInt(1, listID);

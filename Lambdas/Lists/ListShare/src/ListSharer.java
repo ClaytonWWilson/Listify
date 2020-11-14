@@ -22,7 +22,7 @@ public class ListSharer implements CallHandler {
     }
 
     final private String CHECK_ACCESS = "SELECT * from ListSharee WHERE listID = ? AND userID = ?;";
-    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?);";
+    final private String SHARE_LIST = "REPLACE INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?);";
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement checkAccess = connection.prepareStatement(CHECK_ACCESS);
@@ -30,8 +30,12 @@ public class ListSharer implements CallHandler {
         checkAccess.setInt(1, listID);
         checkAccess.setString(2, cognitoID);
         ResultSet checkAccessRS = checkAccess.executeQuery();
-        if (!checkAccessRS.next()) {
-            throw new AccessControlException("The requesting user does not have access to the requested list");
+        if (checkAccessRS.next()) {
+            if (!ListPermissions.hasPermission(checkAccessRS.getInt("permissionLevel"), "Share")) {
+                throw new AccessControlException("User " + cognitoID + " does not have share permissions for list " + listID);
+            }
+        } else {
+            throw new AccessControlException("User " + cognitoID + " does not have any permissions to access list " + listID);
         }
         InvokeRequest invokeRequest = new InvokeRequest();
         invokeRequest.setFunctionName("UserGET");

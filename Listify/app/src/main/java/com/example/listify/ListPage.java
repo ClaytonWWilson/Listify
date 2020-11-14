@@ -114,7 +114,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(listID, sharedEmail, "Read, Edit, Delete");
+                        ListShare listShare = new ListShare(listID, sharedEmail, "Read, Edit, Delete, Share");
                         try {
                             requestor.postObject(listShare);
                         }

@@ -28,11 +28,22 @@ public class UserGetter implements CallHandler {
         System.out.println(userPoolId);
         ListUsersRequest checkRequest = new ListUsersRequest().withUserPoolId(userPoolId);
         Object emailObject = bodyMap.get("emailToCheck");
+        String attributeToGet = "sub";
         if (emailObject != null) {
             checkRequest.setFilter("email=\"" + emailObject.toString() +"\"");
         } else {
-            //            checkRequest.setFilter("sub=\"" + cognitoID + "\"");
-            return cognitoID;
+            try {
+                String id = queryMap.get("id");
+                if ((id != null) && (!id.equals(""))) {
+                    attributeToGet = "email";
+                    checkRequest.setFilter("sub=\"" + cognitoID + "\"");
+                } else {
+                    return cognitoID;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                return cognitoID;
+            }
         }
         System.out.println(checkRequest);
         AWSCognitoIdentityProvider awsCognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder.defaultClient();
@@ -47,14 +58,14 @@ public class UserGetter implements CallHandler {
         }
         UserType foundUser = foundUsers.get(0);
         System.out.println(foundUser.getAttributes());
-        String sub = "";
+        String attributeToReturn = "";
         for (AttributeType attribute : foundUser.getAttributes()) {
-            if (attribute.getName().equals("sub")) {
-                sub = attribute.getValue();
+            if (attribute.getName().equals(attributeToGet)) {
+                attributeToReturn = attribute.getValue();
                 break;
             }
             System.out.println(attribute.getName() + ": " + attribute.getValue());
         }
-        return sub;
+        return attributeToReturn;
     }
 }

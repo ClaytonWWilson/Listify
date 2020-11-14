@@ -3,7 +3,6 @@ package com.example.listify.data;
 import com.example.listify.BuildConfig;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,10 +14,12 @@ public class ListShare {
     private static final Map<Integer, String> keysToPerms;
     static {
         //All keys should be a prime number > 1
+        //All keys need to be maintained here and in List module->ListPermissions class on the Lambda side
         HashMap<Integer, String> keysToPermsTemp = new HashMap<>();
-        keysToPermsTemp.put(2, "Read");
-        keysToPermsTemp.put(3, "Edit");
-        keysToPermsTemp.put(5, "Delete");
+        keysToPermsTemp.put(2, "read");
+        keysToPermsTemp.put(3, "write");
+        keysToPermsTemp.put(5, "delete");
+        keysToPermsTemp.put(7, "share");
         keysToPerms = Collections.unmodifiableMap(keysToPermsTemp);
     }
 
@@ -28,7 +29,8 @@ public class ListShare {
         this.permissionLevel = permissionLevel;
     }
 
-    public ListShare(Integer listID, String shareWithEmail, String permissions) {
+    public ListShare(Integer listID, String shareWithEmail, String permissionsRaw) {
+        String permissions = permissionsRaw.toLowerCase();
         this.listID = listID;
         this.shareWithEmail = shareWithEmail;
         permissionLevel = 1;
@@ -48,8 +50,8 @@ public class ListShare {
                 " [Permissions: ");
 
         int permissionLevelCopy = permissionLevel;
-        for (Object permissionObject : keysToPerms.keySet().stream().sorted(Comparator.reverseOrder()).toArray()) {
-            Integer permissionInteger = (Integer) permissionObject;
+        for (Integer permissionObject : keysToPerms.keySet()) {
+            Integer permissionInteger = permissionObject;
             if (permissionLevelCopy % permissionInteger == 0) {
                 permissionLevelCopy /= permissionInteger;
                 toReturn.append(keysToPerms.get(permissionInteger)).append(",");

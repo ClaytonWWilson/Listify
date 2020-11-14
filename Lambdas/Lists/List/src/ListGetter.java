@@ -1,3 +1,4 @@
+import java.security.AccessControlException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,7 +41,14 @@ public class ListGetter implements CallHandler{
         System.out.println(checkAccess);
         ResultSet accessResults = checkAccess.executeQuery();
         int sharees = 0;
-        while (sharees < 2 && accessResults.next()) {
+        boolean verifiedAccess = false;
+        while ((sharees < 2 && accessResults.next()) || !verifiedAccess) {
+            if (accessResults.getString("userID").equals(cognitoID)) {
+                verifiedAccess = true;
+                if (!ListPermissions.hasPermission(accessResults.getInt("permissionLevel"), "Read")) {
+                    throw new AccessControlException("User " + cognitoID + " does not have permission to read list " + id);
+                }
+            }
             sharees++;
         }
         boolean shared = false;
