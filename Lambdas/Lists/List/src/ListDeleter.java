@@ -24,11 +24,6 @@ public class ListDeleter implements CallHandler {
     @Override
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
         Integer listID = Integer.parseInt(queryMap.get("id"));
-        PreparedStatement cleanRequestorAccess = connection.prepareStatement(DELETE_REQUESTOR_ACCESS);
-        cleanRequestorAccess.setInt(1, listID);
-        cleanRequestorAccess.setString(2, cognitoID);
-        System.out.println(cleanRequestorAccess);
-        cleanRequestorAccess.executeUpdate();
 
         PreparedStatement accessCheck = connection.prepareStatement(ACCESS_CHECK);
         accessCheck.setString(1, cognitoID);
@@ -40,7 +35,12 @@ public class ListDeleter implements CallHandler {
         } else {
             Integer permissionLevel = userLists.getInt("permissionLevel");
             if (!ListPermissions.hasPermission(permissionLevel, "Delete")) {
-                throw new AccessControlException("User " + cognitoID + " does not have permission to delete list " + listID);
+                PreparedStatement cleanRequestorAccess = connection.prepareStatement(DELETE_REQUESTOR_ACCESS);
+                cleanRequestorAccess.setInt(1, listID);
+                cleanRequestorAccess.setString(2, cognitoID);
+                System.out.println(cleanRequestorAccess);
+                cleanRequestorAccess.executeUpdate();
+                return null;
             }
         }
         PreparedStatement cleanAccess = connection.prepareStatement(DELETE_LIST_ACCESS);
