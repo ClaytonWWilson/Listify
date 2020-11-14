@@ -20,4 +20,11 @@ public class SearchHistory {
     public void addSearch(String newSearch) {
         searches.add(newSearch);
     }
+
+    @Override
+    public String toString() {
+        return "SearchHistory{" +
+                "searches=" + searches +
+                '}';
+    }
 }

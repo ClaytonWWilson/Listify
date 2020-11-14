@@ -29,10 +29,18 @@ public class ItemSearcher implements CallHandler {
         ItemSearch searchResultsObject = new ItemSearch(searchResults);
         System.out.println(searchResultsObject);
         InvokeRequest invokeRequest = new InvokeRequest();
-        invokeRequest.setFunctionName("SearchHistoryUpdate");
+        invokeRequest.setFunctionName("SearchHistoryPOST");
         invokeRequest.setPayload("{" +
-                "  \"newSearch\": \"" + queryParams.get("id") + "\"," +
-                "  \"cognitoID\": \""+ cognitoID + "\"" +
+                "  \"body\": {" +
+                "    \"searchTerm\": \"" + queryParams.get("id") + "\"" +
+                "  }," +
+                "  \"params\": {" +
+                "      \"querystring\": {" +
+                "      }" +
+                "  }," +
+                "  \"context\": {" +
+                "    \"sub\": \"" + cognitoID + "\"" +
+                "  }" +
                 "}");
         invokeRequest.setInvocationType("Event");
         System.out.println(invokeRequest);

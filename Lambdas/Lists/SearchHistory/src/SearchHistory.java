@@ -15,7 +15,11 @@ public class SearchHistory implements Serializable {
     }
 
     public SearchHistory(ResultSet row) throws SQLException {
-        this.searches = (ArrayList<String>) row.getObject("historyObject");
+        this.searches = new ArrayList<>();
+        row.beforeFirst();
+        while (row.next()) {
+            this.searches.add(row.getString("search"));
+        }
     }
 
     public ArrayList<String> getSearches() {
