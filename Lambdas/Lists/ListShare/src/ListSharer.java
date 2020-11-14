@@ -22,7 +22,7 @@ public class ListSharer implements CallHandler {
     }
 
     final private String CHECK_ACCESS = "SELECT * from ListSharee WHERE listID = ? AND userID = ?;";
-    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID) VALUES(?, ?);";
+    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?);";
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement checkAccess = connection.prepareStatement(CHECK_ACCESS);
@@ -52,15 +52,17 @@ public class ListSharer implements CallHandler {
             throw new InputMismatchException("Could not find specified user to share with");
         }
         String shareWithSub = new String(invokeResult.getPayload().array()).replace("\"", "");
-        checkAccess.setString(2, shareWithSub);
-        checkAccessRS = checkAccess.executeQuery();
-        if (checkAccessRS.next()) {
-            throw new InputMismatchException("The specified user already has access");
-        }
+//        checkAccess.setString(2, shareWithSub);
+//        checkAccessRS = checkAccess.executeQuery();
+//        if (checkAccessRS.next()) {
+//            throw new InputMismatchException("The specified user already has access");
+//        }
 
         PreparedStatement shareList = connection.prepareStatement(SHARE_LIST);
         shareList.setInt(1, listID);
         shareList.setString(2, shareWithSub);
+        Integer permissionLevel = Integer.parseInt(bodyMap.get("permissionLevel").toString());
+        shareList.setInt(3, permissionLevel);
         shareList.executeUpdate();
         connection.commit();
         return null;
