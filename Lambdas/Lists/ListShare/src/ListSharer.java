@@ -22,7 +22,7 @@ public class ListSharer implements CallHandler {
     }
 
     final private String CHECK_ACCESS = "SELECT * from ListSharee WHERE listID = ? AND userID = ?;";
-    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?) ON DUPLICATE;";
+    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE permissionLevel = ?;";
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement checkAccess = connection.prepareStatement(CHECK_ACCESS);
@@ -67,6 +67,7 @@ public class ListSharer implements CallHandler {
         shareList.setString(2, shareWithSub);
         Integer permissionLevel = Integer.parseInt(bodyMap.get("permissionLevel").toString());
         shareList.setInt(3, permissionLevel);
+        shareList.setInt(4, permissionLevel);
         shareList.executeUpdate();
         connection.commit();
         return null;
