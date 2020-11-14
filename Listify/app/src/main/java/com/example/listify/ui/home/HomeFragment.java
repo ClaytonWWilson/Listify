@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
-        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli() , -1);
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);
