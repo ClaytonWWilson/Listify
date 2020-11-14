@@ -22,7 +22,8 @@ public class ListSharer implements CallHandler {
     }
 
     final private String CHECK_ACCESS = "SELECT * from ListSharee WHERE listID = ? AND userID = ?;";
-    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE permissionLevel = ?;";
+    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel, ) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE permissionLevel = ?;";
+    private final String UI_POSITION_CHECK = "SELECT Max(uiPosition) as maxUIPosition FROM ListSharee WHERE userID = ?;";
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement checkAccess = connection.prepareStatement(CHECK_ACCESS);
@@ -62,12 +63,21 @@ public class ListSharer implements CallHandler {
 //            throw new InputMismatchException("The specified user already has access");
 //        }
 
+        PreparedStatement uiPositionCheck = connection.prepareStatement(UI_POSITION_CHECK);
+        uiPositionCheck.setString(1, shareWithSub);
+        ResultSet uiPositionCheckRS = uiPositionCheck.executeQuery();
+        int nextPosition = 1;
+        if (uiPositionCheckRS.next()) {
+            nextPosition = uiPositionCheckRS.getInt("maxUIPosition") + 1;
+        }
+
         PreparedStatement shareList = connection.prepareStatement(SHARE_LIST);
         shareList.setInt(1, listID);
         shareList.setString(2, shareWithSub);
         Integer permissionLevel = Integer.parseInt(bodyMap.get("permissionLevel").toString());
         shareList.setInt(3, permissionLevel);
-        shareList.setInt(4, permissionLevel);
+        shareList.setInt(4, nextPosition);
+        shareList.setInt(5, permissionLevel);
         shareList.executeUpdate();
         connection.commit();
         return null;
