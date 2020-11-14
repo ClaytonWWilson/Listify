@@ -16,19 +16,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
-import com.example.listify.data.Item;
-import com.example.listify.data.ItemSearch;
 import com.example.listify.data.List;
-import com.example.listify.data.ListEntry;
+import com.example.listify.data.SearchHistory;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.Random;
 
 import static com.example.listify.SplashActivity.showSplash;
 
@@ -108,7 +104,14 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             }
 
             Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
-
+            SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
+            requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
+            try {
+                System.out.println(historyReceiver.await());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            /*
             List testList = new List(-1, "New List", "user filled by lambda", Instant.now().toEpochMilli());
             ListEntry entry = new ListEntry(1, 4, Math.abs(new Random().nextInt()), Instant.now().toEpochMilli(),false);
           
@@ -139,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             } catch (Exception receiverError) {
                 receiverError.printStackTrace();
             }
+            */
         }
 
         //------------------------------------------------------------------------------------------//

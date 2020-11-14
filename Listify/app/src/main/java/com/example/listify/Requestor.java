@@ -60,6 +60,25 @@ public class Requestor {
         launchCall(deleteRequest, null, classType, failureHandler);
     }
 
+    public void putObject(Object toPost) throws JSONException {
+        putObject(toPost, (RequestErrorHandler) null);
+    }
+
+    public void putObject(Object toPost, RequestErrorHandler failureHandler) throws JSONException {
+        putObject(toPost, null, failureHandler);
+    }
+
+    public void putObject(Object toPost, Receiver<Integer> idReceiver) throws JSONException {
+        putObject(toPost, idReceiver, null);
+    }
+
+    public void putObject(Object toPut, Receiver<Integer> idReceiver, RequestErrorHandler failureHandler) throws JSONException {
+        String putURL = DEV_BASEURL + "/" + toPut.getClass().getSimpleName();
+        Request putRequest = buildBaseRequest(putURL, "PUT", new Gson().toJson(toPut));
+        launchCall(putRequest, idReceiver, Integer.class, failureHandler);
+    }
+
+
     public void postObject(Object toPost) throws JSONException {
         postObject(toPost, (RequestErrorHandler) null);
     }
@@ -85,7 +104,7 @@ public class Requestor {
                 String responseString = response.body().string();
                 if (receiver != null) {
                     if (classType == null) {
-                        Log.e("Requestor Contract Error", "classType while receiver populated");
+                        Log.e("Requestor Contract Error", "no/null classType while receiver populated");
                     }
                     try {
                         receiver.acceptDelivery(new Gson().fromJson(responseString, classType));
