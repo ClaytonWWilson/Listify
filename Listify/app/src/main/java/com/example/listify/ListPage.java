@@ -116,7 +116,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         String sharedEmail = sharedEmailText.getText().toString();
                         ListShare listShare = new ListShare(listID, sharedEmail, "Read, Edit, Delete, Share");
                         try {
-                            requestor.postObject(listShare);
+                            requestor.putObject(listShare);
                         }
                         catch(Exception e) {
                             e.printStackTrace();
