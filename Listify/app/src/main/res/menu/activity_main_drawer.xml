@@ -17,7 +17,8 @@
         <item
             android:id="@+id/nav_logout"
             android:title="Sign out"
-            android:onClick="onClickSignout" />
+            android:onClick="onClickSignout"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"/>
             
 <!--    <item-->
 <!--        android:id="@+id/nav_gallery"-->
