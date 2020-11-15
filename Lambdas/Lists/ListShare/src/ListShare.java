@@ -3,18 +3,12 @@ package com.example.listify.data;
 public class ListShare {
     Integer listID;
     String shareWithEmail;
-    final ListShare[] other;
+    ArrayList<ListShare> other;
 
-    public ListShare(Integer listID, String shareWithEmail, ListShare[] other) {
-        this.listID = listID;
-        this.shareWithEmail = shareWithEmail;
-        this.other = other;
-    }
-
-    public ListShare(Integer listID, String shareWithEmail) {
-        this.listID = listID;
-        this.shareWithEmail = shareWithEmail;
-        this.other = null;
+    public ListShare(ResultSet listRow) throws SQLException {
+        this.listID = listRow.getInt("listID");
+        this.shareWithEmail = listRow.getString("userID");
+        other = new ArrayList<>();
     }
 
     public Integer getListID() {
@@ -34,6 +28,10 @@ public class ListShare {
     }
 
     public ListShare[] getEntries() {
-        return other;
+        return other.toArray(new ListShare[other.size()]);
+    }
+
+    public void addtoList(ListShare entry) {
+        other.add(entry);
     }
 }

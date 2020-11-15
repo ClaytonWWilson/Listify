@@ -67,15 +67,15 @@ public class List {
         this.lastUpdated = lastUpdated;
     }
 
-    public ListEntry[] getEntries() {
-        return entries;
-    }
-
     public boolean isShared() {
         return shared;
     }
 
     public void setShared(boolean shared) {
         this.shared = shared;
+    }
+
+    public ListEntry[] getEntries() {
+        return entries;
     }
 }
