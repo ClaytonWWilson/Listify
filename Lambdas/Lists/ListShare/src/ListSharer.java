@@ -22,8 +22,8 @@ public class ListSharer implements CallHandler {
     }
 
     final private String CHECK_ACCESS = "SELECT * from ListSharee WHERE listID = ? AND userID = ?;";
-    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel, ) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE permissionLevel = ?;";
     private final String UI_POSITION_CHECK = "SELECT Max(uiPosition) as maxUIPosition FROM ListSharee WHERE userID = ?;";
+    final private String SHARE_LIST = "INSERT INTO ListSharee(listID, userID, permissionLevel, uiPosition) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE permissionLevel = ?;";
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement checkAccess = connection.prepareStatement(CHECK_ACCESS);
