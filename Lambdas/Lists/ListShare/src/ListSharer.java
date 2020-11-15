@@ -65,6 +65,7 @@ public class ListSharer implements CallHandler {
 
         PreparedStatement uiPositionCheck = connection.prepareStatement(UI_POSITION_CHECK);
         uiPositionCheck.setString(1, shareWithSub);
+        System.out.println(uiPositionCheck);
         ResultSet uiPositionCheckRS = uiPositionCheck.executeQuery();
         int nextPosition = 1;
         if (uiPositionCheckRS.next()) {
@@ -78,6 +79,7 @@ public class ListSharer implements CallHandler {
         shareList.setInt(3, permissionLevel);
         shareList.setInt(4, nextPosition);
         shareList.setInt(5, permissionLevel);
+        System.out.println(shareList);
         shareList.executeUpdate();
         connection.commit();
         return null;
