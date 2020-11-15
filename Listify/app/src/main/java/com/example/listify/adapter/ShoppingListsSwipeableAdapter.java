@@ -80,7 +80,8 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.frontView = convertView.findViewById(R.id.front_layout);
             holder.deleteList = convertView.findViewById(R.id.delete_list);
             holder.shareList = convertView.findViewById(R.id.share_list);
-            holder.textView = (TextView) convertView.findViewById(R.id.shopping_list_name);
+            holder.listName = (TextView) convertView.findViewById(R.id.shopping_list_name);
+            holder.itemCount = (TextView) convertView.findViewById(R.id.shopping_list_item_count);
 
             convertView.setTag(holder);
         } else {
@@ -93,11 +94,14 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getItemID()));
 
         if(curList.isShared()) {
-            holder.textView.setText(curList.getName() + " (shared)");
+            holder.listName.setText(curList.getName() + " (shared)");
         }
         else {
-            holder.textView.setText(curList.getName());
+            holder.listName.setText(curList.getName());
         }
+
+        holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +176,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         View frontView;
         View deleteList;
         View shareList;
-        TextView textView;
+        TextView listName;
+        TextView itemCount;
     }
 }
