@@ -90,7 +90,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         final List curList = lists.get(position);
 
         // Bind the view to the unique list ID
-        binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getItemID()));
+        binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
 
         if(curList.isShared()) {
             holder.textView.setText(curList.getName() + " (shared)");
@@ -102,7 +102,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 try {
-                    requestor.deleteObject(Integer.toString(curList.getItemID()), List.class);
+                    requestor.deleteObject(Integer.toString(curList.getListID()), List.class);
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -129,7 +129,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(curList.getItemID(), sharedEmail, "Read, Write, Delete, Share");
+                        ListShare listShare = new ListShare(curList.getListID(), sharedEmail, "Read, Write, Delete, Share");
                         try {
                             requestor.putObject(listShare);
                         }
@@ -148,7 +148,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                 Toast.makeText(activity, String.format("Share %s", curList.getName()), Toast.LENGTH_SHORT).show();
 
                 // Close the layout
-                binderHelper.closeLayout(Integer.toString(curList.getItemID()));
+                binderHelper.closeLayout(Integer.toString(curList.getListID()));
             }
         });
 
@@ -158,7 +158,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                 Intent listPage = new Intent(activity, ListPage.class);
 
                 // Send the list ID
-                listPage.putExtra("listID", curList.getItemID());
+                listPage.putExtra("listID", curList.getListID());
                 activity.startActivity(listPage);
             }
         });
