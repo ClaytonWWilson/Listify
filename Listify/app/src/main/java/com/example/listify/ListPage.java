@@ -343,7 +343,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
                     }
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
             if(Integer.parseInt(pQuantity.get(position)) <= 1) {
@@ -378,7 +378,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
                     }
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
             if(Integer.parseInt(pQuantity.get(position)) > 1) {
@@ -404,7 +404,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pImages.remove(position);
 
                     requestor.deleteObject(pListItemPair.remove(position));
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
 
