@@ -43,13 +43,16 @@ public class ListGetter implements CallHandler{
         int sharees = 0;
         boolean verifiedAccess = false;
         while ((sharees < 2 && accessResults.next()) || !verifiedAccess) {
+            int permissionLevel = accessResults.getInt("permissionLevel");
             if (accessResults.getString("userID").equals(cognitoID)) {
                 verifiedAccess = true;
-                if (!ListPermissions.hasPermission(accessResults.getInt("permissionLevel"), "Read")) {
+                if (!ListPermissions.hasPermission(permissionLevel, "Read")) {
                     throw new AccessControlException("User " + cognitoID + " does not have permission to read list " + id);
                 }
             }
-            sharees++;
+            if (permissionLevel > 0) {
+                sharees++;
+            }
         }
         boolean shared = false;
         if (sharees > 1) {
