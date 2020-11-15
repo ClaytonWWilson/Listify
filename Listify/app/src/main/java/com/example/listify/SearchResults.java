@@ -28,7 +28,7 @@ import java.util.Properties;
 import static com.example.listify.MainActivity.am;
 
 public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener, Requestor.Receiver {
-    private ListView listView;
+    private ListView resultsListView;
     private MenuItem filterItem;
     private ProgressBar loadingSearch;
     private SearchResultsListAdapter searchResultsListAdapter;
@@ -95,10 +95,10 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         });
 
-        ListView listView = (ListView) findViewById(R.id.search_results_list);
+        resultsListView = (ListView) findViewById(R.id.search_results_list);
         searchResultsListAdapter = new SearchResultsListAdapter(this, resultsProductListSorted);
-        listView.setAdapter(searchResultsListAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        resultsListView.setAdapter(searchResultsListAdapter);
+        resultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent itemDetailsPage = new Intent(SearchResults.this, ItemDetails.class);
@@ -207,12 +207,21 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         requestor.getObject(query, ItemSearch.class, this);
     }
 
-    // TODO: Scroll the list back to the top when a search, sort, or filter is performed
     // Sorts the search results
     private void sortResults() {
         // Reset the filtered list
         resultsProductListSorted.clear();
         resultsProductListSorted.addAll(resultsProductList);
+
+        // Scroll the user back to the top of the results
+        if (resultsListView != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    resultsListView.smoothScrollToPosition(0);
+                }
+            });
+        }
 
         // Sort Modes
         // 0 default (no sorting)
