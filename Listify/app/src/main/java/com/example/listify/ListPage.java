@@ -70,7 +70,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final int listID = (int) getIntent().getSerializableExtra("listID");
+        final int LIST_ID = (int) getIntent().getSerializableExtra("listID");
+        final String LIST_NAME = (String) getIntent().getSerializableExtra("listName");
+        setTitle(LIST_NAME);
 
         Properties configs = new Properties();
         try {
@@ -79,7 +81,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        requestor.getObject(Integer.toString(listID), List.class, this);
+        requestor.getObject(Integer.toString(LIST_ID), List.class, this);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -125,7 +127,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(listID, sharedEmail);
+                        ListShare listShare = new ListShare(LIST_ID, sharedEmail);
                         try {
                             requestor.postObject(listShare);
                         }

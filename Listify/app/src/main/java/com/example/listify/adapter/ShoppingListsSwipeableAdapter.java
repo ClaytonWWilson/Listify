@@ -157,8 +157,9 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent listPage = new Intent(activity, ListPage.class);
 
-                // Send the list ID
+                // Send the list ID and list name
                 listPage.putExtra("listID", curList.getItemID());
+                listPage.putExtra("listName", curList.getName());
                 activity.startActivity(listPage);
             }
         });
