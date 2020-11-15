@@ -1,3 +1,4 @@
+import java.security.AccessControlException;
 import java.sql.*;
 import java.time.Instant;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ public class ListEntryAdder implements CallHandler {
     private Connection connection;
     private String cognitoID;
 
-
+    private final String ACCESS_CHECK = "SELECT * from ListSharee WHERE userID = ? and listID = ?;";
     private final String CHECK_ITEM_IN_LIST = "SELECT quantity from ListProduct WHERE productID = ? AND listID = ?;";
     private final String CLEAR_PAIRING = "DELETE from ListProduct WHERE productID = ? AND listID = ?;";
     private final String ITEM_TO_LIST = "INSERT INTO ListProduct (productID, listID, quantity, addedDate, purchased) VALUES (?, ?, ?, ?, ?)";
@@ -19,12 +20,24 @@ public class ListEntryAdder implements CallHandler {
     }
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
-        PreparedStatement quantitiyStatement = connection.prepareStatement(CHECK_ITEM_IN_LIST);
         Integer productID =  (Integer) bodyMap.get("productID");
         Integer listID = (Integer) bodyMap.get("listID");
-        quantitiyStatement.setInt(1, productID);
-        quantitiyStatement.setInt(2, listID);
-        ResultSet quanitityRS = quantitiyStatement.executeQuery();
+        PreparedStatement accessCheck = connection.prepareStatement(ACCESS_CHECK);
+        accessCheck.setString(1, cognitoID);
+        accessCheck.setInt(2, listID);
+        ResultSet access = accessCheck.executeQuery();
+        if (access.next()) {
+            if (!ListPermissions.hasPermission(access.getInt("permissionLevel"), "Write")) {
+                throw new AccessControlException("User " + cognitoID + " does not have write permissions for list " + listID);
+            }
+        } else {
+            throw new AccessControlException("User " + cognitoID + " does not have any permissions to access list " + listID);
+        }
+
+        PreparedStatement quantityStatement = connection.prepareStatement(CHECK_ITEM_IN_LIST);
+        quantityStatement.setInt(1, productID);
+        quantityStatement.setInt(2, listID);
+        ResultSet quanitityRS = quantityStatement.executeQuery();
         int priorQuanity = 0;
         if (quanitityRS.next()) {
             priorQuanity = quanitityRS.getInt(1);

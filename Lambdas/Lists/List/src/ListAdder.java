@@ -9,7 +9,7 @@ public class ListAdder implements CallHandler {
     private String cognitoID;
 
     private final String LIST_CREATE = "INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);";
-    private final String LIST_ACCESS_GRANT = "INSERT INTO ListSharee(listID, userID) VALUES(?, ?);";
+    private final String LIST_ACCESS_GRANT = "INSERT INTO ListSharee(listID, userID, permissionLevel) VALUES(?, ?, ?);";
 
     public ListAdder(Connection connection, String cognitoID) {
         this.connection = connection;
@@ -31,6 +31,7 @@ public class ListAdder implements CallHandler {
         PreparedStatement accessGrant = connection.prepareStatement(LIST_ACCESS_GRANT);
         accessGrant.setInt(1, newID);
         accessGrant.setString(2, cognitoID);
+        accessGrant.setInt(3, ListPermissions.getAll());
         System.out.println(accessGrant);
         accessGrant.executeUpdate();
         connection.commit();
