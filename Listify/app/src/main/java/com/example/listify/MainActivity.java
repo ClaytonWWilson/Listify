@@ -17,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.List;
+import com.example.listify.data.ListDuplicate;
 import com.example.listify.data.ListReposition;
 import com.example.listify.data.SearchHistory;
 import com.example.listify.ui.LoginPage;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             try {
                 System.out.println(historyReceiver.await());
                 requestor.putObject(new ListReposition(291, 1));
+                requestor.postObject(new ListDuplicate(290, "yet another list"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
