@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
+
 import com.example.listify.adapter.SearchResultsListAdapter;
 import com.example.listify.data.Chain;
 import com.example.listify.data.ItemSearch;
@@ -31,6 +33,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     private ListView resultsListView;
     private MenuItem filterItem;
     private ProgressBar loadingSearch;
+    private TextView tvNoResults;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
@@ -64,6 +67,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         setSupportActionBar(toolbar);
 
         loadingSearch = (ProgressBar) findViewById(R.id.progress_loading_search);
+        tvNoResults = (TextView) findViewById(R.id.tv_search_no_results);
 
         // Back button closes this activity and returns to previous activity (MainActivity)
         ImageButton backButton = (ImageButton) findViewById(R.id.backToHomeButton);
@@ -320,10 +324,22 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     }
 
     // This is called after the search results come back from the server
-    // TODO: Display a "no results" message if nothing is found when searching
     @Override
     public void acceptDelivery(Object delivered) {
         ItemSearch results = (ItemSearch) delivered;
+
+        // Display "no results" message if the search returns none
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (results.getResults().size() == 0) {
+                    tvNoResults.setVisibility(View.VISIBLE);
+                } else {
+                    tvNoResults.setVisibility(View.GONE);
+                }
+            }
+        });
+
         try {
             HashMap<Integer,String> chainNameMap = new HashMap<>();
             for (int i = 0; i < results.getResults().size(); i++) {
