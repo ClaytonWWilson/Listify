@@ -5,25 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.bumptech.glide.Glide;
-
-import com.example.listify.data.Chain;
-import com.example.listify.data.Item;
-import com.example.listify.data.List;
-import com.example.listify.data.ListEntry;
-import com.example.listify.data.ListShare;
 import com.example.listify.ui.home.HomeFragment;
+import com.bumptech.glide.Glide;
+import com.example.listify.data.*;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -31,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.json.JSONException;
 
 import static com.example.listify.MainActivity.am;
 
@@ -132,9 +121,10 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(LIST_ID, sharedEmail);
+                      
+                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share");
                         try {
-                            requestor.postObject(listShare);
+                            requestor.putObject(listShare);
                         }
                         catch(Exception e) {
                             e.printStackTrace();
