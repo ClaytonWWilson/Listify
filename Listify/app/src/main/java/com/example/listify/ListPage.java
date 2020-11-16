@@ -10,6 +10,8 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.example.listify.ui.home.HomeFragment;
 import com.bumptech.glide.Glide;
 import com.example.listify.data.*;
 import org.json.JSONException;
@@ -27,6 +29,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     ListView listView;
     MyAdapter myAdapter;
     Requestor requestor;
+    SwipeRefreshLayout refreshList;
 
     Button incrQuan;
     Button decrQuan;
@@ -59,7 +62,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final int listID = (int) getIntent().getSerializableExtra("listID");
+        final int LIST_ID = (int) getIntent().getSerializableExtra("listID");
+        final String LIST_NAME = (String) getIntent().getSerializableExtra("listName");
+        setTitle(LIST_NAME);
 
         Properties configs = new Properties();
         try {
@@ -68,7 +73,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        requestor.getObject(Integer.toString(listID), List.class, this);
+        requestor.getObject(Integer.toString(LIST_ID), List.class, this);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -76,6 +81,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         loadingListItems = findViewById(R.id.progress_loading_list_items);
         loadingListItems.setVisibility(View.VISIBLE);
+
+        tvTotalPrice = (TextView) findViewById(R.id.total_price);
 
         clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +121,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share");
+                      
+                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share");
                         try {
                             requestor.putObject(listShare);
                         }
@@ -129,6 +137,22 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+            }
+        });
+
+        refreshList = (SwipeRefreshLayout) findViewById(R.id.refresh_list);
+        refreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                requestor.getObject(Integer.toString(LIST_ID), List.class, ListPage.this);
             }
         });
     }
@@ -180,6 +204,24 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
     @Override
     public void acceptDelivery(Object delivered) {
+        // Clear out old values
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pNames.clear();
+                pStores.clear();
+                pPrices.clear();
+                pQuantity.clear();
+                pImages.clear();
+                totalPriceByStore.clear();
+                storeID2Name.clear();
+                storeHeaderIndex.clear();
+                pListItemPair.clear();
+                totalPrice = 0;
+                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+            }
+        });
+
         List list = (List) delivered;
 
         if(list != null) {
@@ -260,8 +302,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             }
 
-
-            tvTotalPrice = (TextView) findViewById(R.id.total_price);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -271,6 +311,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             });
         }
+
+        refreshList.setRefreshing(false);
     }
 
     class MyAdapter extends ArrayAdapter<String> {
@@ -330,7 +372,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
                     }
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
             if(Integer.parseInt(pQuantity.get(position)) <= 1) {
@@ -365,7 +407,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     catch (Exception e) {
                         Log.i("Authentication", e.toString());
                     }
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
             if(Integer.parseInt(pQuantity.get(position)) > 1) {
@@ -391,7 +433,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pImages.remove(position);
 
                     requestor.deleteObject(pListItemPair.remove(position));
-                    listView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 }
             });
 
