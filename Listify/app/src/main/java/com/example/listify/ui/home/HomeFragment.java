@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             @Override
             public void run() {
                 try {
-                    newList.setItemID(idReceiver.await());
+                    newList.setListID(idReceiver.await());
                 } catch (Exception e) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override

@@ -3,7 +3,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class List {
-    Integer itemID;
+    Integer listID;
     String name;
     String owner;
     long lastUpdated;
@@ -11,7 +11,7 @@ public class List {
     boolean shared;
 
     public List(ResultSet listRow, boolean shared) throws SQLException {
-        itemID = listRow.getInt("listID");
+        listID = listRow.getInt("listID");
         name = listRow.getString("name");
         owner = listRow.getString("owner");
         lastUpdated = listRow.getTimestamp("lastUpdated").toInstant().toEpochMilli();
@@ -26,7 +26,7 @@ public class List {
     @Override
     public String toString() {
         return "List{" +
-                "itemID=" + itemID +
+                "listID=" + listID +
                 ", name='" + name + '\'' +
                 ", owner='" + owner + '\'' +
                 ", lastUpdated=" + lastUpdated +
@@ -38,12 +38,12 @@ public class List {
         return entries.toArray(new ItemEntry[entries.size()]);
     }
 
-    public Integer getItemID() {
-        return itemID;
+    public Integer getListID() {
+        return listID;
     }
 
-    public void setItemID(Integer itemID) {
-        this.itemID = itemID;
+    public void setListID(Integer listID) {
+        this.listID = listID;
     }
 
     public String getName() {

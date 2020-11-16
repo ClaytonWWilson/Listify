@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
             requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
             try {
+                requestor.putObject(new List(293, "Java.py", "me!", 1));
                 System.out.println(historyReceiver.await());
             } catch (Exception e) {
                 e.printStackTrace();
