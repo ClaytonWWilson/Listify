@@ -19,10 +19,6 @@ public class List {
         this.shared = shared;
     }
 
-    public void addItemEntry(ItemEntry entry) {
-        entries.add(entry);
-    }
-
     @Override
     public String toString() {
         return "List{" +
@@ -32,10 +28,6 @@ public class List {
                 ", lastUpdated=" + lastUpdated +
                 ", entries=" + entries +
                 '}';
-    }
-
-    public ItemEntry[] getEntries() {
-        return entries.toArray(new ItemEntry[entries.size()]);
     }
 
     public Integer getItemID() {
@@ -76,5 +68,13 @@ public class List {
 
     public void setShared(boolean shared) {
         this.shared = shared;
+    }
+
+    public ItemEntry[] getEntries() {
+        return entries.toArray(new ItemEntry[entries.size()]);
+    }
+
+    public void addItemEntry(ItemEntry entry) {
+        entries.add(entry);
     }
 }
