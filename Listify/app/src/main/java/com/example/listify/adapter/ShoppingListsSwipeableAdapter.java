@@ -129,9 +129,9 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(curList.getItemID(), sharedEmail);
+                        ListShare listShare = new ListShare(curList.getItemID(), sharedEmail, "Read, Write, Delete, Share");
                         try {
-                            requestor.postObject(listShare);
+                            requestor.putObject(listShare);
                         }
                         catch(Exception e) {
                             e.printStackTrace();

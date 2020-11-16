@@ -3,25 +3,16 @@ package com.example.listify;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
-
-import com.example.listify.data.Chain;
-import com.example.listify.data.Item;
-import com.example.listify.data.List;
-import com.example.listify.data.ListEntry;
-import com.example.listify.data.ListShare;
-import com.example.listify.ui.SignupPage;
+import com.example.listify.data.*;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -29,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.json.JSONException;
 
 import static com.example.listify.MainActivity.am;
 
@@ -125,9 +114,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(listID, sharedEmail);
+                        ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share");
                         try {
-                            requestor.postObject(listShare);
+                            requestor.putObject(listShare);
                         }
                         catch(Exception e) {
                             e.printStackTrace();
@@ -142,6 +131,51 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 dialog.show();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.list, menu);
+//        return super.onCreateOptionsMenu(menu);
+
+        MenuItem renameItem = menu.findItem(R.id.action_rename_list);
+        renameItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(ListPage.this, "Rename List", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        MenuItem shareItem = menu.findItem(R.id.action_share_list);
+        shareItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(ListPage.this, "Share List", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        MenuItem duplicateItem = menu.findItem(R.id.action_duplicate_list);
+        duplicateItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(ListPage.this, "Duplicate List", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        MenuItem exportItem = menu.findItem(R.id.action_export_list);
+        exportItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(ListPage.this, "Export List", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        return true;
     }
 
     @Override
