@@ -14,6 +14,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -22,6 +23,7 @@ import com.example.listify.data.Item;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.example.listify.data.ListShare;
+import com.example.listify.ui.home.HomeFragment;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -38,6 +40,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     ListView listView;
     MyAdapter myAdapter;
     Requestor requestor;
+    SwipeRefreshLayout refreshList;
 
     Button incrQuan;
     Button decrQuan;
@@ -89,6 +92,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         loadingListItems = findViewById(R.id.progress_loading_list_items);
         loadingListItems.setVisibility(View.VISIBLE);
+
+        tvTotalPrice = (TextView) findViewById(R.id.total_price);
 
         clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +149,22 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 dialog.show();
             }
         });
+
+        refreshList = (SwipeRefreshLayout) findViewById(R.id.refresh_list);
+        refreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                requestor.getObject(Integer.toString(LIST_ID), List.class, ListPage.this);
+            }
+        });
     }
 
     @Override
@@ -193,6 +214,24 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
     @Override
     public void acceptDelivery(Object delivered) {
+        // Clear out old values
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pNames.clear();
+                pStores.clear();
+                pPrices.clear();
+                pQuantity.clear();
+                pImages.clear();
+                totalPriceByStore.clear();
+                storeID2Name.clear();
+                storeHeaderIndex.clear();
+                pListItemPair.clear();
+                totalPrice = 0;
+                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+            }
+        });
+
         List list = (List) delivered;
 
         if(list != null) {
@@ -273,8 +312,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             }
 
-
-            tvTotalPrice = (TextView) findViewById(R.id.total_price);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -284,6 +321,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             });
         }
+
+        refreshList.setRefreshing(false);
     }
 
     class MyAdapter extends ArrayAdapter<String> {

@@ -35,7 +35,6 @@ public class SortDialogFragment extends DialogFragment {
     }
 
 
-    // TODO: Sorting should scroll the user back to the top of the page
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
