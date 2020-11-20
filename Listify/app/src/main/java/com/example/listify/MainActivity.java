@@ -17,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.List;
+import com.example.listify.data.ListReposition;
 import com.example.listify.data.SearchHistory;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             try {
                 requestor.putObject(new List(293, "Java.py", "me!", 1));
                 System.out.println(historyReceiver.await());
+                requestor.putObject(new ListReposition(291, 1));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
-        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli(), -1);
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);

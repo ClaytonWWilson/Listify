@@ -2,20 +2,15 @@ package com.example.listify;
 
 import android.os.Bundle;
 
+import android.view.View;
+import android.widget.*;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.example.listify.model.Product;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -233,7 +228,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
-        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli(), -1);
 
         Thread t = new Thread(new Runnable() {
             @Override

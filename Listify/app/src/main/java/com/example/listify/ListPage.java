@@ -325,7 +325,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
 
         MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<String> images) {
-            super(c, R.layout.activity_listproductentry, R.id.productView, names);
+            super(c, R.layout.shopping_list_product_entry, R.id.productView, names);
             context = c;
             pNames = names;
             pStores = stores;
@@ -338,7 +338,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View listproduct = layoutInflater.inflate(R.layout.activity_listproductentry, parent,false);
+            View listproduct = layoutInflater.inflate(R.layout.shopping_list_product_entry, parent,false);
 
             decrQuan = (Button) listproduct.findViewById(R.id.buttonDecr);
             incrQuan = (Button) listproduct.findViewById(R.id.buttonIncr);
