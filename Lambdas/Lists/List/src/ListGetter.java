@@ -12,7 +12,7 @@ public class ListGetter implements CallHandler{
     private final String cognitoID;
 
     private final String GET_LIST = "SELECT * FROM List WHERE listID = ?;";
-    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ?;";
+    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ? ORDER BY uiPosition;";
     private final String SHARE_CHECK = "SELECT * FROM ListSharee WHERE listID = ?;";
     private final String GET_ENTRIES = "SELECT * FROM ListProduct WHERE listID = ?;";
 
@@ -42,6 +42,7 @@ public class ListGetter implements CallHandler{
         ResultSet accessResults = checkAccess.executeQuery();
         int sharees = 0;
         boolean verifiedAccess = false;
+        int uiPosition = 1;
         while ((sharees < 2 && accessResults.next()) || !verifiedAccess) {
             int permissionLevel = accessResults.getInt("permissionLevel");
             if (accessResults.getString("userID").equals(cognitoID)) {
@@ -49,6 +50,7 @@ public class ListGetter implements CallHandler{
                 if (!ListPermissions.hasPermission(permissionLevel, "Read")) {
                     throw new AccessControlException("User " + cognitoID + " does not have permission to read list " + id);
                 }
+                uiPosition = accessResults.getInt("uiPosition");
             }
             if (permissionLevel > 0) {
                 sharees++;
@@ -64,7 +66,7 @@ public class ListGetter implements CallHandler{
         ResultSet getListResults = getList.executeQuery();
         getListResults.first();
         System.out.println(getListResults);
-        List retrievedList = new List(getListResults, shared);
+        List retrievedList = new List(getListResults, shared, uiPosition);
         System.out.println(retrievedList);
         PreparedStatement getListEntries = connection.prepareStatement(GET_ENTRIES);
         getListEntries.setInt(1, id);
