@@ -70,10 +70,6 @@ public class List {
         this.lastUpdated = lastUpdated;
     }
 
-    public ListEntry[] getEntries() {
-        return entries;
-    }
-
     public boolean isShared() {
         return shared;
     }
@@ -88,5 +84,8 @@ public class List {
 
     public void setUiPosition(Integer uiPosition) {
         this.uiPosition = uiPosition;
+
+    public ListEntry[] getEntries() {
+        return entries;
     }
 }
