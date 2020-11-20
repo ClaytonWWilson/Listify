@@ -1,6 +1,7 @@
 package com.example.listify;
 
 import android.os.Bundle;
+
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -203,7 +204,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
 
         try {
-            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getItemID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getListID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
             requestor.postObject(entry);
             Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
         } catch (Exception e) {

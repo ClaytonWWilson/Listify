@@ -3,7 +3,7 @@ package com.example.listify.data;
 import java.util.Arrays;
 
 public class List {
-    Integer itemID;
+    Integer listID;
     String name;
     String owner;
     long lastUpdated;
@@ -11,8 +11,8 @@ public class List {
     boolean shared;
     Integer uiPosition;
 
-    public List(Integer itemID, String name, String owner, long lastUpdated, ListEntry[] entries, boolean shared, Integer uiPosition) {
-        this.itemID = itemID;
+    public List(Integer listID, String name, String owner, long lastUpdated, ListEntry[] entries, boolean shared, Integer uiPosition) {
+        this.listID = listID;
         this.name = name;
         this.owner = owner;
         this.lastUpdated = lastUpdated;
@@ -21,14 +21,14 @@ public class List {
         this.uiPosition = uiPosition;
     }
 
-    public List(Integer itemID, String name, String owner, long lastUpdated, Integer uiPosition) {
-        this(itemID,  name,  owner,  lastUpdated, null, false, uiPosition);
+    public List(Integer listID, String name, String owner, long lastUpdated, Integer uiPosition) {
+        this(listID,  name,  owner,  lastUpdated, null, false, uiPosition);
     }
 
     @Override
     public String toString() {
         return "List{" +
-                "itemID=" + itemID +
+                "listID=" + listID +
                 ", name='" + name + '\'' +
                 ", owner='" + owner + '\'' +
                 ", lastUpdated=" + lastUpdated +
@@ -38,12 +38,12 @@ public class List {
                 '}';
     }
 
-    public Integer getItemID() {
-        return itemID;
+    public Integer getListID() {
+        return listID;
     }
 
-    public void setItemID(Integer itemID) {
-        this.itemID = itemID;
+    public void setListID(Integer listID) {
+        this.listID = listID;
     }
 
     public String getName() {

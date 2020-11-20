@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.listify.AuthManager;
 import com.example.listify.CreateListDialogFragment;
 import com.example.listify.LoadingCircleDialog;
@@ -37,6 +40,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
     ListView shoppingListsView;
     ProgressBar loadingLists;
     TextView emptyMessage;
+    SwipeRefreshLayout refreshLists;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -44,6 +48,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
         loadingLists = (ProgressBar) root.findViewById(R.id.progress_loading_lists);
         loadingLists.setVisibility(View.VISIBLE);
         emptyMessage = (TextView) root.findViewById(R.id.textViewEmpty);
+        refreshLists = (SwipeRefreshLayout) root.findViewById(R.id.refresh_lists);
 
         Properties configs = new Properties();
         try {
@@ -55,8 +60,8 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
         requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
 
-        final Requestor.Receiver<Integer[]> recv = this;
-        requestor.getListOfIds(List.class, recv, null);
+//        final Requestor.Receiver<Integer[]> recv = this;
+        requestor.getListOfIds(List.class, this, null);
 
 
         FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.new_list_fab);
@@ -67,6 +72,23 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
                 CreateListDialogFragment createListDialogFragment = new CreateListDialogFragment();
                 createListDialogFragment.show(getFragmentManager(), "Create New List");
                 createListDialogFragment.setTargetFragment(thisFragment, 0);
+            }
+        });
+
+        refreshLists.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
+
+                requestor.getListOfIds(List.class, HomeFragment.this, null);
             }
         });
 
@@ -101,7 +123,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             @Override
             public void run() {
                 try {
-                    newList.setItemID(idReceiver.await());
+                    newList.setListID(idReceiver.await());
                 } catch (Exception e) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -130,6 +152,9 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
 
     @Override
     public void acceptDelivery(Object delivered) {
+        // Remove old lists on refresh
+        shoppingLists.clear();
+
         Integer[] listIds = (Integer[]) delivered;
         // Create threads and add them to a list
         Thread[] threads = new Thread[listIds.length];
@@ -169,16 +194,6 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             @Override
             public void run() {
                 shoppingListsView.setAdapter(shoppingListsSwipeableAdapter);
-//                shoppingListsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        Intent listPage = new Intent(getContext(), ListPage.class);
-//
-//                        // Send the list ID
-//                        listPage.putExtra("listID", shoppingLists.get(position).getItemID());
-//                        startActivity(listPage);
-//                    }
-//                });
                 loadingLists.setVisibility(View.GONE);
 
                 if(listIds.length == 0) {
@@ -187,5 +202,6 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             }
         });
 
+        refreshLists.setRefreshing(false);
     }
 }

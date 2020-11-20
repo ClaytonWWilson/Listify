@@ -90,8 +90,13 @@ public class ListPickerDialogFragment extends DialogFragment {
         btnMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Set to 1 if it is empty
+                if (etQuantity.getText().toString().equals("")) {
+                    etQuantity.setText("1");
+                }
+
                 int curQauntity = Integer.parseInt(etQuantity.getText().toString());
-                if (curQauntity > 0) {
+                if (curQauntity > 1) {
                     curQauntity--;
                     etQuantity.setText(String.format("%d", curQauntity));
                 }
@@ -102,6 +107,11 @@ public class ListPickerDialogFragment extends DialogFragment {
         btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Set to 1 if it is empty
+                if (etQuantity.getText().toString().equals("")) {
+                    etQuantity.setText("1");
+                }
+
                 int curQauntity = Integer.parseInt(etQuantity.getText().toString());
                 curQauntity++;
                 etQuantity.setText(String.format("%d", curQauntity));

@@ -38,6 +38,7 @@
             android:layout_width="60dp"
             android:layout_height="50dp"
             android:text="@string/_1"
+            android:digits="0123456789"
             android:inputType="number"/>
 
         <Button

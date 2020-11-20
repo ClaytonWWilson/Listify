@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
             requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
             try {
+                requestor.putObject(new List(293, "Java.py", "me!", 1));
                 System.out.println(historyReceiver.await());
                 requestor.putObject(new ListReposition(291, 1));
             } catch (Exception e) {
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_profile)
+                R.id.nav_home, R.id.nav_profile, R.id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -180,20 +181,14 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
     }
 
     public void onClickSignout(MenuItem m) {
-        m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                try {
-                    am.signOutUser();
-                    Intent intent = new Intent(MainActivity.this, com.example.listify.ui.LoginPage.class);
-                    startActivity(intent);
-                }
-                catch (Exception e) {
-                    Log.i("Authentication", e.toString());
-                }
-                return false;
-            }
-        });
+        try {
+            am.signOutUser();
+            Intent intent = new Intent(MainActivity.this, com.example.listify.ui.LoginPage.class);
+            startActivity(intent);
+        }
+        catch (Exception e) {
+            Log.i("Authentication", e.toString());
+        }
     }
 
     @Override
