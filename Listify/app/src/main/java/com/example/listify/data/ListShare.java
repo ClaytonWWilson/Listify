@@ -28,7 +28,7 @@ public class ListShare {
         this.listID = listID;
         this.shareWithEmail = shareWithEmail;
         this.permissionLevel = permissionLevel;
-        this.other = other
+        this.other = other;
     }
 
     public ListShare(Integer listID, String shareWithEmail, String permissionsRaw, ListShare[] other) {
