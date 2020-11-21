@@ -1,27 +1,16 @@
 package com.example.listify;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import com.amplifyframework.auth.AuthException;
+import android.view.View;
+import android.widget.*;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.example.listify.data.List;
 import com.example.listify.data.ListEntry;
 import com.example.listify.model.Product;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -215,7 +204,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
 
 
         try {
-            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getItemID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
+            ListEntry entry = new ListEntry(shoppingLists.get(selectedListIndex).getListID(), curProduct.getItemId(), quantity, Instant.now().toEpochMilli(),false);
             requestor.postObject(entry);
             Toast.makeText(this, String.format("%d of Item added to %s", quantity, shoppingLists.get(selectedListIndex).getName()), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
@@ -239,7 +228,7 @@ public class ItemDetails extends AppCompatActivity implements ListPickerDialogFr
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
-        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+        com.example.listify.data.List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli(), -1);
 
         Thread t = new Thread(new Runnable() {
             @Override

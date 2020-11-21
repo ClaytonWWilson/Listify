@@ -62,8 +62,12 @@ public class CreateListAddDialogFragment extends DialogFragment {
         btnMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (etQuantity.getText().toString().equals("")) {
+                    etQuantity.setText("1");
+                }
+
                 int curQauntity = Integer.parseInt(etQuantity.getText().toString());
-                if (curQauntity > 0) {
+                if (curQauntity > 1) {
                     curQauntity--;
                     etQuantity.setText(String.format("%d", curQauntity));
                 }
@@ -74,6 +78,10 @@ public class CreateListAddDialogFragment extends DialogFragment {
         btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (etQuantity.getText().toString().equals("")) {
+                    etQuantity.setText("1");
+                }
+
                 int curQauntity = Integer.parseInt(etQuantity.getText().toString());
                 curQauntity++;
                 etQuantity.setText(String.format("%d", curQauntity));

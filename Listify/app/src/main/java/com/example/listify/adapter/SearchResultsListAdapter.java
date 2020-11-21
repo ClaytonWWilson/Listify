@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.listify.model.Product;
 import com.example.listify.R;
 
@@ -55,8 +56,12 @@ public class SearchResultsListAdapter extends BaseAdapter {
         TextView itemStore  = (TextView) convertView.findViewById(R.id.item_store);
 
         Product product = productList.get(position);
-        // TODO: If image url is broken, display @drawable/ic_baseline_broken_image_600.xml
-        Glide.with(activity).load(product.getImageUrl()).into(productImage);
+
+        Glide.with(activity)
+                .applyDefaultRequestOptions(new RequestOptions().placeholder(R.drawable.ic_baseline_image_600).error(R.drawable.ic_baseline_broken_image_600))
+                .load(product.getImageUrl())
+                .into(productImage);
+
         if (product.getItemName().length() >= 60) {
             itemName.setText(product.getItemName().substring(0, 60) + "...");
         } else {

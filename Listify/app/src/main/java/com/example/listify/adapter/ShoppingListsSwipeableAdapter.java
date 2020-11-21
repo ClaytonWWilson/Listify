@@ -80,7 +80,8 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.frontView = convertView.findViewById(R.id.front_layout);
             holder.deleteList = convertView.findViewById(R.id.delete_list);
             holder.shareList = convertView.findViewById(R.id.share_list);
-            holder.textView = (TextView) convertView.findViewById(R.id.shopping_list_name);
+            holder.listName = (TextView) convertView.findViewById(R.id.shopping_list_name);
+            holder.itemCount = (TextView) convertView.findViewById(R.id.shopping_list_item_count);
 
             convertView.setTag(holder);
         } else {
@@ -90,19 +91,22 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         final List curList = lists.get(position);
 
         // Bind the view to the unique list ID
-        binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getItemID()));
+        binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
 
         if(curList.isShared()) {
-            holder.textView.setText(curList.getName() + " (shared)");
+            holder.listName.setText(curList.getName() + " (shared)");
         }
         else {
-            holder.textView.setText(curList.getName());
+            holder.listName.setText(curList.getName());
         }
+
+        holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    requestor.deleteObject(Integer.toString(curList.getItemID()), List.class);
+                    requestor.deleteObject(Integer.toString(curList.getListID()), List.class);
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -129,7 +133,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(curList.getItemID(), sharedEmail, "Read, Write, Delete, Share");
+                        ListShare listShare = new ListShare(curList.getListID(), sharedEmail, "Read, Write, Delete, Share");
                         try {
                             requestor.putObject(listShare);
                         }
@@ -148,7 +152,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                 Toast.makeText(activity, String.format("Share %s", curList.getName()), Toast.LENGTH_SHORT).show();
 
                 // Close the layout
-                binderHelper.closeLayout(Integer.toString(curList.getItemID()));
+                binderHelper.closeLayout(Integer.toString(curList.getListID()));
             }
         });
 
@@ -157,8 +161,10 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent listPage = new Intent(activity, ListPage.class);
 
-                // Send the list ID
-                listPage.putExtra("listID", curList.getItemID());
+                // Send the list ID and list name
+                listPage.putExtra("listID", curList.getListID());
+                listPage.putExtra("listName", curList.getName());
+
                 activity.startActivity(listPage);
             }
         });
@@ -171,6 +177,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         View frontView;
         View deleteList;
         View shareList;
-        TextView textView;
+        TextView listName;
+        TextView itemCount;
     }
 }
