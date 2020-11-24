@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                 e.printStackTrace();
             }
 
-            Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+            /*Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
             SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
             requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
             try {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            /*
+
             List testList = new List(-1, "New List", "user filled by lambda", Instant.now().toEpochMilli());
             ListEntry entry = new ListEntry(1, 4, Math.abs(new Random().nextInt()), Instant.now().toEpochMilli(),false);
           

@@ -84,6 +84,7 @@ public class List {
 
     public void setUiPosition(Integer uiPosition) {
         this.uiPosition = uiPosition;
+    }
 
     public ListEntry[] getEntries() {
         return entries;
