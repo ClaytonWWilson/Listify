@@ -122,7 +122,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
                       
-                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share");
+                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share", null);
                         try {
                             requestor.putObject(listShare);
                         }
