@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_profile" />
 
     <fragment
+        android:id="@+id/nav_stores"
+        android:name="com.example.listify.ui.store.StoreFragment"
+        android:label="@string/menu_stores"
+        tools:layout="@layout/fragment_stores" />
+
+    <fragment
         android:id="@+id/nav_gallery"
         android:name="com.example.listify.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
