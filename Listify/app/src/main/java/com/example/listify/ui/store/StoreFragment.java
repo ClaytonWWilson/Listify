@@ -13,6 +13,7 @@ import com.example.listify.R;
 public class StoreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_stores, container, false);
+        
         return root;
     }
 }
