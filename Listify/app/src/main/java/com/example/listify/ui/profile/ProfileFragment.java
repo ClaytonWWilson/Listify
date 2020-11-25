@@ -67,6 +67,17 @@ public class ProfileFragment extends Fragment {
                                 Log.i("Authentication", e.toString());
                             }
                         }
+                        else {
+                            View errorView = getLayoutInflater().inflate(R.layout.activity_erroralert, null);
+                            AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                            builder2.setView(errorView);
+                            builder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {}
+                            });
+                            AlertDialog dialog2 = builder2.create();
+                            dialog2.show();
+                        }
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
