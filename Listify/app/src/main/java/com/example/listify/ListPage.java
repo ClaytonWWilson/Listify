@@ -11,6 +11,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.listify.ui.home.HomeFragment;
 import com.bumptech.glide.Glide;
@@ -493,6 +494,12 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     removeItem.setVisibility(View.GONE);
 
                     listproduct.setBackgroundColor(Color.parseColor("#BBBBBB"));
+
+                    ConstraintLayout constraintLayout = listproduct.findViewById(R.id.constraintLayout);
+                    constraintLayout.setMaxHeight(250);
+
+                    name.setPadding(0, 175, 0, 0);
+                    price.setPadding(0, 175, 0, 0);
                 }
                 else {
                     quantity.setText(pQuantity.get(position));
