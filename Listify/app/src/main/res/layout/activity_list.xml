@@ -13,7 +13,7 @@
         android:indeterminate="true"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -35,7 +35,7 @@
             android:text="Share"
             android:textSize="10sp"/>
 
-    </LinearLayout>
+    </LinearLayout>-->
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_list"
@@ -51,7 +51,15 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-  
+    <TextView
+        android:id="@+id/textViewEmpty2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="20sp"
+        android:text="This list is empty."/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
