@@ -38,6 +38,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button shareList;
 
     TextView tvTotalPrice;
+    TextView emptyMessage;
+
     ProgressBar loadingListItems;
 
     ArrayList<String> pNames = new ArrayList<>();
@@ -56,7 +58,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
     DecimalFormat df = new DecimalFormat("0.00");
 
-    // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +84,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         loadingListItems.setVisibility(View.VISIBLE);
 
         tvTotalPrice = (TextView) findViewById(R.id.total_price);
-
-        clearAll = (Button) findViewById(R.id.buttonClear);
+        emptyMessage = (TextView) findViewById(R.id.textViewEmpty2);
+        /*clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +94,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 pPrices.clear();
                 pQuantity.clear();
                 pImages.clear();
+
+                emptyMessage.setVisibility(View.VISIBLE);
 
                 while(!pListItemPair.isEmpty()) {
                     try {
@@ -138,7 +141,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        });
+        });*/
 
         refreshList = (SwipeRefreshLayout) findViewById(R.id.refresh_list);
         refreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -161,7 +164,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
-//        return super.onCreateOptionsMenu(menu);
+        //return super.onCreateOptionsMenu(menu);
 
         MenuItem renameItem = menu.findItem(R.id.action_rename_list);
         renameItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -226,6 +229,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
+                //emptyMessage.setVisibility(View.GONE);
                 int product = entry.getProductID();
                 SynchronousReceiver<Item> pr = new SynchronousReceiver<>();
                 requestor.getObject(Integer.toString(product), Item.class, pr, pr);
@@ -422,7 +426,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     totalPriceByStore.put(storeName, totalPriceByStore.get(storeName) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
                     pPrices.set(storeHeaderIndex.get(storeName), df.format(totalPriceByStore.get(storeName)));
 
-
                     totalPrice -= (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)));
                     tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
@@ -431,8 +434,35 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pPrices.remove(position);
                     pQuantity.remove(position);
                     pImages.remove(position);
-
                     requestor.deleteObject(pListItemPair.remove(position));
+
+                    for(String str : storeHeaderIndex.keySet()) {
+                        if(storeHeaderIndex.get(str) > position) {
+                            storeHeaderIndex.put(str, storeHeaderIndex.get(str) - 1);
+                        }
+                    }
+
+                    if(String.format("$%.2f", totalPriceByStore.get(storeName)).equals("$0.00") || String.format("$%.2f", totalPriceByStore.get(storeName)).equals("$-0.00")) {
+                        int index = storeHeaderIndex.remove(storeName);
+
+                        pNames.remove(index);
+                        pStores.remove(index);
+                        pPrices.remove(index);
+                        pQuantity.remove(index);
+                        pImages.remove(index);
+                        pListItemPair.remove(index);
+
+                        for(String str : storeHeaderIndex.keySet()) {
+                            if(storeHeaderIndex.get(str) > index) {
+                                storeHeaderIndex.put(str, storeHeaderIndex.get(str) - 1);
+                            }
+                        }
+                    }
+
+                    if(pNames.isEmpty()) {
+                        //emptyMessage.setVisibility(View.VISIBLE);
+                    }
+
                     myAdapter.notifyDataSetChanged();
                 }
             });
