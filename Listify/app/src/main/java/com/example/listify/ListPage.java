@@ -234,7 +234,12 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
-                //emptyMessage.setVisibility(View.GONE);
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        emptyMessage.setVisibility(View.GONE);
+                    }
+                });
                 int product = entry.getProductID();
                 SynchronousReceiver<Item> pr = new SynchronousReceiver<>();
                 requestor.getObject(Integer.toString(product), Item.class, pr, pr);
@@ -465,7 +470,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     }
 
                     if(pNames.isEmpty()) {
-                        //emptyMessage.setVisibility(View.VISIBLE);
+                        emptyMessage.setVisibility(View.VISIBLE);
                     }
 
                     myAdapter.notifyDataSetChanged();
