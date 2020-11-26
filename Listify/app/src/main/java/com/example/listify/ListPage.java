@@ -3,6 +3,7 @@ package com.example.listify;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -85,6 +86,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         tvTotalPrice = (TextView) findViewById(R.id.total_price);
         emptyMessage = (TextView) findViewById(R.id.textViewEmpty2);
+
         /*clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +165,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.list, menu);
+        
         //return super.onCreateOptionsMenu(menu);
 
         MenuItem renameItem = menu.findItem(R.id.action_rename_list);
@@ -487,6 +491,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     decrQuan.setVisibility(View.GONE);
                     incrQuan.setVisibility(View.GONE);
                     removeItem.setVisibility(View.GONE);
+
+                    listproduct.setBackgroundColor(Color.parseColor("#BBBBBB"));
                 }
                 else {
                     quantity.setText(pQuantity.get(position));
