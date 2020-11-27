@@ -100,7 +100,11 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.listName.setText(curList.getName());
         }
 
-        holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+        if (curList.getEntries() != null) {
+            holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+        } else {
+            holder.itemCount.setText("0 items");
+        }
 
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,9 +165,8 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent listPage = new Intent(activity, ListPage.class);
 
-                // Send the list ID and list name
-                listPage.putExtra("listID", curList.getListID());
-                listPage.putExtra("listName", curList.getName());
+                // Send the selected list
+                listPage.putExtra("selectedList", curList);
 
                 activity.startActivity(listPage);
             }

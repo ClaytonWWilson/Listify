@@ -1,8 +1,9 @@
 package com.example.listify.data;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class List {
+public class List implements Serializable {
     Integer listID;
     String name;
     String owner;
