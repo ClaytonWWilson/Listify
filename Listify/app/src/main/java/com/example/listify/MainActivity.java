@@ -1,15 +1,22 @@
 package com.example.listify;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,15 +24,15 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.List;
-import com.example.listify.data.ListDuplicate;
-import com.example.listify.data.ListReposition;
-import com.example.listify.data.SearchHistory;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Properties;
 
 import static com.example.listify.SplashActivity.showSplash;
@@ -33,6 +40,9 @@ import static com.example.listify.SplashActivity.showSplash;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
     public static AuthManager am = new AuthManager();
+    private File newImageFileLocation = null;
+    private final int CAMERA_CAPTURE = 1;
+    private final int IMAGE_SELECT = 2;
 
     @Override
     public void onBackPressed() {
@@ -151,12 +161,49 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         }
 
         //------------------------------------------------------------------------------------------//
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        TextView emailView = navigationView.getHeaderView(0).findViewById(R.id.textViewEmailSidebar);
+        emailView.setText(am.getEmail());
+
+        ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setView(navigationView.getHeaderView(0));
+                builder.setTitle("Change picture");
+                builder.setMessage("Please select a method to add a new profile picture.");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Take picture", (dialog, which) -> {
+                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    File imageFileLocation = getOutputImageFile();
+                    Log.i("Profile Picture", "New image file at " + imageFileLocation.getAbsolutePath());
+                    newImageFileLocation = imageFileLocation;
+                    Uri imageUri = FileProvider.getUriForFile(
+                            MainActivity.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            imageFileLocation);
+                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                    startActivityForResult(takePicture, CAMERA_CAPTURE);
+                });
+                builder.setNeutralButton("Select picture", (dialog, which) -> {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, IMAGE_SELECT);
+                });
+                builder.setNegativeButton("Cancel", (dialog, which) -> {
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_profile, R.id.nav_logout)
                 .setDrawerLayout(drawer)
@@ -174,6 +221,55 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
 
             }
         });
+    }
+
+    protected void onActivityResult (int requestCode,
+                                     int resultCode,
+                                     Intent data) {
+        Uri selectedImage = null;
+        switch (requestCode){
+            case CAMERA_CAPTURE:
+                Log.i("Profile Picture", "Pulling image file at " + this.newImageFileLocation.getAbsolutePath());
+                selectedImage = Uri.fromFile(this.newImageFileLocation);
+                break;
+            case IMAGE_SELECT:
+                if ((data == null) || (data.getData() == null)) {
+                    return;
+                }
+                selectedImage = data.getData();
+                break;
+        }
+
+        MainActivity.super.onActivityResult(requestCode, resultCode, data);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
+        profilePicture.setImageURI(selectedImage);
+    }
+
+    //getOutputImageFile from https://developer.android.com/guide/topics/media/camera
+    private static File getOutputImageFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("File creation", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        Log.i("File creation", mediaFile.toString());
+        return mediaFile;
     }
 
     @Override
@@ -214,5 +310,8 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+
     }
+
+
 }
