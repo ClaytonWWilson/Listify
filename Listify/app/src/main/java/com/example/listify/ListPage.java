@@ -59,14 +59,16 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
     DecimalFormat df = new DecimalFormat("0.00");
+    int LIST_ID;
+    String LIST_NAME;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final int LIST_ID = (int) getIntent().getSerializableExtra("listID");
-        final String LIST_NAME = (String) getIntent().getSerializableExtra("listName");
+        LIST_ID = (int) getIntent().getSerializableExtra("listID");
+        LIST_NAME = (String) getIntent().getSerializableExtra("listName");
         setTitle(LIST_NAME);
 
         Properties configs = new Properties();
@@ -193,7 +195,24 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         duplicateItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Duplicate List", Toast.LENGTH_SHORT).show();
+
+                ListDuplicate duplicate = new ListDuplicate(LIST_ID, String.format("%s copy", LIST_NAME));
+
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                try {
+                    requestor.postObject(duplicate);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(ListPage.this, "List duplicated", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
