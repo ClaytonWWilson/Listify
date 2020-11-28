@@ -79,7 +79,7 @@ public class ShareeSwipeableAdapter extends BaseAdapter {
             holder.swipeLayout = (SwipeRevealLayout)convertView.findViewById(R.id.swipe_layout);
             holder.frontView = convertView.findViewById(R.id.front_layout);
             holder.deleteList = convertView.findViewById(R.id.delete_list);
-            holder.shareList = convertView.findViewById(R.id.share_list);
+            //holder.shareList = convertView.findViewById(R.id.share_list);
             holder.textView = (TextView) convertView.findViewById(R.id.shopping_list_name);
 
             convertView.setTag(holder);
