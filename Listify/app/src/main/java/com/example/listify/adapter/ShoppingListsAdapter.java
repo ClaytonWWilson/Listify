@@ -49,7 +49,7 @@ public class ShoppingListsAdapter extends BaseAdapter {
 
         TextView tvListName = (TextView) convertView.findViewById(R.id.shopping_list_name);
         if(curList.isShared()) {
-            tvListName.setText(curList.getName() + " (shared)");
+            tvListName.setText(curList.getName() + " (shared by " + curList.getOwner() + ")");
         }
         else {
             tvListName.setText(curList.getName());

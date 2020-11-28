@@ -94,7 +94,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
 
         if(curList.isShared()) {
-            holder.listName.setText(curList.getName() + " (shared)");
+            holder.listName.setText(curList.getName() + " (shared by " + curList.getOwner() + ")");
         }
         else {
             holder.listName.setText(curList.getName());
