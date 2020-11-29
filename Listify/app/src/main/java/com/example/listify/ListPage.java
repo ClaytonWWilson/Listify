@@ -1,15 +1,16 @@
 package com.example.listify;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -27,7 +28,7 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListPage extends AppCompatActivity implements Requestor.Receiver {
+public class ListPage extends AppCompatActivity implements Requestor.Receiver, RenameListDialogFragment.OnRenameListListener {
     ListView listView;
     MyAdapter myAdapter;
     Requestor requestor;
@@ -59,15 +60,15 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
     DecimalFormat df = new DecimalFormat("0.00");
+    List selectedList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final int LIST_ID = (int) getIntent().getSerializableExtra("listID");
-        final String LIST_NAME = (String) getIntent().getSerializableExtra("listName");
-        setTitle(LIST_NAME);
+        selectedList = (List) getIntent().getSerializableExtra("selectedList");
+        setTitle(selectedList.getName());
 
         Properties configs = new Properties();
         try {
@@ -76,7 +77,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        requestor.getObject(Integer.toString(LIST_ID), List.class, this);
+        requestor.getObject(Integer.toString(selectedList.getListID()), List.class, this);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -158,7 +159,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
 
                 requestor = new Requestor(am, configs.getProperty("apiKey"));
-                requestor.getObject(Integer.toString(LIST_ID), List.class, ListPage.this);
+                requestor.getObject(Integer.toString(selectedList.getListID()), List.class, ListPage.this);
             }
         });
     }
@@ -166,16 +167,16 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if it is present.
-
         getMenuInflater().inflate(R.menu.list, menu);
-        
-        //return super.onCreateOptionsMenu(menu);
+
+
 
         MenuItem renameItem = menu.findItem(R.id.action_rename_list);
         renameItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Rename List", Toast.LENGTH_SHORT).show();
+                RenameListDialogFragment renameListDialog = new RenameListDialogFragment();
+                renameListDialog.show(getSupportFragmentManager(), "Rename List");
                 return false;
             }
         });
@@ -193,7 +194,24 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         duplicateItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Duplicate List", Toast.LENGTH_SHORT).show();
+
+                ListDuplicate duplicate = new ListDuplicate(selectedList.getListID(), String.format("%s copy", selectedList.getName()));
+
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                try {
+                    requestor.postObject(duplicate);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(ListPage.this, "List duplicated", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -327,6 +345,34 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         }
 
         refreshList.setRefreshing(false);
+    }
+
+    @Override
+    public void sendRenameListName(String name) {
+        selectedList.setName(name);
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
+        try {
+            requestor.putObject(selectedList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTitle(name);
+                Toast.makeText(ListPage.this, "List Renamed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     class MyAdapter extends ArrayAdapter<String> {
