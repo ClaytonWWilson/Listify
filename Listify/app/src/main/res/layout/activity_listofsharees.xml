@@ -3,20 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/progress_loading_list_items"
-        style="?android:attr/progressBarStyleLarge"
+    <TextView
+        android:id="@+id/textView15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:indeterminate="true"
-        android:visibility="gone"/>
+        android:text="Enter the email of the user you want to share the list with."
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="13dp"/>
+
+    <EditText
+        android:id="@+id/editTextShareeEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="17"
+        android:inputType="textPersonName"
+        android:hint="Sharee's email"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp"/>
+
+    <Button
+        android:id="@+id/buttonShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="10dp"/>
 
     <ListView
         android:id="@+id/listOfSharees"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="175dp"/>
 
 </RelativeLayout>
