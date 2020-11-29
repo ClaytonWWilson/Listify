@@ -45,6 +45,8 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
     MyAdapter myAdapter;
     Requestor requestor;
 
+    Button removeSharee;
+
     ArrayList<String> lShareeEmails = new ArrayList<>();
 
     @Override
@@ -107,10 +109,18 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
             View listproduct = layoutInflater.inflate(R.layout.shopping_list_sharee_entry, parent,false);
 
             TextView shareeEmail = listproduct.findViewById(R.id.textView14);
-
             if(!lShareeEmails.isEmpty()) {
                 shareeEmail.setText(lShareeEmails.get(position));
             }
+
+            removeSharee = (Button) listproduct.findViewById(R.id.button4);
+            removeSharee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lShareeEmails.remove(position);
+                    myAdapter.notifyDataSetChanged();
+                }
+            });
 
             return listproduct;
         }
