@@ -41,14 +41,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import static com.example.listify.MainActivity.am;
 
 public class ListSharees extends AppCompatActivity implements Requestor.Receiver {
-    ShareeSwipeableAdapter myAdapter;
+    ListView listView;
+    MyAdapter myAdapter;
     Requestor requestor;
-    ProgressBar loadingListItems;
 
+    Button removeSharee;
 
-    DecimalFormat df = new DecimalFormat("0.00");
+    ArrayList<String> lShareeEmails = new ArrayList<>();
 
-    // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +65,9 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
         requestor = new Requestor(am, configs.getProperty("apiKey"));
         requestor.getObject(Integer.toString(listID), ListShare.class, this);
 
-        loadingListItems = findViewById(R.id.progress_loading_list_items);
-        loadingListItems.setVisibility(View.VISIBLE);
+        listView = findViewById(R.id.listOfSharees);
+        myAdapter = new MyAdapter(this, lShareeEmails);
+        listView.setAdapter(myAdapter);
     }
 
     @Override
@@ -74,29 +75,54 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
         ListShare sharee = (ListShare) delivered;
 
         if(sharee != null) {
-            SynchronousReceiver<ListShare> listShareReceiver = new SynchronousReceiver<>();
-            requestor.getObject(Integer.toString(sharee.getListID()), ListShare.class, listShareReceiver, listShareReceiver);
+            lShareeEmails.add("sharee.getShareWithEmail()");
 
-            ArrayList<ListShare> resultList = new ArrayList<>();
-            ListShare result;
-
-            try {
-                result = listShareReceiver.await();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                result = null;
-            }
-
-            if(result != null) {
-                resultList.add(result);
-
-                for(ListShare r : result.getEntries()) {
-                    resultList.add(r);
+            if(sharee.getEntries() != null) {
+                for(ListShare ls : sharee.getEntries()) {
+                    lShareeEmails.add(ls.getShareWithEmail());
                 }
-
-                myAdapter = new ShareeSwipeableAdapter(this, resultList);
             }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    myAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    class MyAdapter extends ArrayAdapter<String> {
+        Context context;
+        ArrayList<String> lShareeEmails;
+
+        MyAdapter (Context c, ArrayList<String> shareeEmails) {
+            super(c, R.layout.shopping_list_sharee_entry, R.id.textView14, shareeEmails);
+            context = c;
+            lShareeEmails = shareeEmails;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View listproduct = layoutInflater.inflate(R.layout.shopping_list_sharee_entry, parent,false);
+
+            TextView shareeEmail = listproduct.findViewById(R.id.textView14);
+            if(!lShareeEmails.isEmpty()) {
+                shareeEmail.setText(lShareeEmails.get(position));
+            }
+
+            removeSharee = (Button) listproduct.findViewById(R.id.button4);
+            removeSharee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lShareeEmails.remove(position);
+                    myAdapter.notifyDataSetChanged();
+                }
+            });
+
+            return listproduct;
         }
     }
 }
