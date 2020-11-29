@@ -1,12 +1,16 @@
 package com.example.listify;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,12 +28,12 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.List;
+import com.example.listify.data.Picture;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
 import org.json.JSONException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
@@ -169,9 +173,22 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
 
         TextView emailView = navigationView.getHeaderView(0).findViewById(R.id.textViewEmailSidebar);
         emailView.setText(am.getEmail());
-
-        ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
-        profilePicture.setOnClickListener(new View.OnClickListener() {
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<Picture> profilePictureReceiver = new SynchronousReceiver<>();
+        ImageView profilePictureView = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
+        try {
+            requestor.getObject("profile", Picture.class, profilePictureReceiver);
+            profilePictureView.setImageURI(Uri.fromFile(saveImage(profilePictureReceiver.await().getBase64EncodedImage())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        profilePictureView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -223,27 +240,116 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         });
     }
 
+    //From: https://stackoverflow.com/questions/30005815/convert-encoded-base64-image-to-file-object-in-android
+    private File saveImage(final String imageData) throws IOException {
+        final byte[] imgBytesData = android.util.Base64.decode(imageData,
+                android.util.Base64.DEFAULT);
+
+        final File file = File.createTempFile("profilePicture", null, this.getCacheDir());
+        final FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                fileOutputStream);
+        try {
+            bufferedOutputStream.write(imgBytesData);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                bufferedOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
+
     protected void onActivityResult (int requestCode,
                                      int resultCode,
                                      Intent data) {
         Uri selectedImage = null;
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         switch (requestCode){
             case CAMERA_CAPTURE:
                 Log.i("Profile Picture", "Pulling image file at " + this.newImageFileLocation.getAbsolutePath());
                 selectedImage = Uri.fromFile(this.newImageFileLocation);
+                try {
+                    requestor.putObject(new Picture(fileToString(this.newImageFileLocation)));
+                } catch (JSONException | IOException jsonException) {
+                    jsonException.printStackTrace();
+                }
+
                 break;
             case IMAGE_SELECT:
                 if ((data == null) || (data.getData() == null)) {
                     return;
                 }
                 selectedImage = data.getData();
+                try {
+                    requestor.putObject(new Picture(fileToString(new File(getRealPathFromUri(this, selectedImage)))));
+                } catch (JSONException | IOException exception) {
+                    exception.printStackTrace();
+                }
                 break;
         }
 
         MainActivity.super.onActivityResult(requestCode, resultCode, data);
+        if (selectedImage == null) {
+            return;
+        }
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
         profilePicture.setImageURI(selectedImage);
+
+    }
+
+    //From:  https://stackoverflow.com/questions/20028319/how-to-convert-content-media-external-images-media-y-to-file-storage-sdc
+    private static String getRealPathFromUri(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    //From: https://stackoverflow.com/questions/27784230/convert-a-file-100mo-in-base64-on-android
+    private String fileToString(File toStringify) throws IOException {
+        InputStream inputStream = new FileInputStream(toStringify.getAbsolutePath());
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output64.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        output64.close();
+
+        return output.toString();
     }
 
     //getOutputImageFile from https://developer.android.com/guide/topics/media/camera
