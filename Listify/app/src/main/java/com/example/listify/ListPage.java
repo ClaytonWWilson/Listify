@@ -221,12 +221,19 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver, R
         exportItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                String listContent = "";
+                StringBuilder listContents = new StringBuilder();
 
+                for (int i = 0; i < pNames.size(); i++) {
+                    if (Integer.parseInt(pQuantity.get(i)) == -1) {
+                        listContents.append(String.format("\n%s\n", pNames.get(i)));
+                    } else {
+                        listContents.append(String.format("    %s of %s\n", pQuantity.get(i), pNames.get(i)));
+                    }
+                }
 
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "this is my text test");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, listContents.toString());
                 sendIntent.setType("text/plain");
 
                 Intent shareIntent = Intent.createChooser(sendIntent, null);
