@@ -11,6 +11,7 @@ public class ListShare {
     String shareWithEmail;
     final ListShare[] other;
     Integer permissionLevel;
+    Integer uiPosition;
     private static final Map<Integer, String> keysToPerms;
   
     static {
@@ -24,11 +25,17 @@ public class ListShare {
         keysToPerms = Collections.unmodifiableMap(keysToPermsTemp);
     }
   
-    public ListShare(Integer listID, String shareWithEmail, Integer permissionLevel, ListShare[] other) {
+    public ListShare(Integer listID, String shareWithEmail, Integer permissionLevel, Integer uiPosition, ListShare[] other) {
         this.listID = listID;
         this.shareWithEmail = shareWithEmail;
         this.permissionLevel = permissionLevel;
         this.other = other;
+        this.uiPosition = uiPosition;
+    }
+
+    public ListShare(Integer listID, String shareWithEmail, String permissionsRaw, Integer uiPosition, ListShare[] other) {
+        this(listID, shareWithEmail, permissionsRaw, other);
+        this.uiPosition = uiPosition;
     }
 
     public ListShare(Integer listID, String shareWithEmail, String permissionsRaw, ListShare[] other) {
@@ -42,6 +49,7 @@ public class ListShare {
                 permissionLevel *= keytoPermEntry.getKey();
             }
         }
+        this.uiPosition = -1;
     }
 
     @Override

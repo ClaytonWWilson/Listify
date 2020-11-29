@@ -2,7 +2,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class ListShareGetter implements CallHandler{
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
         Integer listID = Integer.parseInt(queryMap.get("id"));
 
-        PreparedStatement getList = connection.prepareStatement(GET_LIST);
+        PreparedStatement getList = connection.prepareStatement(GET_LISTS);
         getList.setInt(1, listID);
 
         ResultSet getListResults = getList.executeQuery();
