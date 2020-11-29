@@ -17,6 +17,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.amplifyframework.auth.AuthException;
 import com.example.listify.data.List;
+import com.example.listify.data.ListDuplicate;
+import com.example.listify.data.ListReposition;
 import com.example.listify.data.SearchHistory;
 import com.example.listify.ui.LoginPage;
 import com.google.android.material.navigation.NavigationView;
@@ -103,16 +105,18 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                 e.printStackTrace();
             }
 
-            Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
+            /*Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
             SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
             requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
             try {
                 requestor.putObject(new List(293, "Java.py", "me!", 1));
                 System.out.println(historyReceiver.await());
+                requestor.putObject(new ListReposition(291, 1));
+                requestor.postObject(new ListDuplicate(290, "yet another list"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            /*
+
             List testList = new List(-1, "New List", "user filled by lambda", Instant.now().toEpochMilli());
             ListEntry entry = new ListEntry(1, 4, Math.abs(new Random().nextInt()), Instant.now().toEpochMilli(),false);
           
@@ -200,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
 
-        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli());
+        List newList = new List(-1, name, "user filled by lambda", Instant.now().toEpochMilli(), -1);
 
         try {
             requestor.postObject(newList, idReceiver, idReceiver);

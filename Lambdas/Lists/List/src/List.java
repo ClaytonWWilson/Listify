@@ -9,18 +9,16 @@ public class List {
     long lastUpdated;
     ArrayList<ItemEntry> entries;
     boolean shared;
+    Integer uiPosition;
 
-    public List(ResultSet listRow, boolean shared) throws SQLException {
+    public List(ResultSet listRow, boolean shared, Integer uiPosition) throws SQLException {
         listID = listRow.getInt("listID");
         name = listRow.getString("name");
         owner = listRow.getString("owner");
         lastUpdated = listRow.getTimestamp("lastUpdated").toInstant().toEpochMilli();
         entries = new ArrayList<>();
         this.shared = shared;
-    }
-
-    public void addItemEntry(ItemEntry entry) {
-        entries.add(entry);
+        this.uiPosition = uiPosition;
     }
 
     @Override
@@ -31,8 +29,11 @@ public class List {
                 ", owner='" + owner + '\'' +
                 ", lastUpdated=" + lastUpdated +
                 ", entries=" + entries +
+                ", shared=" + shared +
+                ", uiPosition=" + uiPosition +
                 '}';
     }
+
 
     public ItemEntry[] getEntries() {
         return entries.toArray(new ItemEntry[entries.size()]);
@@ -76,5 +77,20 @@ public class List {
 
     public void setShared(boolean shared) {
         this.shared = shared;
+    }
+
+    public Integer getUiPosition() {
+        return uiPosition;
+    }
+
+    public void setUiPosition(Integer uiPosition) {
+        this.uiPosition = uiPosition;
+
+   public ItemEntry[] getEntries() {
+        return entries.toArray(new ItemEntry[entries.size()]);
+    }
+
+    public void addItemEntry(ItemEntry entry) {
+        entries.add(entry);
     }
 }

@@ -1,16 +1,19 @@
 package com.example.listify;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.listify.ui.home.HomeFragment;
 import com.bumptech.glide.Glide;
@@ -26,7 +29,7 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ListPage extends AppCompatActivity implements Requestor.Receiver {
+public class ListPage extends AppCompatActivity implements Requestor.Receiver, RenameListDialogFragment.OnRenameListListener {
     ListView listView;
     MyAdapter myAdapter;
     Requestor requestor;
@@ -39,6 +42,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Button shareList;
 
     TextView tvTotalPrice;
+    TextView emptyMessage;
+
     ProgressBar loadingListItems;
 
     ArrayList<String> pNames = new ArrayList<>();
@@ -56,16 +61,15 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     Map<String, Integer> storeHeaderIndex = new HashMap<>();
 
     DecimalFormat df = new DecimalFormat("0.00");
+    List selectedList;
 
-    // TODO: Display a message if their list is empty
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final int LIST_ID = (int) getIntent().getSerializableExtra("listID");
-        final String LIST_NAME = (String) getIntent().getSerializableExtra("listName");
-        setTitle(LIST_NAME);
+        selectedList = (List) getIntent().getSerializableExtra("selectedList");
+        setTitle(selectedList.getName());
 
         Properties configs = new Properties();
         try {
@@ -74,7 +78,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
             e.printStackTrace();
         }
         requestor = new Requestor(am, configs.getProperty("apiKey"));
-        requestor.getObject(Integer.toString(LIST_ID), List.class, this);
+        requestor.getObject(Integer.toString(selectedList.getListID()), List.class, this);
 
         listView = findViewById(R.id.listView);
         myAdapter = new MyAdapter(this, pNames, pStores, pPrices, pQuantity, pImages);
@@ -84,8 +88,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         loadingListItems.setVisibility(View.VISIBLE);
 
         tvTotalPrice = (TextView) findViewById(R.id.total_price);
+        emptyMessage = (TextView) findViewById(R.id.textViewEmpty2);
 
-        clearAll = (Button) findViewById(R.id.buttonClear);
+        /*clearAll = (Button) findViewById(R.id.buttonClear);
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +99,8 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 pPrices.clear();
                 pQuantity.clear();
                 pImages.clear();
+
+                emptyMessage.setVisibility(View.VISIBLE);
 
                 while(!pListItemPair.isEmpty()) {
                     try {
@@ -123,7 +130,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                         EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
                         String sharedEmail = sharedEmailText.getText().toString();
                       
-                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share");
+                        ListShare listShare = new ListShare(LIST_ID, sharedEmail, "Read, Write, Delete, Share", null);
                         try {
                             requestor.putObject(listShare);
                         }
@@ -139,7 +146,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        });
+        });*/
 
         refreshList = (SwipeRefreshLayout) findViewById(R.id.refresh_list);
         refreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -153,7 +160,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
 
                 requestor = new Requestor(am, configs.getProperty("apiKey"));
-                requestor.getObject(Integer.toString(LIST_ID), List.class, ListPage.this);
+                requestor.getObject(Integer.toString(selectedList.getListID()), List.class, ListPage.this);
             }
         });
     }
@@ -162,13 +169,15 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
-//        return super.onCreateOptionsMenu(menu);
+
+
 
         MenuItem renameItem = menu.findItem(R.id.action_rename_list);
         renameItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Rename List", Toast.LENGTH_SHORT).show();
+                RenameListDialogFragment renameListDialog = new RenameListDialogFragment();
+                renameListDialog.show(getSupportFragmentManager(), "Rename List");
                 return false;
             }
         });
@@ -186,7 +195,24 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         duplicateItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Duplicate List", Toast.LENGTH_SHORT).show();
+
+                ListDuplicate duplicate = new ListDuplicate(selectedList.getListID(), String.format("%s copy", selectedList.getName()));
+
+                Properties configs = new Properties();
+                try {
+                    configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+
+                requestor = new Requestor(am, configs.getProperty("apiKey"));
+                try {
+                    requestor.postObject(duplicate);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(ListPage.this, "List duplicated", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -232,6 +258,12 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
         if(list != null) {
             for (ListEntry entry : list.getEntries()) {
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        emptyMessage.setVisibility(View.GONE);
+                    }
+                });
                 int product = entry.getProductID();
                 SynchronousReceiver<Item> pr = new SynchronousReceiver<>();
                 requestor.getObject(Integer.toString(product), Item.class, pr, pr);
@@ -328,6 +360,34 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         refreshList.setRefreshing(false);
     }
 
+    @Override
+    public void sendRenameListName(String name) {
+        selectedList.setName(name);
+
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(ListPage.this, "android.resource://" + getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
+        try {
+            requestor.putObject(selectedList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTitle(name);
+                Toast.makeText(ListPage.this, "List Renamed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     class MyAdapter extends ArrayAdapter<String> {
         Context context;
         ArrayList<String> pNames;
@@ -338,7 +398,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
 
 
         MyAdapter (Context c, ArrayList<String> names, ArrayList<String> stores, ArrayList<String> prices, ArrayList<String> quantity, ArrayList<String> images) {
-            super(c, R.layout.activity_listproductentry, R.id.productView, names);
+            super(c, R.layout.shopping_list_product_entry, R.id.productView, names);
             context = c;
             pNames = names;
             pStores = stores;
@@ -351,7 +411,7 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View listproduct = layoutInflater.inflate(R.layout.activity_listproductentry, parent,false);
+            View listproduct = layoutInflater.inflate(R.layout.shopping_list_product_entry, parent,false);
 
             decrQuan = (Button) listproduct.findViewById(R.id.buttonDecr);
             incrQuan = (Button) listproduct.findViewById(R.id.buttonIncr);
@@ -435,7 +495,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     totalPriceByStore.put(storeName, totalPriceByStore.get(storeName) - (Double.parseDouble(pPrices.get(position)) * Integer.parseInt(pQuantity.get(position))));
                     pPrices.set(storeHeaderIndex.get(storeName), df.format(totalPriceByStore.get(storeName)));
 
-
                     totalPrice -= (Double.parseDouble(pPrices.get(position)) * Double.parseDouble(pQuantity.get(position)));
                     tvTotalPrice.setText(String.format("$%.2f", totalPrice));
 
@@ -444,8 +503,35 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     pPrices.remove(position);
                     pQuantity.remove(position);
                     pImages.remove(position);
-
                     requestor.deleteObject(pListItemPair.remove(position));
+
+                    for(String str : storeHeaderIndex.keySet()) {
+                        if(storeHeaderIndex.get(str) > position) {
+                            storeHeaderIndex.put(str, storeHeaderIndex.get(str) - 1);
+                        }
+                    }
+
+                    if(String.format("$%.2f", totalPriceByStore.get(storeName)).equals("$0.00") || String.format("$%.2f", totalPriceByStore.get(storeName)).equals("$-0.00")) {
+                        int index = storeHeaderIndex.remove(storeName);
+
+                        pNames.remove(index);
+                        pStores.remove(index);
+                        pPrices.remove(index);
+                        pQuantity.remove(index);
+                        pImages.remove(index);
+                        pListItemPair.remove(index);
+
+                        for(String str : storeHeaderIndex.keySet()) {
+                            if(storeHeaderIndex.get(str) > index) {
+                                storeHeaderIndex.put(str, storeHeaderIndex.get(str) - 1);
+                            }
+                        }
+                    }
+
+                    if(pNames.isEmpty()) {
+                        emptyMessage.setVisibility(View.VISIBLE);
+                    }
+
                     myAdapter.notifyDataSetChanged();
                 }
             });
@@ -470,6 +556,14 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                     decrQuan.setVisibility(View.GONE);
                     incrQuan.setVisibility(View.GONE);
                     removeItem.setVisibility(View.GONE);
+
+                    listproduct.setBackgroundColor(Color.parseColor("#BBBBBB"));
+
+                    ConstraintLayout constraintLayout = listproduct.findViewById(R.id.constraintLayout);
+                    constraintLayout.setMaxHeight(250);
+
+                    name.setPadding(0, 175, 0, 0);
+                    price.setPadding(0, 175, 0, 0);
                 }
                 else {
                     quantity.setText(pQuantity.get(position));

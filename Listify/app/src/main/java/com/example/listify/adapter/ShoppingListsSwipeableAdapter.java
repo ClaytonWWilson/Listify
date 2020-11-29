@@ -79,7 +79,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.swipeLayout = (SwipeRevealLayout)convertView.findViewById(R.id.swipe_layout);
             holder.frontView = convertView.findViewById(R.id.front_layout);
             holder.deleteList = convertView.findViewById(R.id.delete_list);
-            holder.shareList = convertView.findViewById(R.id.share_list);
+//            holder.shareList = convertView.findViewById(R.id.share_list);
             holder.listName = (TextView) convertView.findViewById(R.id.shopping_list_name);
             holder.itemCount = (TextView) convertView.findViewById(R.id.shopping_list_item_count);
 
@@ -100,7 +100,11 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.listName.setText(curList.getName());
         }
 
-        holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+        if (curList.getEntries() != null) {
+            holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
+        } else {
+            holder.itemCount.setText("0 items");
+        }
 
         holder.deleteList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,50 +124,49 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             }
         });
 
-        holder.shareList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View codeView = inflater.inflate(R.layout.activity_sharedemail, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setView(codeView);
-                builder.setTitle("Share list");
-                builder.setMessage("Please enter the email of the user who you want to share the list with.");
-                builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
-                        String sharedEmail = sharedEmailText.getText().toString();
-                        ListShare listShare = new ListShare(curList.getListID(), sharedEmail, "Read, Write, Delete, Share");
-                        try {
-                            requestor.putObject(listShare);
-                        }
-                        catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {}
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                Toast.makeText(activity, String.format("Share %s", curList.getName()), Toast.LENGTH_SHORT).show();
-
-                // Close the layout
-                binderHelper.closeLayout(Integer.toString(curList.getListID()));
-            }
-        });
+//        holder.shareList.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                View codeView = inflater.inflate(R.layout.activity_sharedemail, null);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//                builder.setView(codeView);
+//                builder.setTitle("Share list");
+//                builder.setMessage("Please enter the email of the user who you want to share the list with.");
+//                builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        EditText sharedEmailText = (EditText) codeView.findViewById(R.id.editTextTextSharedEmail);
+//                        String sharedEmail = sharedEmailText.getText().toString();
+//                        ListShare listShare = new ListShare(curList.getListID(), sharedEmail, "Read, Write, Delete, Share", null);
+//                        try {
+//                            requestor.putObject(listShare);
+//                        }
+//                        catch(Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {}
+//                });
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//
+//                Toast.makeText(activity, String.format("Share %s", curList.getName()), Toast.LENGTH_SHORT).show();
+//
+//                // Close the layout
+//                binderHelper.closeLayout(Integer.toString(curList.getListID()));
+//            }
+//        });
 
         holder.frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent listPage = new Intent(activity, ListPage.class);
 
-                // Send the list ID and list name
-                listPage.putExtra("listID", curList.getListID());
-                listPage.putExtra("listName", curList.getName());
+                // Send the selected list
+                listPage.putExtra("selectedList", curList);
 
                 activity.startActivity(listPage);
             }
@@ -176,7 +179,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         SwipeRevealLayout swipeLayout;
         View frontView;
         View deleteList;
-        View shareList;
+//        View shareList;
         TextView listName;
         TextView itemCount;
     }
