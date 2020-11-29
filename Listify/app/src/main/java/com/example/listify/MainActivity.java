@@ -192,12 +192,12 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                     takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     startActivityForResult(takePicture, CAMERA_CAPTURE);
                 });
-                builder.setNeutralButton("Select picture", (dialog, which) -> {
+                builder.setNegativeButton("Select picture", (dialog, which) -> {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(pickPhoto, IMAGE_SELECT);
                 });
-                builder.setNegativeButton("Cancel", (dialog, which) -> {
+                builder.setNeutralButton("Cancel", (dialog, which) -> {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
