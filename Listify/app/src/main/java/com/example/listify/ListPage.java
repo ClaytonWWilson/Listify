@@ -205,19 +205,20 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
     @Override
     public void acceptDelivery(Object delivered) {
         // Clear out old values
+        pNames.clear();
+        pStores.clear();
+        pPrices.clear();
+        pQuantity.clear();
+        pImages.clear();
+        totalPriceByStore.clear();
+        storeID2Name.clear();
+        storeHeaderIndex.clear();
+        pListItemPair.clear();
+        totalPrice = 0;
+        
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                pNames.clear();
-                pStores.clear();
-                pPrices.clear();
-                pQuantity.clear();
-                pImages.clear();
-                totalPriceByStore.clear();
-                storeID2Name.clear();
-                storeHeaderIndex.clear();
-                pListItemPair.clear();
-                totalPrice = 0;
                 tvTotalPrice.setText(String.format("$%.2f", totalPrice));
             }
         });
