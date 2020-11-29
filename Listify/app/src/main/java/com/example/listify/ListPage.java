@@ -3,6 +3,7 @@ package com.example.listify;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -194,6 +195,17 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         exportItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                String listContent = "";
+
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "this is my text test");
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
                 Toast.makeText(ListPage.this, "Export List", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -215,13 +227,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
         storeHeaderIndex.clear();
         pListItemPair.clear();
         totalPrice = 0;
-        
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
-            }
-        });
 
         List list = (List) delivered;
 
@@ -312,6 +317,13 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver {
                 }
             });
         }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+            }
+        });
 
         refreshList.setRefreshing(false);
     }
