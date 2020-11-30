@@ -69,7 +69,7 @@ public class AuthManager {
                 jsonException.printStackTrace();
             }
             SynchronousReceiver<User> userSynchronousReceiver = new SynchronousReceiver<>();
-            requestor.getObject("self", User.class, userSynchronousReceiver);
+            requestor.getObject("", User.class, userSynchronousReceiver);
             try {
                 email = userSynchronousReceiver.await().getEmail();
             } catch (Exception e) {

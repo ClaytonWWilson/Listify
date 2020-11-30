@@ -33,15 +33,12 @@ public class UserGetter implements CallHandler {
             checkRequest.setFilter("email=\"" + emailObject.toString() +"\"");
         } else {
             try {
-//                String id = queryMap.get("id");
+                String id = queryMap.get("id");
                 attributeToGet = "email";
                 checkRequest.setFilter("sub=\"" + cognitoID + "\"");
-//                if ((id != null) && (!id.equals(""))) {
-//                    attributeToGet = "email";
-//                    checkRequest.setFilter("sub=\"" + cognitoID + "\"");
-//                } else {
-//                    return cognitoID;
-//                }
+                if ((id != null) && (!id.equals(""))) {
+                    checkRequest.setFilter("sub=\"" + id + "\"");
+                }
             } catch (Exception e) {
                 System.out.println(e);
                 return new User(cognitoID, null);
