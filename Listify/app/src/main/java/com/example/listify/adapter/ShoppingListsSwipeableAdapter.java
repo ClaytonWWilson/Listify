@@ -2,9 +2,11 @@ package com.example.listify.adapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,6 +171,17 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
                 listPage.putExtra("selectedList", curList);
 
                 activity.startActivity(listPage);
+            }
+        });
+
+        holder.frontView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipData data = ClipData.newPlainText(" ", " ");
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                v.startDragAndDrop(data, shadowBuilder, v, 0);
+//                v.setVisibility(View.INVISIBLE);
+                return false;
             }
         });
 

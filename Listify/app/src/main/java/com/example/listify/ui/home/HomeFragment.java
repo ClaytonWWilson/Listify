@@ -1,9 +1,11 @@
 package com.example.listify.ui.home;
 
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -91,6 +93,30 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
                 requestor.getListOfIds(List.class, HomeFragment.this, null);
             }
         });
+
+//        refreshLists.setOnDragListener(new View.OnDragListener() {
+//            @Override
+//            public boolean onDrag(View v, DragEvent event) {
+//                int action = event.getAction();
+//                System.out.println("drag event");
+//                switch (action) {
+//                    case DragEvent.ACTION_DRAG_STARTED:
+//                        System.out.println("start");
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENTERED:
+//                        break;
+//                    case DragEvent.ACTION_DRAG_EXITED:
+//                        break;
+//                    case DragEvent.ACTION_DROP:
+//                        System.out.println("dropped on me");
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//                        System.out.println("dropped");
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
 
         return root;
     }
