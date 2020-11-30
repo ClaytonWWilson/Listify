@@ -34,15 +34,14 @@ public class UserGetter implements CallHandler {
         } else {
             try {
                 String id = queryMap.get("id");
+                attributeToGet = "email";
+                checkRequest.setFilter("sub=\"" + cognitoID + "\"");
                 if ((id != null) && (!id.equals(""))) {
-                    attributeToGet = "email";
-                    checkRequest.setFilter("sub=\"" + cognitoID + "\"");
-                } else {
-                    return cognitoID;
+                    checkRequest.setFilter("sub=\"" + id + "\"");
                 }
             } catch (Exception e) {
                 System.out.println(e);
-                return cognitoID;
+                return new User(cognitoID, null);
             }
         }
         System.out.println(checkRequest);
@@ -52,9 +51,9 @@ public class UserGetter implements CallHandler {
         if (foundUsers.size() != 1) {
             System.out.println(foundUsers);
             if (foundUsers.size() == 0) {
-                throw new InputMismatchException("Not user with given email");
+                throw new InputMismatchException("Not user with given attribute (" + attributeToGet + ")");
             }
-            throw new InputMismatchException("Found more than one user with supposedly unique email");
+            throw new InputMismatchException("Found more than one user with supposedly unique attribute (" + attributeToGet + ")");
         }
         UserType foundUser = foundUsers.get(0);
         System.out.println(foundUser.getAttributes());
@@ -66,6 +65,11 @@ public class UserGetter implements CallHandler {
             }
             System.out.println(attribute.getName() + ": " + attribute.getValue());
         }
-        return attributeToReturn;
+        if (attributeToGet.equals("email")) {
+            return new User(cognitoID, attributeToReturn);
+        } else if (attributeToGet.equals("sub")) {
+            return new User(attributeToReturn, emailObject.toString());
+        }
+        return null;
     }
 }

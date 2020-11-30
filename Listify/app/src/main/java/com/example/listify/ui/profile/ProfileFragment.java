@@ -33,7 +33,14 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         TextView emailText = (TextView) root.findViewById(R.id.textViewEmail);
-        emailText.setText(am.getEmail());
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        emailText.setText(am.getEmail(requestor));
 
         toDeleteAccountPage = (Button) root.findViewById(R.id.button);
         toDeleteAccountPage.setOnClickListener(new View.OnClickListener() {

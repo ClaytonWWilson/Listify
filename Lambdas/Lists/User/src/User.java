@@ -1,4 +1,3 @@
-package com.example.listify.data;
 
 public class User {
     String cognitoID;
