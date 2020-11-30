@@ -1,4 +1,6 @@
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -7,16 +9,14 @@ import java.util.Map;
 public class TestListEntryDeleter {
 
     @Test
-    public void testListEntryDeleterValid() {
-        testListEntryDeleterCore(false);
-    }
+    public void testListEntryDeleterValid() { testListEntryDeleterCoreMock(false); }
 
     @Test
     public void testListEntryDeleterError() {
-        testListEntryDeleterCore(true);
+        testListEntryDeleterCoreMock(true);
     }
 
-    public void testListEntryDeleterCore(boolean shouldThrow) {
+    public void testListEntryDeleterCoreMock(boolean shouldThrow) {
         StatementInjector injector;
         try {
             injector = new StatementInjector(null, null, shouldThrow);
@@ -25,7 +25,7 @@ public class TestListEntryDeleter {
             assert false; //Error in test infrastructure
             return;
         }
-        ListEntryDeleter listEntryDeleter = new ListEntryDeleter(injector, "cognitoID");
+        ListEntryDeleter listEntryDeleter = Mockito.spy(new ListEntryDeleter(injector, "cognitoID"));
         Map<String, Object> ignore = new HashMap<>();
         Map<String, Object> body = TestInputUtils.addBody(ignore);
         body.put("productID", 16);

@@ -17,7 +17,7 @@ public class TestListEntryAdder {
     public void testListEntryAdderError() {
         testListEntryAdderCoreMock(true);
     }
-    
+
     public void testListEntryAdderCoreMock(boolean shouldThrow) {
         StatementInjector injector;
         try {
