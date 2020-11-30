@@ -171,8 +171,6 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        TextView emailView = navigationView.getHeaderView(0).findViewById(R.id.textViewEmailSidebar);
-        emailView.setText(am.getEmail());
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -180,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             e.printStackTrace();
         }
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        TextView emailView = navigationView.getHeaderView(0).findViewById(R.id.textViewEmailSidebar);
+        emailView.setText(am.getEmail(requestor));
         SynchronousReceiver<Picture> profilePictureReceiver = new SynchronousReceiver<>();
         ImageView profilePictureView = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
         try {
