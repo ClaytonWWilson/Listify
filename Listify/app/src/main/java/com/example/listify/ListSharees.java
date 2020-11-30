@@ -45,6 +45,7 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
     MyAdapter myAdapter;
     Requestor requestor;
 
+    Button shareList;
     Button removeSharee;
 
     ArrayList<String> lShareeEmails = new ArrayList<>();
@@ -68,6 +69,23 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
         listView = findViewById(R.id.listOfSharees);
         myAdapter = new MyAdapter(this, lShareeEmails);
         listView.setAdapter(myAdapter);
+
+        shareList = (Button) findViewById(R.id.buttonShare);
+        shareList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText sharedEmailText = (EditText) findViewById(R.id.editTextShareeEmail);
+                String sharedEmail = sharedEmailText.getText().toString();
+
+                ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share", null);
+                try {
+                    requestor.putObject(listShare);
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -121,6 +139,12 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
                     myAdapter.notifyDataSetChanged();
                 }
             });
+
+            //No need to show owner
+            if(position == 0) {
+                shareeEmail.setVisibility(View.GONE);
+                removeSharee.setVisibility(View.GONE);
+            }
 
             return listproduct;
         }
