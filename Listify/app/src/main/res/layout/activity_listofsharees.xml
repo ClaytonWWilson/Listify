@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:ems="17"
         android:inputType="textPersonName"
-        android:hint="Sharee's email"
+        android:hint="Share with"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="10dp"/>
 
