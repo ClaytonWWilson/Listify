@@ -70,7 +70,7 @@ public class TestListDelete {
             assert false; //Error in test infrastructure
             return;
         }
-        
+
         ListDeleter testMock = Mockito.spy(new ListDeleter(injector, "cognitoID"));
 
         Map<String, Object> body = (Map<String, Object>) TestBasicHandler.buildFullSampleMap().get("body");
