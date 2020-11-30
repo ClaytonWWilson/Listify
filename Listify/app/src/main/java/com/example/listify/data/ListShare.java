@@ -61,14 +61,16 @@ public class ListShare {
                 " [Permissions: ");
 
         int permissionLevelCopy = permissionLevel;
-        for (Integer permissionObject : keysToPerms.keySet()) {
-            Integer permissionInteger = permissionObject;
-            if (permissionLevelCopy % permissionInteger == 0) {
-                permissionLevelCopy /= permissionInteger;
-                toReturn.append(keysToPerms.get(permissionInteger)).append(",");
+        if (permissionLevel > 0) {
+            for (Integer permissionObject : keysToPerms.keySet()) {
+                Integer permissionInteger = permissionObject;
+                if (permissionLevelCopy % permissionInteger == 0) {
+                    permissionLevelCopy /= permissionInteger;
+                    toReturn.append(keysToPerms.get(permissionInteger)).append(",");
+                }
             }
         }
-        if (BuildConfig.DEBUG && permissionLevelCopy != 1) {
+        if (BuildConfig.DEBUG && (permissionLevelCopy != 1 && permissionLevelCopy != 0)) {
             throw new AssertionError("Assertion failed");
         }
         toReturn.append("]}");

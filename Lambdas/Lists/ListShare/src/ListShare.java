@@ -9,9 +9,9 @@ public class ListShare {
     Integer uiPosition;
     ArrayList<ListShare> other;
 
-    public ListShare(ResultSet listRow) throws SQLException {
+    public ListShare(ResultSet listRow, String shareWithEmail) throws SQLException {
         this.listID = listRow.getInt("listID");
-        this.shareWithEmail = listRow.getString("userID");
+        this.shareWithEmail = shareWithEmail;
         this.permissionLevel = listRow.getInt("permissionLevel");
         this.uiPosition = listRow.getInt("uiPosition");
         other = new ArrayList<>();

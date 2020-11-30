@@ -1,42 +1,20 @@
 package com.example.listify;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.example.listify.adapter.ShareeSwipeableAdapter;
-import com.example.listify.adapter.ShoppingListsSwipeableAdapter;
-import com.example.listify.data.Chain;
-import com.example.listify.data.Item;
-import com.example.listify.data.List;
-import com.example.listify.data.ListEntry;
-import com.example.listify.data.ListShare;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.listify.data.ListShare;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
@@ -48,6 +26,7 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
     Button shareList;
     Button removeSharee;
 
+    ArrayList<ListShare> lShareeEntries = new ArrayList<>();
     ArrayList<String> lShareeEmails = new ArrayList<>();
 
     @Override
@@ -97,6 +76,7 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
 
             if(sharee.getEntries() != null) {
                 for(ListShare ls : sharee.getEntries()) {
+                    lShareeEntries.add(ls);
                     lShareeEmails.add(ls.getShareWithEmail());
                 }
             }
@@ -135,8 +115,16 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
             removeSharee.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    lShareeEmails.remove(position);
-                    myAdapter.notifyDataSetChanged();
+                    try {
+                        lShareeEntries.get(position).setPermissionLevel(0);
+                        ListShare toRemove = lShareeEntries.remove(position);
+                        System.out.println(toRemove);
+                        requestor.putObject(toRemove);
+                        myAdapter.notifyDataSetChanged();
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 

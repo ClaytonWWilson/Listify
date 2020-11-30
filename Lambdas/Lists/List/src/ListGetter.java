@@ -12,7 +12,7 @@ public class ListGetter implements CallHandler{
     private final String cognitoID;
 
     private final String GET_LIST = "SELECT * FROM List WHERE listID = ?;";
-    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ? ORDER BY uiPosition;";
+    private final String GET_LISTS = "SELECT listID, permissionLevel FROM ListSharee WHERE userID = ? ORDER BY uiPosition;";
     private final String SHARE_CHECK = "SELECT * FROM ListSharee WHERE listID = ?;";
     private final String GET_ENTRIES = "SELECT * FROM ListProduct WHERE listID = ?;";
 
@@ -32,7 +32,10 @@ public class ListGetter implements CallHandler{
             System.out.println(getListsResults);
             ArrayList<Integer> listIds = new ArrayList<>();
             while (getListsResults.next()) {
-                listIds.add(getListsResults.getInt(1));
+                Integer permissionLevel = getListsResults.getInt("permissionLevel");
+                if (ListPermissions.hasPermission(permissionLevel, "Read")) {
+                    listIds.add(getListsResults.getInt("listID"));
+                }
             }
             return listIds;
         }

@@ -51,7 +51,7 @@ public class UserGetter implements CallHandler {
         if (foundUsers.size() != 1) {
             System.out.println(foundUsers);
             if (foundUsers.size() == 0) {
-                throw new InputMismatchException("Not user with given attribute (" + attributeToGet + ")");
+                throw new InputMismatchException("No user with given attribute when searching for (" + attributeToGet + ")");
             }
             throw new InputMismatchException("Found more than one user with supposedly unique attribute (" + attributeToGet + ")");
         }

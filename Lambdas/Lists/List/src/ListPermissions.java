@@ -24,7 +24,7 @@ public class ListPermissions {
     }
 
     public static boolean hasPermission(Integer level, String permission) {
-        return level % getKeyForPermission(permission) == 0;
+        return (level % getKeyForPermission(permission) == 0 && level != 0);
     }
 
     public static Integer getKeyForPermission(String permissionRaw) {
