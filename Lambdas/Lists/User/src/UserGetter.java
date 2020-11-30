@@ -66,6 +66,6 @@ public class UserGetter implements CallHandler {
             }
             System.out.println(attribute.getName() + ": " + attribute.getValue());
         }
-        return attributeToReturn;
+        return new User(cognitoID, attributeToReturn);
     }
 }
