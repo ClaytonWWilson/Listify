@@ -63,6 +63,16 @@ public class TestListAdder {
         Map<String, Object> ignore = new HashMap<>();
         Map<String, Object> body = TestInputUtils.addBody(ignore);
         body.put("name", "aname");
+        try {
+            Object rawIDReturn  = listAdder.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
+            if (!(rawIDReturn.getClass() == Integer.class)) {
+                assert false;
+                return;
+            }
+        } catch(SQLException throwables) {
+            assert shouldThrow;
+            throwables.printStackTrace();
+        }
         if(injector.getStatementString() == null) {
             assert(false);
             return;
