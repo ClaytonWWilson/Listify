@@ -22,6 +22,8 @@ import com.example.listify.Requestor;
 import com.example.listify.SynchronousReceiver;
 import com.example.listify.adapter.ShoppingListsSwipeableAdapter;
 import com.example.listify.data.List;
+import com.example.listify.data.SearchHistory;
+import com.example.listify.model.Product;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
+import static com.example.listify.MainActivity.searchHistory;
 
 public class HomeFragment extends Fragment implements CreateListDialogFragment.OnNewListListener, Requestor.Receiver {
     ArrayList<List> shoppingLists = new ArrayList<>();
@@ -156,6 +159,7 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
         shoppingLists.clear();
 
         Integer[] listIds = (Integer[]) delivered;
+
         // Create threads and add them to a list
         Thread[] threads = new Thread[listIds.length];
         List[] results = new List[listIds.length];
@@ -177,6 +181,30 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             t.start();
         }
 
+        // Request search history
+        final SearchHistory[] history = new SearchHistory[1]; // Needs to be an array because of anonymous class weirdness
+        SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(getContext(), "android.resource://" + getActivity().getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        Requestor historyRequestor = new Requestor(am, configs.getProperty("apiKey"));
+        historyRequestor.getObject("0", SearchHistory.class, historyReceiver);
+        Thread historyThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    history[0] = historyReceiver.await();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        historyThread.start();
+
         // Wait for each thread to finish and add results to shoppingLists
         for (int i = 0; i < threads.length; i++) {
             try {
@@ -186,6 +214,15 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
             }
             shoppingLists.add(results[i]);
         }
+
+        // Wait for search History response
+        try {
+            historyThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        searchHistory = history[0].getSearches();
 
         // Set adapter and display this users lists
         shoppingListsSwipeableAdapter = new ShoppingListsSwipeableAdapter(getActivity(), shoppingLists);

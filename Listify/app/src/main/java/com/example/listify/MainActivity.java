@@ -26,6 +26,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static com.example.listify.SplashActivity.showSplash;
@@ -33,6 +34,7 @@ import static com.example.listify.SplashActivity.showSplash;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
     public static AuthManager am = new AuthManager();
+    public static ArrayList<String> searchHistory;
 
     @Override
     public void onBackPressed() {
