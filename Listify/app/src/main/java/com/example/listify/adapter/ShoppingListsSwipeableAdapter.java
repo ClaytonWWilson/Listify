@@ -80,7 +80,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder.swipeLayout = (SwipeRevealLayout)convertView.findViewById(R.id.swipe_layout);
             holder.frontView = convertView.findViewById(R.id.front_layout);
             holder.deleteList = convertView.findViewById(R.id.delete_list);
-//            holder.shareList = convertView.findViewById(R.id.share_list);
+            holder.shareList = convertView.findViewById(R.id.share_list);
             holder.listName = (TextView) convertView.findViewById(R.id.shopping_list_name);
             holder.itemCount = (TextView) convertView.findViewById(R.id.shopping_list_item_count);
 
@@ -132,7 +132,6 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
 
                 // Send the list ID and list name
                 listSharees.putExtra("listID", curList.getListID());
-                //listPage.putExtra("listName", curList.getName());
 
                 activity.startActivity(listSharees);
             }
@@ -157,7 +156,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         SwipeRevealLayout swipeLayout;
         View frontView;
         View deleteList;
-//        View shareList;
+        View shareList;
         TextView listName;
         TextView itemCount;
     }
