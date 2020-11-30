@@ -43,7 +43,7 @@ public class ListGetter implements CallHandler{
         int sharees = 0;
         boolean verifiedAccess = false;
         int uiPosition = 1;
-        while ((sharees < 2 && accessResults.next()) || !verifiedAccess) {
+        while (accessResults.next() && (sharees < 2 || !verifiedAccess )) {
             int permissionLevel = accessResults.getInt("permissionLevel");
             if (accessResults.getString("userID").equals(cognitoID)) {
                 verifiedAccess = true;
@@ -55,6 +55,9 @@ public class ListGetter implements CallHandler{
             if (permissionLevel > 0) {
                 sharees++;
             }
+        }
+        if (!verifiedAccess) {
+            throw new AccessControlException("User " + cognitoID + " does not have ant permission for list " + id);
         }
         boolean shared = false;
         if (sharees > 1) {
