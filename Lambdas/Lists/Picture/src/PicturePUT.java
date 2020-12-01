@@ -3,10 +3,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import java.util.Map;
 
-public class ListShareDELETE implements RequestHandler<Map<String,Object>, Object> {
+public class PicturePUT implements RequestHandler<Map<String,Object>, Object> {
 
     public Object handleRequest(Map<String, Object> inputMap, Context unfilled) {
-        return BasicHandler.handleRequest(inputMap, unfilled, ListShareDeleter.class);
+        return BasicHandler.handleRequest(inputMap, unfilled, PicturePutter.class);
     }
-
 }

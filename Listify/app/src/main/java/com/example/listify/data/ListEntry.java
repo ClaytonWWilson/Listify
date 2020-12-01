@@ -1,6 +1,8 @@
 package com.example.listify.data;
 
-public class ListEntry {
+import java.io.Serializable;
+
+public class ListEntry implements Serializable {
     Integer listID;
     Integer productID;
     Integer quantity;

@@ -12,7 +12,7 @@ public class ListGetter implements CallHandler{
     private final String cognitoID;
 
     private final String GET_LIST = "SELECT * FROM List WHERE listID = ?;";
-    private final String GET_LISTS = "SELECT listID FROM ListSharee WHERE userID = ? ORDER BY uiPosition;";
+    private final String GET_LISTS = "SELECT listID, permissionLevel FROM ListSharee WHERE userID = ? ORDER BY uiPosition;";
     private final String SHARE_CHECK = "SELECT * FROM ListSharee WHERE listID = ?;";
     private final String GET_ENTRIES = "SELECT * FROM ListProduct WHERE listID = ?;";
 
@@ -32,7 +32,10 @@ public class ListGetter implements CallHandler{
             System.out.println(getListsResults);
             ArrayList<Integer> listIds = new ArrayList<>();
             while (getListsResults.next()) {
-                listIds.add(getListsResults.getInt(1));
+                Integer permissionLevel = getListsResults.getInt("permissionLevel");
+                if (ListPermissions.hasPermission(permissionLevel, "Read")) {
+                    listIds.add(getListsResults.getInt("listID"));
+                }
             }
             return listIds;
         }
@@ -43,7 +46,7 @@ public class ListGetter implements CallHandler{
         int sharees = 0;
         boolean verifiedAccess = false;
         int uiPosition = 1;
-        while ((sharees < 2 && accessResults.next()) || !verifiedAccess) {
+        while (accessResults.next() && (sharees < 2 || !verifiedAccess )) {
             int permissionLevel = accessResults.getInt("permissionLevel");
             if (accessResults.getString("userID").equals(cognitoID)) {
                 verifiedAccess = true;
@@ -55,6 +58,9 @@ public class ListGetter implements CallHandler{
             if (permissionLevel > 0) {
                 sharees++;
             }
+        }
+        if (!verifiedAccess) {
+            throw new AccessControlException("User " + cognitoID + " does not have ant permission for list " + id);
         }
         boolean shared = false;
         if (sharees > 1) {
