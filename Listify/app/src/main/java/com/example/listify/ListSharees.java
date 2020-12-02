@@ -55,7 +55,6 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
             public void onClick(View v) {
                 EditText sharedEmailText = (EditText) findViewById(R.id.editTextShareeEmail);
                 String sharedEmail = sharedEmailText.getText().toString();
-
                 ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share", null);
                 try {
                     requestor.putObject(listShare);
@@ -131,6 +130,11 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
                     }
                 }
             });
+
+            if(shareeEmail.getText().toString().equals(am.getEmail(requestor))) {
+                shareeEmail.setVisibility(View.GONE);
+                removeSharee.setVisibility(View.GONE);
+            }
 
             return listproduct;
         }
