@@ -1,4 +1,6 @@
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
 
 import java.security.AccessControlException;
 import java.sql.SQLException;
@@ -9,15 +11,15 @@ public class TestListSharer {
 
     @Test
     public void testListSharerWOAccess() {
-        testListEntryAdderCore(false, false);
+        testListEntryAdderCoreMock(false, false);
     }
 
     @Test
     public void testListSharerError() {
-        testListEntryAdderCore(true, true);
+        testListEntryAdderCoreMock(true, true);
     }
 
-    public void testListEntryAdderCore(boolean shouldThrow, boolean hasAccess) {
+    public void testListEntryAdderCoreMock(boolean shouldThrow, boolean hasAccess) {
         StatementInjector injector;
         try {
             injector = new StatementInjector(null, null, shouldThrow);
@@ -26,7 +28,7 @@ public class TestListSharer {
             assert false; //Error in test infrastructure
             return;
         }
-        ListSharer listSharer = new ListSharer(injector, "cognitoID");
+        ListSharer listSharer = Mockito.spy(new ListSharer(injector, "cognitoID"));
         Map<String, Object> ignore = new HashMap<>();
         Map<String, Object> body = TestInputUtils.addBody(ignore);
         body.put("listID", 49);

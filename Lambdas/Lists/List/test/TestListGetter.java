@@ -1,4 +1,6 @@
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -10,26 +12,22 @@ import java.util.Map;
 public class TestListGetter {
 
     @Test
-    public void testListGetterValid() {
-        conductListGetterTest(false);
-    }
+    public void testListGetterValid() { conductListGetterTestMock(false); }
 
     @Test
     public void testListIDGetterValid() {
-        conductListIDGetterTest(false);
+        conductListIDGetterTestMock(false);
     }
 
     @Test
     public void testListIDGetterError() {
-        conductListIDGetterTest(false);
+        conductListIDGetterTestMock(false);
     }
 
     @Test
-    public void testListGetterError() {
-        conductListGetterTest(true);
-    }
+    public void testListGetterError() { conductListGetterTestMock(true); }
 
-    public void conductListGetterTest(boolean shouldThrow) {
+    public void conductListGetterTestMock(boolean shouldThrow) {
         Integer listID = 1;
         String name = "aname";
         String owner = "anowner";
@@ -55,7 +53,7 @@ public class TestListGetter {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        ListGetter getter = new ListGetter(injector, "id");
+        ListGetter getter = Mockito.spy(new ListGetter(injector, "id"));
         Map<String, Object> ignore = new HashMap<>();
         HashMap<String, String> queryParams = TestInputUtils.addQueryParams(ignore);
         queryParams.put("id", "1");
@@ -71,9 +69,7 @@ public class TestListGetter {
         }
     }
 
-    public void conductListIDGetterTest(boolean shouldThrow) {
-
-
+    public void conductListIDGetterTestMock(boolean shouldThrow) {
         ArrayList<Object> rsReturns = new ArrayList<>();
         rsReturns.add(1);
         rsReturns.add(2);
@@ -86,7 +82,8 @@ public class TestListGetter {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        ListGetter getter = new ListGetter(injector, "id");
+        //ListGetter getter = new ListGetter(injector, "id");
+        ListGetter getter = Mockito.spy(new ListGetter(injector, "id"));
         Map<String, Object> ignore = new HashMap<>();
         HashMap<String, String> queryParams = TestInputUtils.addQueryParams(ignore);
         queryParams.put("id", "-1");

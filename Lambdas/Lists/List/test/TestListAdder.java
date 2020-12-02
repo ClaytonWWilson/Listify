@@ -1,4 +1,8 @@
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.configuration.IMockitoConfiguration;
+
+import static org.mockito.Mockito.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,16 +12,16 @@ import java.util.Map;
 public class TestListAdder {
 
     @Test
-    public void testListAdderValid() {
-        testListAdderCore(false);
+    public void testListAdderValid() throws SQLException {
+        testListAdderCoreMock(false);
     }
 
     @Test
-    public void testListAdderError() {
-        testListAdderCore(true);
+    public void testListAdderError() throws SQLException {
+        testListAdderCoreMock(true);
     }
 
-    public void testListAdderCore(boolean shouldThrow) {
+    public void testListAdderCoreMock(boolean shouldThrow) throws SQLException {
         StatementInjector injector;
         ArrayList<Object> rsReturns = new ArrayList<>();
         rsReturns.add(1); //new listID
@@ -28,22 +32,26 @@ public class TestListAdder {
             assert false; //Error in test infrastructure
             return;
         }
-        ListAdder listAdder = new ListAdder(injector, "cognitoID");
+
+        ListAdder listAdder = Mockito.spy(new ListAdder(injector, "cognitoID"));
         Map<String, Object> ignore = new HashMap<>();
         Map<String, Object> body = TestInputUtils.addBody(ignore);
         body.put("name", "aname");
         try {
-            Object rawIDReturn = listAdder.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
-            assert !shouldThrow;
+            Object rawIDReturn  = listAdder.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
             if (!(rawIDReturn.getClass() == Integer.class)) {
                 assert false;
                 return;
             }
-            assert (((Integer) rawIDReturn) == 1);
-            assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]"));
-        } catch (SQLException throwables) {
+        } catch(SQLException throwables) {
             assert shouldThrow;
             throwables.printStackTrace();
         }
+        if(injector.getStatementString() == null) {
+            assert(false);
+            return;
+        }
+        when(injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]")).thenReturn(true);
+        assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]"));
     }
 }

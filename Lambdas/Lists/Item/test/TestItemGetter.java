@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -12,15 +13,15 @@ public class TestItemGetter {
 
     @Test
     public void testItemGetterValid() {
-        conductItemGetterTest(false);
+        conductItemGetterTestMock(false);
     }
 
     @Test
     public void testItemGetterError() {
-        conductItemGetterTest(true);
+        conductItemGetterTestMock(true);
     }
 
-    public void conductItemGetterTest(boolean shouldThrow) {
+    public void conductItemGetterTestMock(boolean shouldThrow) {
         ArrayList<Object> rsReturns = new ArrayList<>();
         rsReturns.add(1);//ProductID
         rsReturns.add(2);//chainID
@@ -37,7 +38,7 @@ public class TestItemGetter {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        ItemGetter getter = new ItemGetter(injector, "id");
+        ItemGetter getter = Mockito.spy(new ItemGetter(injector, "id"));
         Map<String, Object> ignore = new HashMap<>();
         HashMap<String, String> queryParams = TestInputUtils.addQueryParams(ignore);
         queryParams.put("id", "1");

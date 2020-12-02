@@ -72,7 +72,8 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
         ListShare sharee = (ListShare) delivered;
 
         if(sharee != null) {
-            //lShareeEmails.add(sharee.getShareWithEmail());
+            lShareeEmails.add(sharee.getShareWithEmail());
+            lShareeEntries.add(sharee);
 
             if(sharee.getEntries() != null) {
                 for(ListShare ls : sharee.getEntries()) {
