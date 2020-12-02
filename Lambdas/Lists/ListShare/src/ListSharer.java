@@ -58,11 +58,6 @@ public class ListSharer implements CallHandler {
             throw new InputMismatchException("Could not find specified user to share with");
         }
         String shareWithSub = new Gson().fromJson(new String(invokeResult.getPayload().array()), User.class).cognitoID;
-//        checkAccess.setString(2, shareWithSub);
-//        checkAccessRS = checkAccess.executeQuery();
-//        if (checkAccessRS.next()) {
-//            throw new InputMismatchException("The specified user already has access");
-//        }
 
         PreparedStatement uiPositionCheck = connection.prepareStatement(UI_POSITION_CHECK);
         uiPositionCheck.setString(1, shareWithSub);
