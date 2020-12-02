@@ -18,6 +18,9 @@ public class PicturePutter implements CallHandler {
 
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryString, String cognitoID) throws SQLException {
         PreparedStatement storePicture = connection.prepareStatement(STORE_PICTURE_SQL);
+        if(!bodyMap.containsKey("base64EncodedImage")) {
+            throw new IllegalArgumentException("Base64EncodedImage not found");
+        }
         storePicture.setString(1, cognitoID);
         storePicture.setString(2, bodyMap.get("base64EncodedImage").toString());
         System.out.println(storePicture);
