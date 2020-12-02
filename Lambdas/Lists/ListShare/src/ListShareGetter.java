@@ -33,7 +33,7 @@ public class ListShareGetter implements CallHandler{
         System.out.println(getListResults);
 
         ListShare first = null;
-        while (getListResults.next() && first == null) {
+        while (first == null && getListResults.next()) {
             InvokeRequest invokeRequest = new InvokeRequest();
             invokeRequest.setFunctionName("UserGET");
             invokeRequest.setPayload("{" +
