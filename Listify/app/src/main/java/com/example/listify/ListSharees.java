@@ -129,12 +129,6 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
                 }
             });
 
-            //No need to show owner
-            if(position == 0) {
-                shareeEmail.setVisibility(View.GONE);
-                removeSharee.setVisibility(View.GONE);
-            }
-
             return listproduct;
         }
     }

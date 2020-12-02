@@ -31,10 +31,13 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ShoppingListsSwipeableAdapter extends BaseAdapter {
+public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Requestor.Receiver {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
+    private List curList;
+    private ViewHolder holder;
+    private Requestor requestor;
     private final ViewBinderHelper binderHelper;
 
     public ShoppingListsSwipeableAdapter(Activity activity, ArrayList<List> lists){
@@ -59,16 +62,33 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public void acceptDelivery(Object delivered) {
+        ListShare sharee = (ListShare) delivered;
 
+        if(sharee != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
+                        holder.listName.setText(curList.getName() + " (shared by me)");
+                    }
+                    else {
+                        holder.listName.setText(curList.getName() + " (shared by " + sharee.getShareWithEmail() + ")");
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
 
         if (inflater == null) {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -89,13 +109,13 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        final List curList = lists.get(position);
+        curList = lists.get(position);
 
         // Bind the view to the unique list ID
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
 
         if(curList.isShared()) {
-            holder.listName.setText(curList.getName() + " (shared by " + curList.getOwner() + ")");
+            requestor.getObject(Integer.toString(curList.getListID()), ListShare.class, this);
         }
         else {
             holder.listName.setText(curList.getName());
@@ -129,10 +149,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent listSharees = new Intent(activity, ListSharees.class);
-
-                // Send the list ID and list name
                 listSharees.putExtra("listID", curList.getListID());
-
                 activity.startActivity(listSharees);
             }
         });
@@ -141,10 +158,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent listPage = new Intent(activity, ListPage.class);
-
-                // Send the selected list
                 listPage.putExtra("selectedList", curList);
-
                 activity.startActivity(listPage);
             }
         });
