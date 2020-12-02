@@ -1,28 +1,18 @@
 package com.example.listify.adapter;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
-import com.example.listify.AuthManager;
-import com.example.listify.ListPage;
-import com.example.listify.ListSharees;
-import com.example.listify.R;
-import com.example.listify.Requestor;
+import com.example.listify.*;
 import com.example.listify.data.List;
-import com.example.listify.data.ListShare;
-
 import org.json.JSONException;
 
 import java.io.IOException;

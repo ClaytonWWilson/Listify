@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         ImageView profilePictureView = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfilePicture);
         try {
             requestor.getObject("profile", Picture.class, profilePictureReceiver);
-            profilePictureView.setImageURI(Uri.fromFile(saveImage(profilePictureReceiver.await().getBase64EncodedImage())));
+            profilePictureView.setImageURI(Uri.fromFile(saveImage(profilePictureReceiver.await().getBase64EncodedImage(), "profilePicture")));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -241,11 +241,11 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
     }
 
     //From: https://stackoverflow.com/questions/30005815/convert-encoded-base64-image-to-file-object-in-android
-    private File saveImage(final String imageData) throws IOException {
+    public File saveImage(final String imageData, String prefix) throws IOException {
         final byte[] imgBytesData = android.util.Base64.decode(imageData,
                 android.util.Base64.DEFAULT);
 
-        final File file = File.createTempFile("profilePicture", null, this.getCacheDir());
+        final File file = File.createTempFile(prefix, null, this.getCacheDir());
         final FileOutputStream fileOutputStream;
         try {
             fileOutputStream = new FileOutputStream(file);
