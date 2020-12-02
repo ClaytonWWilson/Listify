@@ -9,15 +9,15 @@ public class TestListDuplicate {
 
     @Test
     public void testListEntryAdderValid() {
-        testListEntryAdderCoreMock(false);
+        testListDuplicaterMock(false);
     }
 
     @Test
     public void testListEntryAdderError() {
-        testListEntryAdderCoreMock(true);
+        testListDuplicaterMock(true);
     }
 
-    public void testListEntryAdderCoreMock(boolean shouldThrow) {
+    public void testListDuplicaterMock(boolean shouldThrow) {
         StatementInjector injector;
         try {
             injector = new StatementInjector(null, null, shouldThrow);
