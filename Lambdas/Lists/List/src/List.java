@@ -83,15 +83,15 @@ public class List {
         return uiPosition;
     }
 
-    public void setUiPosition(Integer uiPosition) {
-        this.uiPosition = uiPosition;
-    }
-
-    public ItemEntry[] getEntries() {
-        return entries.toArray(new ItemEntry[entries.size()]);
-    }
-
-    public void addItemEntry(ItemEntry entry) {
-        entries.add(entry);
-    }
+//    public void setUiPosition(Integer uiPosition) {
+//        this.uiPosition = uiPosition;
+//    }
+//
+//    public ItemEntry[] getEntries() {
+//        return entries.toArray(new ItemEntry[entries.size()]);
+//    }
+//
+//    public void addItemEntry(ItemEntry entry) {
+//        entries.add(entry);
+//    }
 }

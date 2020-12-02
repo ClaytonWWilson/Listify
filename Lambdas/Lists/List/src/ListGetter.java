@@ -78,7 +78,7 @@ public class ListGetter implements CallHandler{
         getListEntries.setInt(1, id);
         ResultSet getEntryResults = getListEntries.executeQuery();
         while (getEntryResults.next()) {
-            retrievedList.addItemEntry(new ItemEntry(id, getEntryResults));
+            //retrievedList.addItemEntry(new ItemEntry(id, getEntryResults));
         }
         System.out.println(retrievedList);
         return retrievedList;
