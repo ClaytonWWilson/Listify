@@ -59,8 +59,6 @@ public class ListShareGetter implements CallHandler{
             }
         }
 
-
-
         //Insert the ListShare objects to hold the data of the remaining rows into first's ListShare list
         while (getListResults.next()) {
             InvokeRequest invokeRequest = new InvokeRequest();

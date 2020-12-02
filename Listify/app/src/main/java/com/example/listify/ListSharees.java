@@ -55,10 +55,12 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
             public void onClick(View v) {
                 EditText sharedEmailText = (EditText) findViewById(R.id.editTextShareeEmail);
                 String sharedEmail = sharedEmailText.getText().toString();
-
                 ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share", null);
                 try {
                     requestor.putObject(listShare);
+                    lShareeEntries.add(listShare);
+                    lShareeEmails.add(sharedEmail);
+                    myAdapter.notifyDataSetChanged();
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -72,8 +74,8 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
         ListShare sharee = (ListShare) delivered;
 
         if(sharee != null) {
-            lShareeEmails.add(sharee.getShareWithEmail());
             lShareeEntries.add(sharee);
+            lShareeEmails.add(sharee.getShareWithEmail());
 
             if(sharee.getEntries() != null) {
                 for(ListShare ls : sharee.getEntries()) {
@@ -119,7 +121,7 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
                     try {
                         lShareeEntries.get(position).setPermissionLevel(0);
                         ListShare toRemove = lShareeEntries.remove(position);
-                        System.out.println(toRemove);
+                        lShareeEmails.remove(position);
                         requestor.putObject(toRemove);
                         myAdapter.notifyDataSetChanged();
                     }
@@ -128,6 +130,11 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
                     }
                 }
             });
+
+            if(shareeEmail.getText().toString().equals(am.getEmail(requestor))) {
+                shareeEmail.setVisibility(View.GONE);
+                removeSharee.setVisibility(View.GONE);
+            }
 
             return listproduct;
         }
