@@ -28,7 +28,7 @@ public class UserGetter implements CallHandler {
         System.out.println(userPoolId);
         ListUsersRequest checkRequest = new ListUsersRequest().withUserPoolId(userPoolId);
         Object emailObject = bodyMap.get("emailToCheck");
-        if (queryMap.get("id").contains("@")) {
+        if (queryMap.get("id") != null && queryMap.get("id").contains("@")) {
             emailObject = queryMap.get("id");
         }
         String attributeToGet = "sub";
