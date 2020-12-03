@@ -94,7 +94,17 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
                     0
             );
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location;
+
+        while(true) {
+            try {
+                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                break;
+            } catch(java.lang.SecurityException e) {
+                //User clicked delete
+            }
+        }
+
         if(location != null) {
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
