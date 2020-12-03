@@ -1,6 +1,5 @@
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.Mockito.*;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
