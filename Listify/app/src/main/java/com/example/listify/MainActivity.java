@@ -1,9 +1,13 @@
 package com.example.listify;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(showSplash) {
+        if (showSplash) {
             showSplash = false;
 
             new Handler().postDelayed(new Runnable() {
@@ -73,11 +78,28 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             }, 1);
         }
 
-        if(am.getUserToken().equals("")) {
+        if (am.getUserToken().equals("")) {
             am.nullify();
             Intent intent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(intent);
         }
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d("CHECKING", "WORKS");
+        } else {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    0
+            );
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(location != null) {
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+        }
+
 
         //------------------------------Auth Testing---------------------------------------------//
 
