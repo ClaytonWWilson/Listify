@@ -1,8 +1,8 @@
 package com.example.listify;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.listify.data.ListShare;
 import com.example.listify.data.Picture;
+import com.example.listify.data.User;
 import org.json.JSONException;
 
 import java.io.*;
@@ -20,12 +21,12 @@ import static com.example.listify.MainActivity.am;
 
 public class ConfirmShareView extends AppCompatActivity {
     @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState, @Nullable @org.jetbrains.annotations.Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.share_confirmation);
+        System.out.println("Got to confirm view");
         TextView shareeEmailView = findViewById(R.id.shareeEmailView);
         final String shareeEmail = (String) getIntent().getSerializableExtra("shareeEmail");
-        final String shareeID = (String) getIntent().getSerializableExtra("shareeID");
         final Integer listID = (Integer) getIntent().getSerializableExtra("listID");
 
         shareeEmailView.setText(shareeEmail);
@@ -37,9 +38,12 @@ public class ConfirmShareView extends AppCompatActivity {
         }
         Requestor requestor = new Requestor(am, configs.getProperty("apiKey"));
         SynchronousReceiver<Picture> profilePictureReceiver = new SynchronousReceiver<>();
+        SynchronousReceiver<User> userReceiver = new SynchronousReceiver<>();
         ImageView profilePictureView = findViewById(R.id.otherProfilePicture);
         try {
-            requestor.getObject("profile", Picture.class, profilePictureReceiver);
+            requestor.getObject(shareeEmail, User.class, userReceiver);
+            String shareeID = userReceiver.await().getCognitoID();
+            requestor.getObject(shareeID, Picture.class, profilePictureReceiver);
             profilePictureView.setImageURI(Uri.fromFile(saveImage(profilePictureReceiver.await().getBase64EncodedImage(), "shareeProfilePicture")));
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,6 +62,12 @@ public class ConfirmShareView extends AppCompatActivity {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
+                Intent data = new Intent();
+                data.putExtra("listID", listID);
+                data.putExtra("shareeEmail", shareeEmail);
+                setResult(RESULT_OK,data);
+                finish();
+
             }
         });
 
@@ -65,7 +75,8 @@ public class ConfirmShareView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: return to prior view
-            }
+                setResult(RESULT_CANCELED,null);
+                finish();            }
         });
 
     }

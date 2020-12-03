@@ -13,6 +13,7 @@ import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.listify.*;
 import com.example.listify.data.List;
+import com.example.listify.data.ListShare;
 import org.json.JSONException;
 
 import java.io.IOException;
