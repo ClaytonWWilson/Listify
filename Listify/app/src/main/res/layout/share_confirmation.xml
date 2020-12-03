@@ -15,7 +15,7 @@
               android:layout_height="120dp"
               android:text="Please confirm sharing with the below user:"
               android:textSize="30dp"
-              android:textColor="#80000000"
+              android:textColor="#FF000000"
     />
     <androidx.cardview.widget.CardView
             android:layout_width="96dp"
@@ -38,7 +38,7 @@
               android:id="@+id/shareeEmailView"
               android:text="user@email.com"
               android:textSize="25dp"
-              android:textColor="#80000000"
+              android:textColor="#FF000000"
               android:textAlignment="center"
               android:layout_gravity="center_horizontal"
 
@@ -54,7 +54,7 @@
                 android:layout_gravity="left"
                 android:text="Cancel"
                 android:textSize="25dp"
-                android:background="#80800000"
+                android:background="#FF800000"
                 android:id="@+id/cancelShare"
 
         />
@@ -63,9 +63,11 @@
                 android:layout_gravity="right"
                 android:text="Confirm"
                 android:textSize="25dp"
-                android:background="#80008000"
+                android:background="#FF008000"
                 android:id="@+id/confirmShare"
         />
     </androidx.cardview.widget.CardView>
-
+    <androidx.cardview.widget.CardView
+            android:layout_height="70dp"
+            android:layout_width="match_parent" />
 </LinearLayout>

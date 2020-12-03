@@ -1,6 +1,7 @@
 package com.example.listify;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,8 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
     ArrayList<ListShare> lShareeEntries = new ArrayList<>();
     ArrayList<String> lShareeEmails = new ArrayList<>();
 
+    private final int CONFIRM_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +58,29 @@ public class ListSharees extends AppCompatActivity implements Requestor.Receiver
             public void onClick(View v) {
                 EditText sharedEmailText = (EditText) findViewById(R.id.editTextShareeEmail);
                 String sharedEmail = sharedEmailText.getText().toString();
-                ListShare listShare = new ListShare(listID, sharedEmail, "Read, Write, Delete, Share", null);
-                try {
-                    requestor.putObject(listShare);
-                    lShareeEntries.add(listShare);
-                    lShareeEmails.add(sharedEmail);
-                    myAdapter.notifyDataSetChanged();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
+                Intent confirmIntent = new Intent(ListSharees.this, ConfirmShareView.class);
+                confirmIntent.putExtra("listID", listID);
+                confirmIntent.putExtra("shareeEmail", sharedEmail);
+                startActivityForResult(confirmIntent, CONFIRM_REQUEST_CODE);
+
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CONFIRM_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Integer listID = data.getIntExtra("listID", -1);
+                String shareeEmail = data.getStringExtra("shareeEmail");
+                ListShare listShare = new ListShare(listID, shareeEmail, "Read, Write, Delete, Share", null);
+                lShareeEntries.add(listShare);
+                lShareeEmails.add(shareeEmail);
+                myAdapter.notifyDataSetChanged();
+
+            } else { //resultCode == RESULT_CANCELED
+
+            }
+        }
     }
 
     @Override

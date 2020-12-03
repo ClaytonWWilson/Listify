@@ -19,10 +19,14 @@ public class PictureGetter implements CallHandler {
     @Override
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(GET_ITEM);
-        if (!queryMap.containsKey("id") || !queryMap.get("id").toString().equals("profile")) {
-            throw new IllegalArgumentException("Only profile pictures are currently supported.");
+        if (!queryMap.containsKey("id")) {
+            throw new IllegalArgumentException("Must have id set.");
         }
-        statement.setString(1, cognitoID);
+        if (queryMap.get("id").equals("profile")) {
+            statement.setString(1, cognitoID);
+        } else {
+            statement.setString(1, queryMap.get("id"));
+        }
         System.out.println(statement);
         ResultSet queryResults = statement.executeQuery();
         queryResults.first();
