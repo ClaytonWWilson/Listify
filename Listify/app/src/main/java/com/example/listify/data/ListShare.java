@@ -11,6 +11,7 @@ public class ListShare {
     String shareWithEmail;
     final ListShare[] other;
     Integer permissionLevel;
+    Integer uiPosition;
     private static final Map<Integer, String> keysToPerms;
   
     static {
@@ -24,11 +25,17 @@ public class ListShare {
         keysToPerms = Collections.unmodifiableMap(keysToPermsTemp);
     }
   
-    public ListShare(Integer listID, String shareWithEmail, Integer permissionLevel, ListShare[] other) {
+    public ListShare(Integer listID, String shareWithEmail, Integer permissionLevel, Integer uiPosition, ListShare[] other) {
         this.listID = listID;
         this.shareWithEmail = shareWithEmail;
         this.permissionLevel = permissionLevel;
         this.other = other;
+        this.uiPosition = uiPosition;
+    }
+
+    public ListShare(Integer listID, String shareWithEmail, String permissionsRaw, Integer uiPosition, ListShare[] other) {
+        this(listID, shareWithEmail, permissionsRaw, other);
+        this.uiPosition = uiPosition;
     }
 
     public ListShare(Integer listID, String shareWithEmail, String permissionsRaw, ListShare[] other) {
@@ -42,6 +49,7 @@ public class ListShare {
                 permissionLevel *= keytoPermEntry.getKey();
             }
         }
+        this.uiPosition = -1;
     }
 
     @Override
@@ -53,14 +61,16 @@ public class ListShare {
                 " [Permissions: ");
 
         int permissionLevelCopy = permissionLevel;
-        for (Integer permissionObject : keysToPerms.keySet()) {
-            Integer permissionInteger = permissionObject;
-            if (permissionLevelCopy % permissionInteger == 0) {
-                permissionLevelCopy /= permissionInteger;
-                toReturn.append(keysToPerms.get(permissionInteger)).append(",");
+        if (permissionLevel > 0) {
+            for (Integer permissionObject : keysToPerms.keySet()) {
+                Integer permissionInteger = permissionObject;
+                if (permissionLevelCopy % permissionInteger == 0) {
+                    permissionLevelCopy /= permissionInteger;
+                    toReturn.append(keysToPerms.get(permissionInteger)).append(",");
+                }
             }
         }
-        if (BuildConfig.DEBUG && permissionLevelCopy != 1) {
+        if (BuildConfig.DEBUG && (permissionLevelCopy != 1 && permissionLevelCopy != 0)) {
             throw new AssertionError("Assertion failed");
         }
         toReturn.append("]}");

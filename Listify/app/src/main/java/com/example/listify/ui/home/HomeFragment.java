@@ -6,26 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.example.listify.AuthManager;
-import com.example.listify.CreateListDialogFragment;
-import com.example.listify.LoadingCircleDialog;
-import com.example.listify.R;
-import com.example.listify.Requestor;
-import com.example.listify.SynchronousReceiver;
+import com.example.listify.*;
 import com.example.listify.adapter.ShoppingListsSwipeableAdapter;
 import com.example.listify.data.List;
 import com.example.listify.data.SearchHistory;
 import com.example.listify.model.Product;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -161,6 +152,9 @@ public class HomeFragment extends Fragment implements CreateListDialogFragment.O
         Integer[] listIds = (Integer[]) delivered;
 
         // Create threads and add them to a list
+        if (listIds == null) {
+            return;
+        }
         Thread[] threads = new Thread[listIds.length];
         List[] results = new List[listIds.length];
         for (int i = 0; i < listIds.length; i++) {

@@ -85,8 +85,9 @@ public class List {
 
     public void setUiPosition(Integer uiPosition) {
         this.uiPosition = uiPosition;
+    }
 
-   public ItemEntry[] getEntries() {
+    public ItemEntry[] getEntries() {
         return entries.toArray(new ItemEntry[entries.size()]);
     }
 

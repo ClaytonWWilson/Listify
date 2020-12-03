@@ -1,6 +1,7 @@
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import com.google.gson.Gson;
 
 import java.security.AccessControlException;
 import java.sql.Connection;
@@ -56,12 +57,7 @@ public class ListSharer implements CallHandler {
         if (invokeResult.getStatusCode() != 200) {
             throw new InputMismatchException("Could not find specified user to share with");
         }
-        String shareWithSub = new String(invokeResult.getPayload().array()).replace("\"", "");
-//        checkAccess.setString(2, shareWithSub);
-//        checkAccessRS = checkAccess.executeQuery();
-//        if (checkAccessRS.next()) {
-//            throw new InputMismatchException("The specified user already has access");
-//        }
+        String shareWithSub = new Gson().fromJson(new String(invokeResult.getPayload().array()), User.class).cognitoID;
 
         PreparedStatement uiPositionCheck = connection.prepareStatement(UI_POSITION_CHECK);
         uiPositionCheck.setString(1, shareWithSub);

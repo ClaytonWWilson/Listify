@@ -9,6 +9,7 @@ import com.amplifyframework.auth.result.AuthResetPasswordResult;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
+import com.example.listify.data.ListShare;
 import com.example.listify.data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +61,21 @@ public class AuthManager {
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 
-    public String getEmail() {
+    public String getEmail(Requestor requestor) {
+        if (email == null) {
+            try {
+                requestor.putObject(new ListShare(285, "nmerz@icloud.com", 210, -1, null));
+            } catch (JSONException jsonException) {
+                jsonException.printStackTrace();
+            }
+            SynchronousReceiver<User> userSynchronousReceiver = new SynchronousReceiver<>();
+            requestor.getObject("", User.class, userSynchronousReceiver);
+            try {
+                email = userSynchronousReceiver.await().getEmail();
+            } catch (Exception e) {
+                return email;
+            }
+        }
         return email;
     }
 
