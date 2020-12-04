@@ -40,7 +40,7 @@ public class UserDeleter implements CallHandler {
     private final String DELETE_LISTS = "DELETE FROM List WHERE (owner = ?);";
     private final String DELETE_LIST_SHARES = "DELETE FROM ListSharee WHERE (listID = ?);";
     private final String DELETE_LIST_ACCESS = "DELETE FROM ListSharee WHERE (userID = ?);";
-    private final String DELETE_PROFILE_PICTURE = "DELETE FROM Pictures WHERE (userID = ?);";
+    private final String DELETE_PROFILE_PICTURE = "DELETE FROM Pictures WHERE (cognitoID = ?);";
 
     public UserDeleter(Connection connection, String cognitoID) {
         this.connection = connection;

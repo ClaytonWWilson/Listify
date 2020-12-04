@@ -43,6 +43,10 @@ public class ConfirmShareView extends AppCompatActivity {
         try {
             requestor.getObject(shareeEmail, User.class, userReceiver);
             String shareeID = userReceiver.await().getCognitoID();
+            if (shareeID == null) {
+                setResult(RESULT_CANCELED,null);
+                finish();
+            }
             requestor.getObject(shareeID, Picture.class, profilePictureReceiver);
             profilePictureView.setImageURI(Uri.fromFile(saveImage(profilePictureReceiver.await().getBase64EncodedImage(), "shareeProfilePicture")));
         } catch (Exception e) {

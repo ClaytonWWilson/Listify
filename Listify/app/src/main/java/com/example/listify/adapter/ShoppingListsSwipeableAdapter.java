@@ -13,7 +13,7 @@ import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.listify.*;
 import com.example.listify.data.List;
-import com.example.listify.data.ListShare;
+import com.example.listify.data.User;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -25,6 +25,7 @@ import static com.example.listify.MainActivity.am;
 public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
+    private ArrayList<String> emails;
     private LayoutInflater inflater;
     private ViewHolder holder;
     private Requestor requestor;
@@ -34,6 +35,23 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         binderHelper = new ViewBinderHelper();
         this.activity = activity;
         this.lists = lists;
+        this.emails = new ArrayList<>();
+        Properties configs = new Properties();
+        try {
+            configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        requestor = new Requestor(am, configs.getProperty("apiKey"));
+        SynchronousReceiver<User> emailReceiver = new SynchronousReceiver();
+        for (List list : lists) {
+            requestor.getObject(list.getOwner(), User.class, emailReceiver);
+            try {
+                emails.add(emailReceiver.await().getEmail());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -53,13 +71,6 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Properties configs = new Properties();
-        try {
-            configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        requestor = new Requestor(am, configs.getProperty("apiKey"));
 
         if (inflater == null) {
             inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -88,12 +99,12 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
         holder.listName.setText(curList.getName());
 
         if(curList.isShared()) {
-            holder.listName.setText(curList.getName() + " (shared by User " + curList.getOwner() + ")");
+            holder.listName.setText(curList.getName() + " (shared by " + emails.get(position) + ")");
 
             String listText = holder.listName.getText().toString();
 
-            if(listText.length() > 25) {
-                holder.listName.setText(listText.substring(0, 25) + "...");
+            if(listText.length() > 27) {
+                holder.listName.setText(listText.substring(0, 27) + "...");
             }
         }
 
@@ -117,6 +128,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter {
 
                 Toast.makeText(activity, String.format("%s deleted", curList.getName()), Toast.LENGTH_SHORT).show();
                 lists.remove(position);
+                emails.remove(position);
 
                 // Update listView
                 notifyDataSetChanged();
