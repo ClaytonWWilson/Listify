@@ -38,6 +38,9 @@ public class TestListReposition {
         } catch (SQLException throwables) {
             assert shouldThrow;
             throwables.printStackTrace();
+        } catch (IllegalArgumentException throwables) {
+            assert !shouldThrow;
+            throwables.printStackTrace();
         }
     }
 }

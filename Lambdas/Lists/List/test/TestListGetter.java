@@ -11,20 +11,18 @@ import java.util.Map;
 public class TestListGetter {
 
     @Test
-    public void testListGetterValid() { conductListGetterTestMock(false); }
+    public void testListGetterValid() { conductListGetterTestMock(true); }
 
     @Test
     public void testListIDGetterValid() {
-        conductListIDGetterTestMock(false);
+        conductListIDGetterTestMock(true);
     }
 
     @Test
-    public void testListIDGetterError() {
-        conductListIDGetterTestMock(false);
-    }
+    public void testListIDGetterError() { conductListIDGetterTestMock(false); }
 
     @Test
-    public void testListGetterError() { conductListGetterTestMock(true); }
+    public void testListGetterError() { conductListGetterTestMock(false); }
 
     public void conductListGetterTestMock(boolean shouldThrow) {
         Integer listID = 1;
@@ -63,8 +61,11 @@ public class TestListGetter {
             List listReturn = (List) conductReturn;
             assert (listReturn.toString().equals("List{itemID=1, name='aname', owner='anowner', lastUpdated=1602192528688, entries=[ItemEntry{listID=1, productID=2, quantity=3, addedDate=1602192528689, purchased=false}]}"));
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
             assert shouldThrow;
+            throwables.printStackTrace();
+        } catch (ClassCastException throwables) {
+            assert !shouldThrow;
+            throwables.printStackTrace();
         }
     }
 
@@ -81,11 +82,10 @@ public class TestListGetter {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        //ListGetter getter = new ListGetter(injector, "id");
         ListGetter getter = Mockito.spy(new ListGetter(injector, "id"));
         Map<String, Object> ignore = new HashMap<>();
         HashMap<String, String> queryParams = TestInputUtils.addQueryParams(ignore);
-        queryParams.put("id", "-1");
+        queryParams.put("id", "1");
         try {
             Object conductReturn = getter.conductAction(TestInputUtils.addBody(ignore), queryParams, "cognitoID");
             assert !shouldThrow;
@@ -96,6 +96,9 @@ public class TestListGetter {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             assert shouldThrow;
+        } catch (ClassCastException throwables) {
+            throwables.printStackTrace();
+            assert !shouldThrow;
         }
     }
 }

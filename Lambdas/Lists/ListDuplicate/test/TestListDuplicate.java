@@ -1,6 +1,7 @@
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.security.AccessControlException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +10,12 @@ public class TestListDuplicate {
 
     @Test
     public void testListDuplicateValid() {
-        testListDuplicaterMock(false);
+        testListDuplicaterMock(true);
     }
 
     @Test
     public void testListDuplicateError() {
-        testListDuplicaterMock(true);
+        testListDuplicaterMock(false);
     }
 
     public void testListDuplicaterMock(boolean shouldThrow) {
@@ -37,6 +38,9 @@ public class TestListDuplicate {
             assert (rawIDReturn != null);
         } catch (SQLException throwables) {
             assert shouldThrow;
+            throwables.printStackTrace();
+        } catch(AccessControlException throwables) {
+            assert !shouldThrow;
             throwables.printStackTrace();
         }
     }
