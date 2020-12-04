@@ -56,7 +56,7 @@ public class StoreFragment extends Fragment {
         storeURLs.add("https://www.ebay.com/");
 
         listView = root.findViewById(R.id.listOfStores);
-        myAdapter = new StoreFragment.MyAdapter(this.getContext(), storeLogos, storeNames, storeNames);
+        myAdapter = new StoreFragment.MyAdapter(this.getContext(), storeLogos, storeNames, storeURLs);
         listView.setAdapter(myAdapter);
 
         return root;
@@ -64,9 +64,9 @@ public class StoreFragment extends Fragment {
 
     class MyAdapter extends ArrayAdapter<String> {
         Context context;
-        ArrayList<Integer> storeLogos = new ArrayList<>();
-        ArrayList<String> storeNames = new ArrayList<>();
-        ArrayList<String> storeURLs = new ArrayList<>();
+        ArrayList<Integer> storeLogos;
+        ArrayList<String> storeNames;
+        ArrayList<String> storeURLs;
 
         MyAdapter (Context c, ArrayList<Integer> logos, ArrayList<String> names, ArrayList<String> urls) {
             super(c, R.layout.shopping_list_product_entry, R.id.productView, names);
@@ -116,7 +116,8 @@ public class StoreFragment extends Fragment {
                 name.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        gotoUrl(storeURLs.get(position));
+                        Uri uri = Uri.parse(storeURLs.get(position));
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     }
                 });
             }
@@ -128,10 +129,5 @@ public class StoreFragment extends Fragment {
 
             return listproduct;
         }
-    }
-
-    private void gotoUrl(String url) {
-        Uri u = Uri.parse(url);
-        startActivity(new Intent(Intent.ACTION_VIEW, u));
     }
 }
