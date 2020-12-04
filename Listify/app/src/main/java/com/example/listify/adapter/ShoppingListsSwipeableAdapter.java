@@ -61,10 +61,16 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
                 @Override
                 public void run() {
                     if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        holder.listName.setText(curList.getName() + " (shared by me)");
+                        holder.listName.setText(curList.getName() + " (sh. me)");
                     }
                     else {
-                        holder.listName.setText(curList.getName() + " (shared by " + sharee.getShareWithEmail() + ")");
+                        holder.listName.setText(curList.getName() + " (sh. " + sharee.getShareWithEmail() + ")");
+                    }
+
+                    String listText = holder.listName.getText().toString();
+
+                    if(listText.length() > 25) {
+                        holder.listName.setText(listText.substring(0, 25) + "...");
                     }
                 }
             });
@@ -105,11 +111,16 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
         // Bind the view to the unique list ID
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
 
+        holder.listName.setText(curList.getName());
+
         if(curList.isShared()) {
             requestor.getObject(Integer.toString(curList.getListID()), ListShare.class, this);
         }
-        else {
-            holder.listName.setText(curList.getName());
+
+        String listText = holder.listName.getText().toString();
+
+        if(listText.length() > 25) {
+            holder.listName.setText(listText.substring(0, 25) + "...");
         }
 
         if (curList.getEntries() != null) {
