@@ -1,15 +1,13 @@
-import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.*;
-
 
 import java.security.AccessControlException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.when;
 
 public class TestListDelete {
 

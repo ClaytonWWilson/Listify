@@ -3,6 +3,7 @@
     package="com.example.listify">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -56,6 +57,14 @@
         <activity android:name="com.example.listify.ui.ForgotPasswordPage" />
         <activity android:name="com.example.listify.ListPage" />
         <activity android:name="com.example.listify.ListSharees" />
+        <activity   android:name="com.example.listify.ConfirmShareView">
+            <intent-filter>
+                <action android:name="android.intent.action.CONFIRM_SHARE" />
+
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
