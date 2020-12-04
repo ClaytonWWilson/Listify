@@ -3,6 +3,7 @@ package com.example.listify.ui.store;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -55,7 +56,7 @@ public class StoreFragment extends Fragment {
         storeURLs.add("https://www.ebay.com/");
 
         listView = root.findViewById(R.id.listOfStores);
-        myAdapter = new StoreFragment.MyAdapter(this.getContext(), storeLogos, storeNames, storeNames);
+        myAdapter = new StoreFragment.MyAdapter(this.getContext(), storeLogos, storeNames, storeURLs);
         listView.setAdapter(myAdapter);
 
         return root;
@@ -63,9 +64,9 @@ public class StoreFragment extends Fragment {
 
     class MyAdapter extends ArrayAdapter<String> {
         Context context;
-        ArrayList<Integer> storeLogos = new ArrayList<>();
-        ArrayList<String> storeNames = new ArrayList<>();
-        ArrayList<String> storeURLs = new ArrayList<>();
+        ArrayList<Integer> storeLogos;
+        ArrayList<String> storeNames;
+        ArrayList<String> storeURLs;
 
         MyAdapter (Context c, ArrayList<Integer> logos, ArrayList<String> names, ArrayList<String> urls) {
             super(c, R.layout.shopping_list_product_entry, R.id.productView, names);
@@ -111,10 +112,12 @@ public class StoreFragment extends Fragment {
                 name.setText(storeNames.get(position));
                 name.setTextColor(Color.parseColor("#0000FF"));
                 name.setTextSize(20);
+                name.setPaintFlags(name.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 name.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        gotoUrl(storeURLs.get(position));
+                        Uri uri = Uri.parse(storeURLs.get(position));
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     }
                 });
             }
@@ -126,10 +129,5 @@ public class StoreFragment extends Fragment {
 
             return listproduct;
         }
-    }
-
-    private void gotoUrl(String url) {
-        Uri u = Uri.parse(url);
-        startActivity(new Intent(Intent.ACTION_VIEW, u));
     }
 }
