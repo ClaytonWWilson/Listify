@@ -7,7 +7,7 @@ N/A
 
 #### Expected query parameters:
   - id
-    - Used for specifying a substing of the product name that returned items should mathc
+    - Used for specifying a substing of the product name that returned items should match
     - Valid values: {any_string}
     
 #### Inputs and outputs:
