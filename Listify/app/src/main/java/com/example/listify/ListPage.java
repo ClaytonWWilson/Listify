@@ -170,8 +170,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver, R
         //Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
 
-
-
         MenuItem renameItem = menu.findItem(R.id.action_rename_list);
         renameItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -186,7 +184,9 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver, R
         shareItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ListPage.this, "Share List", Toast.LENGTH_SHORT).show();
+                Intent listSharees = new Intent(ListPage.this, ListSharees.class);
+                listSharees.putExtra("listID", selectedList.getListID());
+                ListPage.this.startActivity(listSharees);
                 return false;
             }
         });
@@ -195,7 +195,6 @@ public class ListPage extends AppCompatActivity implements Requestor.Receiver, R
         duplicateItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 ListDuplicate duplicate = new ListDuplicate(selectedList.getListID(), String.format("%s copy", selectedList.getName()));
 
                 Properties configs = new Properties();
