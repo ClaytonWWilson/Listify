@@ -40,6 +40,7 @@ public class UserDeleter implements CallHandler {
     private final String DELETE_LISTS = "DELETE FROM List WHERE (owner = ?);";
     private final String DELETE_LIST_SHARES = "DELETE FROM ListSharee WHERE (listID = ?);";
     private final String DELETE_LIST_ACCESS = "DELETE FROM ListSharee WHERE (userID = ?);";
+    private final String DELETE_PROFILE_PICTURE = "DELETE FROM Pictures WHERE (userID = ?);";
 
     public UserDeleter(Connection connection, String cognitoID) {
         this.connection = connection;
@@ -133,6 +134,11 @@ public class UserDeleter implements CallHandler {
         System.out.println(statement);
         statement.executeUpdate();
         statement = connection.prepareStatement(DELETE_LIST_ACCESS);
+        statement.setString(1, cognitoID);
+        System.out.println(statement);
+        statement.executeUpdate();
+
+        statement = connection.prepareStatement(DELETE_PROFILE_PICTURE);
         statement.setString(1, cognitoID);
         System.out.println(statement);
         statement.executeUpdate();
