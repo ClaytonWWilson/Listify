@@ -22,13 +22,11 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Receiver {
+public class ShoppingListsAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
     private TextView tvListName;
-    private List curList;
-    private Requestor requestor;
 
     public ShoppingListsAdapter(Activity activity, ArrayList<List> lists){
         this.activity = activity;
@@ -59,54 +57,22 @@ public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Recei
             convertView = inflater.inflate(R.layout.shopping_lists_name_item, null);
         }
 
-        curList = lists.get(position);
+        final List curList = lists.get(position);
 
         tvListName = (TextView) convertView.findViewById(R.id.shopping_list_name);
 
         tvListName.setText(curList.getName());
 
         if(curList.isShared()) {
-            Properties configs = new Properties();
-            try {
-                configs = AuthManager.loadProperties(activity, "android.resource://" + activity.getPackageName() + "/raw/auths.json");
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
+            tvListName.setText(curList.getName() + " (shared by User " + curList.getOwner() + ")");
+
+            String listText = tvListName.getText().toString();
+
+            if(listText.length() > 25) {
+                tvListName.setText(listText.substring(0, 25) + "...");
             }
-            requestor = new Requestor(am, configs.getProperty("apiKey"));
-            requestor.getObject(Integer.toString(curList.getListID()), ListShare.class, this);
-        }
-
-        String listText = tvListName.getText().toString();
-
-        if(listText.length() > 25) {
-            tvListName.setText(listText.substring(0, 25) + "...");
         }
 
         return convertView;
-    }
-
-    @Override
-    public void acceptDelivery(Object delivered) {
-        ListShare sharee = (ListShare) delivered;
-
-        if(sharee != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        tvListName.setText(curList.getName() + " (sh. by me)");
-                    }
-                    else {
-                        tvListName.setText(curList.getName() + " (sh. by " + sharee.getShareWithEmail() + ")");
-                    }
-
-                    String listText = tvListName.getText().toString();
-
-                    if(listText.length() > 25) {
-                        tvListName.setText(listText.substring(0, 25) + "...");
-                    }
-                }
-            });
-        }
     }
 }
