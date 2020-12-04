@@ -22,11 +22,10 @@ import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
 
-public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Requestor.Receiver {
+public class ShoppingListsSwipeableAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<List> lists;
     private LayoutInflater inflater;
-    private List curList;
     private ViewHolder holder;
     private Requestor requestor;
     private final ViewBinderHelper binderHelper;
@@ -50,31 +49,6 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
     @Override
     public long getItemId(int position) {
         return position;
-    }
-
-    @Override
-    public void acceptDelivery(Object delivered) {
-        ListShare sharee = (ListShare) delivered;
-
-        if(sharee != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        holder.listName.setText(curList.getName() + " (shared)");
-                    }
-                    else {
-                        holder.listName.setText(curList.getName() + " (" + sharee.getShareWithEmail() + ")");
-                    }
-
-                    String listText = holder.listName.getText().toString();
-
-                    if(listText.length() > 25) {
-                        holder.listName.setText(listText.substring(0, 25) + "...");
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -106,7 +80,7 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
             holder = (ViewHolder) convertView.getTag();
         }
 
-        curList = lists.get(position);
+        final List curList = lists.get(position);
 
         // Bind the view to the unique list ID
         binderHelper.bind(holder.swipeLayout, Integer.toString(curList.getListID()));
@@ -114,14 +88,16 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
         holder.listName.setText(curList.getName());
 
         if(curList.isShared()) {
-            requestor.getObject(Integer.toString(curList.getListID()), ListShare.class, this);
+            holder.listName.setText(curList.getName() + " (shared by User " + curList.getOwner() + ")");
+
+            String listText = holder.listName.getText().toString();
+
+            if(listText.length() > 25) {
+                holder.listName.setText(listText.substring(0, 25) + "...");
+            }
         }
 
         String listText = holder.listName.getText().toString();
-
-        if(listText.length() > 25) {
-            holder.listName.setText(listText.substring(0, 25) + "...");
-        }
 
         if (curList.getEntries() != null) {
             holder.itemCount.setText(String.format("%d items", curList.getEntries().length));
