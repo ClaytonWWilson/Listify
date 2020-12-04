@@ -3,6 +3,7 @@ package com.example.listify.ui.store;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -111,6 +112,7 @@ public class StoreFragment extends Fragment {
                 name.setText(storeNames.get(position));
                 name.setTextColor(Color.parseColor("#0000FF"));
                 name.setTextSize(20);
+                name.setPaintFlags(name.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 name.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -61,10 +61,10 @@ public class ShoppingListsSwipeableAdapter extends BaseAdapter implements Reques
                 @Override
                 public void run() {
                     if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        holder.listName.setText(curList.getName() + " (sh. me)");
+                        holder.listName.setText(curList.getName() + " (sh. by me)");
                     }
                     else {
-                        holder.listName.setText(curList.getName() + " (sh. " + sharee.getShareWithEmail() + ")");
+                        holder.listName.setText(curList.getName() + " (sh. by " + sharee.getShareWithEmail() + ")");
                     }
 
                     String listText = holder.listName.getText().toString();
