@@ -1,6 +1,7 @@
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.security.AccessControlException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +10,12 @@ public class TestListEntryAdder {
 
     @Test
     public void testListEntryAdderValid() {
-        testListEntryAdderCoreMock(false);
+        testListEntryAdderCoreMock(true);
     }
 
     @Test
     public void testListEntryAdderError() {
-        testListEntryAdderCoreMock(true);
+        testListEntryAdderCoreMock(false);
     }
 
     public void testListEntryAdderCoreMock(boolean shouldThrow) {
@@ -42,6 +43,9 @@ public class TestListEntryAdder {
             assert (injector.getStatementString().contains(", false]"));
         } catch (SQLException throwables) {
             assert shouldThrow;
+            throwables.printStackTrace();
+        } catch (AccessControlException throwables) {
+            assert !shouldThrow;
             throwables.printStackTrace();
         }
     }

@@ -9,7 +9,7 @@ public class TestPictureGetter {
 
     @Test
     public void testPictureGetterValid() {
-        testPictureGetter(false);
+        testPictureGetter(true);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class TestPictureGetter {
         try {
             Object rawIDReturn = pictureGetter.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
             assert (rawIDReturn != null);
-        } catch (SQLException throwables) {
+        } catch (SQLException | IllegalArgumentException throwables) {
             assert shouldThrow;
             throwables.printStackTrace();
         }

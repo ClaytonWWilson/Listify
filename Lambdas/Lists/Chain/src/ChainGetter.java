@@ -18,7 +18,7 @@ public class ChainGetter implements CallHandler {
 
     @Override
     public Object conductAction(Map<String, Object> bodyMap, HashMap<String, String> queryMap, String cognitoID) throws SQLException {
-        Integer id = Integer.parseInt(queryMap.get("id"));
+        Integer id = (Integer) bodyMap.get("id");
         if (id == -1) {
             PreparedStatement getChains = connection.prepareStatement(GET_CHAINS);
             System.out.println(getChains);
