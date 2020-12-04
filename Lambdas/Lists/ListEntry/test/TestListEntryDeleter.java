@@ -2,6 +2,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.Mockito.*;
 
+import java.security.AccessControlException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,11 +10,11 @@ import java.util.Map;
 public class TestListEntryDeleter {
 
     @Test
-    public void testListEntryDeleterValid() { testListEntryDeleterCoreMock(false); }
+    public void testListEntryDeleterValid() { testListEntryDeleterCoreMock(true); }
 
     @Test
     public void testListEntryDeleterError() {
-        testListEntryDeleterCoreMock(true);
+        testListEntryDeleterCoreMock(false);
     }
 
     public void testListEntryDeleterCoreMock(boolean shouldThrow) {
@@ -38,6 +39,9 @@ public class TestListEntryDeleter {
             assert (injector.getStatementString().equals("DELETE FROM ListProduct WHERE (ProductID = ? AND ListID = ?);[16, 15]"));
         } catch (SQLException throwables) {
             assert shouldThrow;
+            throwables.printStackTrace();
+        } catch (AccessControlException throwables) {
+            assert !shouldThrow;
             throwables.printStackTrace();
         }
     }

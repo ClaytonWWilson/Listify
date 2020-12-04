@@ -1,4 +1,4 @@
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.sql.SQLException;
@@ -37,6 +37,9 @@ public class TestListReposition {
             assert (rawIDReturn == null);
         } catch (SQLException throwables) {
             assert shouldThrow;
+            throwables.printStackTrace();
+        } catch (IllegalArgumentException throwables) {
+            assert !shouldThrow;
             throwables.printStackTrace();
         }
     }

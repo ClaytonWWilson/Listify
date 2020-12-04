@@ -1,4 +1,4 @@
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.sql.SQLException;
@@ -9,12 +9,12 @@ public class TestPicturePutter {
 
     @Test
     public void testPicturePutterValid() {
-        testPicturePutter(false);
+        testPicturePutter(true);
     }
 
     @Test
     public void testPicturePutterError() {
-        testPicturePutter(true);
+        testPicturePutter(false);
     }
 
     public void testPicturePutter(boolean shouldThrow) {
@@ -29,12 +29,20 @@ public class TestPicturePutter {
         PicturePutter picturePutter = Mockito.spy(new PicturePutter(injector, "cognitoID"));
         Map<String, Object> ignore = new HashMap<>();
         Map<String, Object> body = TestInputUtils.addBody(ignore);
+        body.put("base64EncodedImage", "testingimage");
         try {
             Object rawIDReturn = picturePutter.conductAction(body, TestInputUtils.addQueryParams(ignore), "cognitoID");
             assert (rawIDReturn == null);
         } catch (SQLException throwables) {
             assert shouldThrow;
             throwables.printStackTrace();
+        } catch (IllegalArgumentException throwables) {
+            assert shouldThrow;
+            throwables.printStackTrace();
+        } catch(NullPointerException throwables) {
+            assert shouldThrow;
+            throwables.printStackTrace();
         }
+
     }
 }
