@@ -94,10 +94,10 @@ public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Recei
                 @Override
                 public void run() {
                     if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        tvListName.setText(curList.getName() + " (sh. by me)");
+                        tvListName.setText(curList.getName() + " (shared)");
                     }
                     else {
-                        tvListName.setText(curList.getName() + " (sh. by " + sharee.getShareWithEmail() + ")");
+                        tvListName.setText(curList.getName() + " (" + sharee.getShareWithEmail() + ")");
                     }
 
                     String listText = tvListName.getText().toString();
