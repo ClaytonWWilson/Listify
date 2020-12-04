@@ -30,13 +30,13 @@
                 android:contentDescription="@string/backButton"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
-            <SearchView
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchBar"
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:queryHint="Search Here"
                 >
-            </SearchView>
+            </androidx.appcompat.widget.SearchView>
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -1,4 +1,5 @@
 package com.example.listify;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,12 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
+//import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.listify.adapter.SearchResultsListAdapter;
@@ -28,12 +31,16 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.example.listify.MainActivity.am;
+import static com.example.listify.MainActivity.searchHistory;
 
 public class SearchResults extends AppCompatActivity implements FilterDialogFragment.OnFilterListener, SortDialogFragment.OnSortListener, Requestor.Receiver {
     private ListView resultsListView;
     private MenuItem filterItem;
     private ProgressBar loadingSearch;
     private TextView tvNoResults;
+    private SearchView.SearchAutoComplete searchAutoComplete;
+    private ArrayList<String> orderedHistory = new ArrayList<>();
+    private ArrayAdapter<String> searchHistoryAdapter;
     private SearchResultsListAdapter searchResultsListAdapter;
     private List<Product> resultsProductList = new ArrayList<>();
     private List<Product> resultsProductListSorted = new ArrayList<>();
@@ -85,19 +92,19 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
 
         // There's no easy way to find the close button on the search bar, so this is the way I'm
         // doing it
-        int searchCloseButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
-        ImageView closeButton = (ImageView) searchView.findViewById(searchCloseButtonId);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            // Override default close behavior to only clear the search text and the query
-            @Override
-            public void onClick(View v) {
-                // Finding the edit text of the search bar. Same as the method above
-                int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-                EditText searchText = (EditText) searchView.findViewById(searchTextId);
-                searchText.setText("");
-                searchView.setQuery("", false);
-            }
-        });
+//        int searchCloseButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+//        ImageView closeButton = (ImageView) searchView.findViewById(searchCloseButtonId);
+//        closeButton.setOnClickListener(new View.OnClickListener() {
+//            // Override default close behavior to only clear the search text and the query
+//            @Override
+//            public void onClick(View v) {
+//                // Finding the edit text of the search bar. Same as the method above
+//                int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+//                EditText searchText = (EditText) searchView.findViewById(searchTextId);
+//                searchText.setText("");
+//                searchView.setQuery("", false);
+//            }
+//        });
 
         resultsListView = (ListView) findViewById(R.id.search_results_list);
         searchResultsListAdapter = new SearchResultsListAdapter(this, resultsProductListSorted);
@@ -113,7 +120,7 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
             }
         });
 
-        // Handle searches
+//         Handle searches
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -135,6 +142,49 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
                 return false;
             }
         });
+
+        searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+
+        SearchManager searchManager = (SearchManager) getSystemService(this.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        orderedHistory.clear();
+        orderedHistory.addAll(searchHistory);
+
+        // Reverse the history so it's displayed in the correct ordered
+        for (int i = 0; i < orderedHistory.size() / 2; i++) {
+            String temp = orderedHistory.get(i);
+            orderedHistory.set(i, orderedHistory.get(orderedHistory.size() - i - 1));
+            orderedHistory.set(orderedHistory.size() - i - 1, temp);
+        }
+
+        searchHistoryAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.search_suggestion, orderedHistory);
+        System.out.println(orderedHistory);
+
+        searchAutoComplete.setAdapter(searchHistoryAdapter);
+        searchAutoComplete.setThreshold(0);
+
+        searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String query = ((TextView) view).getText().toString();
+                searchView.setQuery(query, false);
+
+                // Show progress bar
+                loadingSearch.setVisibility(View.VISIBLE);
+
+                // Clear the old search results
+                resultsProductList.clear();
+
+                // Clear old search results from the view
+                resultsProductListSorted.clear();
+                searchResultsListAdapter.notifyDataSetChanged();
+
+                doSearch(query);
+            }
+        });
+
+
     }
 
     @Override
@@ -188,7 +238,6 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
         if (resultsProductList.isEmpty()) {
             filterItem.setEnabled(false);
         }
-
         return true;
     }
 
@@ -200,6 +249,25 @@ public class SearchResults extends AppCompatActivity implements FilterDialogFrag
     }
 
     private void doSearch(String query) {
+        // Add this search to the history
+        searchHistory.add(query);
+        orderedHistory.clear();
+        orderedHistory.addAll(searchHistory);
+        ArrayList<String> t = new ArrayList<>();
+        t.addAll(searchHistory);
+
+        // Reverse the history so it's displayed in the correct ordered
+        for (int i = 0; i < t.size() / 2; i++) {
+            String temp = t.get(i);
+            t.set(i, t.get(t.size() - i - 1));
+            t.set(t.size() - i - 1, temp);
+        }
+
+        // Have to make a new adapter here because calling notifyDatasetChanged() would not update the search suggestions for some reason
+        searchHistoryAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.search_suggestion, t);
+        searchAutoComplete.setAdapter(searchHistoryAdapter);
+
+
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
