@@ -12,4 +12,4 @@ N/A
     
 #### Inputs and outputs:
   - id = -1: Returns an array if chainIDs (Integers)
-  - id = 1<n<{num_chains}: Returns a [Chain object](https://github.com/ClaytonWWilson/Listify/blob/readmes/Lambdas/Lists/Chain/src/Chain.java) for the chain with chainID=id
+  - id = 1<n<{num_chains}: Returns a [Chain object](https://github.com/ClaytonWWilson/Listify/blob/master/Lambdas/Lists/Chain/src/Chain.java) for the chain with chainID=id
