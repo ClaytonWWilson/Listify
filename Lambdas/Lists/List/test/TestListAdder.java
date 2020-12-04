@@ -12,14 +12,10 @@ import java.util.Map;
 public class TestListAdder {
 
     @Test
-    public void testListAdderValid() throws SQLException {
-        testListAdderCoreMock(false);
-    }
+    public void testListAdderValid() throws SQLException { testListAdderCoreMock(true); }
 
     @Test
-    public void testListAdderError() throws SQLException {
-        testListAdderCoreMock(true);
-    }
+    public void testListAdderError() throws SQLException { testListAdderCoreMock(false); }
 
     public void testListAdderCoreMock(boolean shouldThrow) throws SQLException {
         StatementInjector injector;
@@ -52,6 +48,6 @@ public class TestListAdder {
             return;
         }
         when(injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]")).thenReturn(true);
-        assert (injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]"));
+        assert !(injector.getStatementString().contains("INSERT INTO List (name, owner, lastUpdated) VALUES (?, ?, ?);INSERT INTO ListSharee(listID, userID) VALUES(?, ?);[1, cognitoID]"));
     }
 }
