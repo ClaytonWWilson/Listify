@@ -63,6 +63,8 @@ public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Recei
 
         tvListName = (TextView) convertView.findViewById(R.id.shopping_list_name);
 
+        tvListName.setText(curList.getName());
+
         if(curList.isShared()) {
             Properties configs = new Properties();
             try {
@@ -73,8 +75,11 @@ public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Recei
             requestor = new Requestor(am, configs.getProperty("apiKey"));
             requestor.getObject(Integer.toString(curList.getListID()), ListShare.class, this);
         }
-        else {
-            tvListName.setText(curList.getName());
+
+        String listText = tvListName.getText().toString();
+
+        if(listText.length() > 25) {
+            tvListName.setText(listText.substring(0, 25) + "...");
         }
 
         return convertView;
@@ -89,10 +94,16 @@ public class ShoppingListsAdapter extends BaseAdapter implements Requestor.Recei
                 @Override
                 public void run() {
                     if(sharee.getShareWithEmail().equals(am.getEmail(requestor))) {
-                        tvListName.setText(curList.getName() + " (shared by me)");
+                        tvListName.setText(curList.getName() + " (sh. me)");
                     }
                     else {
-                        tvListName.setText(curList.getName() + " (shared by " + sharee.getShareWithEmail() + ")");
+                        tvListName.setText(curList.getName() + " (sh. " + sharee.getShareWithEmail() + ")");
+                    }
+
+                    String listText = tvListName.getText().toString();
+
+                    if(listText.length() > 25) {
+                        tvListName.setText(listText.substring(0, 25) + "...");
                     }
                 }
             });
