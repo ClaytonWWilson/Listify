@@ -36,6 +36,7 @@ import org.json.JSONException;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
@@ -44,6 +45,7 @@ import static com.example.listify.SplashActivity.showSplash;
 public class MainActivity extends AppCompatActivity implements CreateListDialogFragment.OnNewListListener {
     private AppBarConfiguration mAppBarConfiguration;
     public static AuthManager am = new AuthManager();
+    public static ArrayList<String> searchHistory;
     private File newImageFileLocation = null;
     private final int CAMERA_CAPTURE = 1;
     private final int IMAGE_SELECT = 2;
