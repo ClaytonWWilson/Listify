@@ -1,12 +1,10 @@
 {
   "auth": {
-    "listifyf4fad454": {
+    "listify0c093a990c093a99": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false
     }
-  },
-  "function": {},
-  "api": {}
+  }
 }

@@ -12,7 +12,8 @@ import java.io.IOException;
 
 public class Requestor {
 
-    private final String DEV_BASEURL = "https://datoh7woc9.execute-api.us-east-2.amazonaws.com/Development";
+    //API Gateway ID
+    private final String DEV_BASEURL = "https://u7g2t7ok4a.execute-api.us-east-2.amazonaws.com/ListifyStage";
 
     AuthManager authManager;
     String apiKey;

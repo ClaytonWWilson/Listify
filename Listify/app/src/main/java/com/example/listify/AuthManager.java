@@ -57,6 +57,7 @@ public class AuthManager {
         if (authSession.isSignedIn() == false) {
             return "";
         }
+        System.out.println(authSession.getUserPoolTokens().getValue().getIdToken());
         return authSession.getUserPoolTokens().getValue().getIdToken();
     }
 

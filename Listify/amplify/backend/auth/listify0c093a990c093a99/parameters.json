@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "listifyf4fad454_identitypool_f4fad454",
-    "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "listiff4fad454",
-    "userPoolName": "listifyf4fad454_userpool_f4fad454",
+    "identityPoolName": "listify0c093a990c093a99_identitypool_6bcaf6ac",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "listif0c093a99",
+    "userPoolName": "listify0c093a99_userpool_0c093a99",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -14,7 +14,7 @@
     "smsVerificationMessage": "Your verification code is {####}",
     "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
-    "defaultPasswordPolicy": false,
+    "defaultPasswordPolicy": true,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "listiff4fad454_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "listif0c093a99_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "f4fad454",
-    "resourceName": "listifyf4fad454",
+    "sharedId": "0c093a99",
+    "resourceName": "listify0c093a990c093a99",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -49,9 +49,13 @@
     "usernameAttributes": [
         "email"
     ],
+    "userPoolGroups": false,
+    "adminQueries": false,
     "triggers": "{}",
+    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
     "parentStack": {
         "Ref": "AWS::StackId"
     },
