@@ -13,10 +13,8 @@ import com.example.listify.MainActivity
 import com.example.listify.R
 
 class SignupPage : AppCompatActivity() {
-    private var button1 //Log in page button
-            : Button? = null
-    private var button2 //Sign up button
-            : Button? = null
+    private var button1: Button? = null
+    private var button2: Button? = null
     var email: String? = null
     var password: String? = null
     var confirmPassword: String? = null

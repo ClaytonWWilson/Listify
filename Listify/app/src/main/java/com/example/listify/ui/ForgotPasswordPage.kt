@@ -13,8 +13,7 @@ import com.example.listify.MainActivity
 import com.example.listify.R
 
 class ForgotPasswordPage : AppCompatActivity() {
-    private var button1 //Code page button
-            : Button? = null
+    private var button1: Button? = null
     var email: String? = null
     var newPassword: String? = null
     var confirmNewPassword: String? = null

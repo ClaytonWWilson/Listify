@@ -12,12 +12,9 @@ import com.example.listify.MainActivity
 import com.example.listify.R
 
 class LoginPage : AppCompatActivity() {
-    private var button1 //Sign up page button
-            : Button? = null
-    private var button2 //Forgot password button
-            : Button? = null
-    private var button3 //Log in button
-            : Button? = null
+    private var button1: Button? = null
+    private var button2: Button? = null
+    private var button3: Button? = null
 
     override fun onBackPressed() {
         val prev = intent.getStringExtra("prev")
