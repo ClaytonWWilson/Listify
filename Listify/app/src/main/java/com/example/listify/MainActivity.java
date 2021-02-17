@@ -81,125 +81,11 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             startActivity(intent);
         }
 
-//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            Log.d("CHECKING", "WORKS");
-//        } else {
-//            ActivityCompat.requestPermissions(
-//                    this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    0
-//            );
-//        }
-//        Location location;
-//
-//        while(true) {
-//            try {
-//                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                break;
-//            } catch(java.lang.SecurityException e) {
-//                //User clicked delete
-//            }
-//        }
-//
-//        if(location != null) {
-//            double longitude = location.getLongitude();
-//            double latitude = location.getLatitude();
-//        }
-
-
-        //------------------------------Auth Testing---------------------------------------------//
-
-        boolean testAuth = false;
-
-        if (testAuth) {
-
-            AuthManager authManager = new AuthManager();
-            try {
-                authManager.signIn("merzn@purdue.edu", "Password123");
-                Log.i("Authentication", authManager.getAuthSession().toString());
-                Log.i("Token", authManager.getAuthSession().getUserPoolTokens().getValue().getIdToken());
-            } catch (AuthException e) {
-                Log.i("Authentication", "Login failed. User probably needs to register. Exact error: " + e.getMessage());
-                try {
-                    authManager.startSignUp("merzn@purdue.edu", "Password123");
-                    authManager.confirmSignUp("######");
-                } catch (AuthException signUpError) {
-                    Log.e("Authentication", "SignUp error: " + signUpError.getMessage());
-                }
-            }
-        }
-
-        //----------------------------------API Testing---------------------------------------------//
-
-        boolean testAPI = false;
-
-        if (testAPI) {
-            AuthManager authManager = new AuthManager();
-            try {
-                authManager.signIn("merzn@purdue.edu", "Password123");
-            } catch (AuthException e) {
-                e.printStackTrace();
-            }
-            Properties configs = new Properties();
-            try {
-                configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            /*Requestor requestor = new Requestor(authManager, configs.getProperty("apiKey"));
-            SynchronousReceiver<SearchHistory> historyReceiver = new SynchronousReceiver<>();
-            requestor.getObject("N/A", SearchHistory.class, historyReceiver, historyReceiver);
-            try {
-                requestor.putObject(new List(293, "Java.py", "me!", 1));
-                System.out.println(historyReceiver.await());
-                requestor.putObject(new ListReposition(291, 1));
-                requestor.postObject(new ListDuplicate(290, "yet another list"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            List testList = new List(-1, "New List", "user filled by lambda", Instant.now().toEpochMilli());
-            ListEntry entry = new ListEntry(1, 4, Math.abs(new Random().nextInt()), Instant.now().toEpochMilli(),false);
-          
-            SynchronousReceiver<Integer> idReceiver = new SynchronousReceiver<>();
-            try {
-                requestor.postObject(testList, idReceiver, idReceiver);
-                System.out.println(idReceiver.await());
-                requestor.postObject(entry);
-            } 
-            catch (Exception e) {
-                Log.i("Authentication", e.toString());
-                e.printStackTrace();
-            }
-
-            SynchronousReceiver<Item> itemReceiver = new SynchronousReceiver<>();
-            requestor.getObject("1", Item.class, itemReceiver, itemReceiver);
-            SynchronousReceiver<List> listReceiver = new SynchronousReceiver<>();
-            requestor.getObject("39", List.class, listReceiver, listReceiver);
-            SynchronousReceiver<Integer[]> listIdsReceiver = new SynchronousReceiver<>();
-            requestor.getListOfIds(List.class, listIdsReceiver, listIdsReceiver);
-            SynchronousReceiver<ItemSearch> itemSearchReceiver = new SynchronousReceiver<>();
-            requestor.getObject("r", ItemSearch.class, itemSearchReceiver, itemSearchReceiver);
-            try {
-                System.out.println(itemReceiver.await());
-                System.out.println(listReceiver.await());
-                System.out.println(Arrays.toString(listIdsReceiver.await()));
-                System.out.println(itemSearchReceiver.await());
-            } catch (Exception receiverError) {
-                receiverError.printStackTrace();
-            }
-            */
-        }
-
-        //------------------------------------------------------------------------------------------//
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-
         Properties configs = new Properties();
         try {
             configs = AuthManager.loadProperties(this, "android.resource://" + getPackageName() + "/raw/auths.json");
@@ -218,11 +104,9 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
             e.printStackTrace();
         }
         profilePictureView.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setView(navigationView.getHeaderView(0));
                 builder.setTitle("Change picture");
                 builder.setMessage("Please select a method to add a new profile picture.");
                 builder.setCancelable(true);
@@ -447,6 +331,4 @@ public class MainActivity extends AppCompatActivity implements CreateListDialogF
         }
 
     }
-
-
 }
